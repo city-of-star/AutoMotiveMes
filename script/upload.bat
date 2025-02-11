@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 > nul  # 关键修复：强制控制台使用 UTF-8 编码
 setlocal enabledelayedexpansion
 
 set "project_dir=D:\other\obsidian\obsidian_store"
@@ -35,7 +36,7 @@ if %errorlevel% equ 0 (
 )
 
 git add .
-git commit -m "第!upload_count!次上传" --encoding=utf-8
+git commit -m "第!upload_count!次上传"  # 已通过脚本编码修复中文问题
 if %errorlevel% neq 0 (
     echo Git commit failed.
     pause
