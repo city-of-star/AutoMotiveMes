@@ -35,7 +35,7 @@ if %errorlevel% equ 0 (
 )
 
 git add .
-git commit -m "第!upload_count!次上传"  rem 确保此处是 git commit 而非 mit
+git commit -m "第!upload_count!次上传" --encoding=utf-8
 if %errorlevel% neq 0 (
     echo Git commit failed.
     pause
