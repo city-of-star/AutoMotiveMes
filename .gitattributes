@@ -1,0 +1,8 @@
+# 对文本文件使用自动换行符转换
+*.txt text
+*.md text
+*.json text
+
+# 对二进制文件不进行换行符转换
+*.png binary
+*.jpg binary
