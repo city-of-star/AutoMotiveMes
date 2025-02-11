@@ -11,10 +11,14 @@
             "id": "80ae4b6cb16ceeda",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "开发/obsidion/markdown语法.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "markdown语法"
             }
           }
         ],
@@ -91,6 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "开发/obsidion/markdown语法.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,7 +105,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "反向链接"
+              "title": "markdown语法 的反向链接列表"
             }
           },
           {
@@ -109,11 +114,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "开发/obsidion/markdown语法.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "出链"
+              "title": "markdown语法 的出链列表"
             }
           },
           {
@@ -137,12 +143,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "开发/obsidion/markdown语法.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "大纲"
+              "title": "markdown语法 的大纲"
             }
           },
           {
@@ -181,7 +188,7 @@
       "publish:发布更改": false
     }
   },
-  "active": "f714b63c7b795e69",
+  "active": "80ae4b6cb16ceeda",
   "lastOpenFiles": [
     "附件",
     "开发/obsidion/markdown语法.md",
