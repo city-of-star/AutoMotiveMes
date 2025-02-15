@@ -1,0 +1,70 @@
+package com.automotivemes.service.impl.utils;
+
+import com.automotivemes.entity.SysUser;
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+public class UserDetailsImpl implements UserDetails {
+
+    private Long userId;
+    private String username;
+    private String password;
+    private Integer status;
+    private List<GrantedAuthority> authorities;
+
+    // 通过用户实体构建 UserDetailsImpl
+    public static UserDetailsImpl build(SysUser user, List<String> permissions) {
+        UserDetailsImpl userDetails = new UserDetailsImpl();
+        userDetails.setUserId(user.getUserId());
+        userDetails.setUsername(user.getUsername());
+        userDetails.setPassword(user.getPassword());
+        userDetails.setStatus(user.getStatus());
+        // 将权限字符串转换为 GrantedAuthority
+        userDetails.authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        return userDetails;
+    }
+
+    // 实现 UserDetails 接口方法
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return status == 1; // 状态1表示启用
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status == 1;
+    }
+}
