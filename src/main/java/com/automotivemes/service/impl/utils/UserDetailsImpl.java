@@ -51,20 +51,18 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
+    }  // 账号永不会过期
 
     @Override
-    public boolean isAccountNonLocked() {
-        return status == 1; // 状态1表示启用
-    }
+    public boolean isAccountNonLocked() { return status == 1; }  // 状态 1 表示启用（返回 true 表示账号永不会锁定）
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
+    }  // 用户的密码永不会过期
 
     @Override
     public boolean isEnabled() {
         return status == 1;
-    }
+    }  // 状态 1 表示启用（返回 true 表示账号永远启用）
 }
