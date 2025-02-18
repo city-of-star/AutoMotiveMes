@@ -1,6 +1,5 @@
-package com.automotivemes.utils;
+package com.automotivemes.common.response;
 
-import com.automotivemes.common.response.CommonResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,7 @@ import org.springframework.http.ResponseEntity;
  * 响应工具类，用于构建包含不同状态码和响应体的ResponseEntity对象。
  * 该类提供了一系列静态方法，方便根据不同的业务场景返回相应的HTTP响应。
  */
-public class ResponseUtil {
+public class ResponseUtils {
 
     /**
      * 返回表示成功的响应，状态码为200 OK，响应体包含传入的数据。

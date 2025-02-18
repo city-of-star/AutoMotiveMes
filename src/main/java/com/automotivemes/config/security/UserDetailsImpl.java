@@ -1,4 +1,4 @@
-package com.automotivemes.service.impl.utils;
+package com.automotivemes.config.security;
 
 import com.automotivemes.entity.SysUser;
 import lombok.Data;

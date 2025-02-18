@@ -5,7 +5,7 @@ import com.automotivemes.service.AuthService;
 import com.automotivemes.common.dto.LoginRequest;
 import com.automotivemes.common.dto.RegisterRequest;
 import com.automotivemes.common.dto.AuthResponse;
-import com.automotivemes.utils.ResponseUtil;
+import com.automotivemes.common.response.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +20,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<CommonResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
         authService.register(registerRequest);
-        return ResponseUtil.okWithoutData();
+        return ResponseUtils.okWithoutData();
     }
 
     @PostMapping("/login")
     public ResponseEntity<CommonResponse<Object>> login(@RequestBody LoginRequest loginRequest) {
         AuthResponse authResponse = authService.login(loginRequest);
-        return ResponseUtil.ok(authResponse);
+        return ResponseUtils.ok(authResponse);
     }
 }

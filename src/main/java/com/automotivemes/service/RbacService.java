@@ -1,4 +1,4 @@
-package com.automotivemes.config;
+package com.automotivemes.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

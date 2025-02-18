@@ -1,4 +1,4 @@
-package com.automotivemes.config;
+package com.automotivemes.config.security;
 
 import com.automotivemes.utils.JwtUtils;
 import jakarta.servlet.FilterChain;

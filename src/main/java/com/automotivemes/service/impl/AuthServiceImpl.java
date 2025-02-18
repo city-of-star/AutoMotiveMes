@@ -7,7 +7,7 @@ import com.automotivemes.entity.SysUser;
 import com.automotivemes.common.exception.AuthException;
 import com.automotivemes.mapper.SysUserMapper;
 import com.automotivemes.service.AuthService;
-import com.automotivemes.service.impl.utils.UserDetailsImpl;
+import com.automotivemes.config.security.UserDetailsImpl;
 import com.automotivemes.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

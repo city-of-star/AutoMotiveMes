@@ -1,4 +1,4 @@
-package com.automotivemes.config;
+package com.automotivemes.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
