@@ -1,5 +1,6 @@
 package com.automotivemes.config.security;
 
+import com.automotivemes.service.RbacService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * Spring Security 配置类，用于配置应用的安全策略，
@@ -28,6 +35,9 @@ public class SecurityConfig {
     // 注入 JWT 认证过滤器
     private final JwtAuthFilter jwtAuthFilter;
 
+    // 注入 Rbac 服务
+    private final RbacService rbacService;
+
     /**
      * 配置安全过滤链，定义请求的访问规则、会话管理和过滤器顺序。
      *
@@ -37,9 +47,17 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // 创建自定义的表达式处理器
+        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
+        // 将 RbacService 注册到表达式处理器中
+        expressionHandler.setDefaultRolePrefix("ROLE_");
+        expressionHandler.setPermissionEvaluator(new RbacPermissionEvaluator(rbacService));
+
         http
                 // 禁用 CSRF（跨站请求伪造）保护，因为在无状态的应用中通常不需要
                 .csrf(AbstractHttpConfigurer::disable)
+                // 配置跨域
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 配置会话管理策略为无状态，即不使用 HTTP 会话来存储用户的认证信息
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -77,5 +95,30 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    /**
+     * 配置跨域请求的源、方法、头信息等。
+     *
+     * @return CorsConfigurationSource 对象
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // 允许所有来源的跨域请求
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
+        // 允许的 HTTP 方法
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // 允许的请求头
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // 允许携带凭证（如 cookie）
+        configuration.setAllowCredentials(true);
+        // 预检请求的有效期（秒）
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 对所有路径应用跨域配置
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

@@ -1,5 +1,7 @@
 package com.automotivemes.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,9 +14,11 @@ public class SysUserRole {
     /**
      * 用户 ID，关联 sys_user 表的用户 ID
      */
+    @TableId
     private Long userId;
     /**
      * 角色 ID，关联 sys_role 表的角色 ID
      */
+    @TableField
     private Integer roleId;
 }

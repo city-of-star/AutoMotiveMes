@@ -1,5 +1,7 @@
 package com.automotivemes.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,9 +14,11 @@ public class SysRolePermission {
     /**
      * 角色 ID，关联 sys_role 表的角色 ID
      */
+    @TableId
     private Integer roleId;
     /**
      * 权限 ID，关联 sys_permission 表的权限 ID
      */
+    @TableField
     private Integer permId;
 }
