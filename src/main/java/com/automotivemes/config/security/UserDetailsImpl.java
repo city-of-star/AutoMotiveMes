@@ -17,6 +17,7 @@ public class UserDetailsImpl implements UserDetails {
     private String username;
     private String password;
     private Integer status;
+    private Boolean accountNonLocked;
     private List<GrantedAuthority> authorities;
 
     // 通过用户实体构建 UserDetailsImpl
@@ -26,6 +27,7 @@ public class UserDetailsImpl implements UserDetails {
         userDetails.setUsername(user.getUsername());
         userDetails.setPassword(user.getPassword());
         userDetails.setStatus(user.getStatus());
+        userDetails.setAccountNonLocked(user.getAccountNonLocked());
         // 将权限字符串转换为 GrantedAuthority
         userDetails.authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
@@ -55,7 +57,7 @@ public class UserDetailsImpl implements UserDetails {
     }  // 账号永不会过期
 
     @Override
-    public boolean isAccountNonLocked() { return status == 1; }  // 状态 1 表示启用（返回 true 表示账号永不会锁定）
+    public boolean isAccountNonLocked() { return accountNonLocked; }  // 状态 1 表示启用（返回 true 表示账号永不会锁定）
 
     @Override
     public boolean isCredentialsNonExpired() {

@@ -30,11 +30,11 @@ public class JwtUtils {
     }
 
     // 生成令牌
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -44,13 +44,21 @@ public class JwtUtils {
     // 验证令牌
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            // 解析令牌
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(token);
-            return true;
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // 获取令牌的过期时间
+            Date expiration = claims.getExpiration();
+
+            // 检查过期时间是否晚于当前时间
+            return expiration != null && expiration.after(new Date());
         } catch (Exception e) {
             // 日志记录异常
+            System.err.println("Token validation failed: " + e.getMessage());
             return false;
         }
     }

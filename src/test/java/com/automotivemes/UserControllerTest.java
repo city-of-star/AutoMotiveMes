@@ -4,11 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AuthControllerTest extends BaseTest {
+class UserControllerTest extends BaseTest {
 
     // 封装创建注册请求 JSON 体的方法
     private String createRegistrationJson(String username, String password, String confirmPassword) {
@@ -36,7 +37,7 @@ class AuthControllerTest extends BaseTest {
     @Test
     void testRegistrationSuccess() throws Exception {
         String jsonBody = createRegistrationJson("newuser", "newpassword", "newpassword");
-        performRequest("/api/auth/register", jsonBody)
+        performRequest("/api/user/register", jsonBody)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -49,8 +50,8 @@ class AuthControllerTest extends BaseTest {
      */
     @Test
     void testRegistrationFailurePasswordMismatch() throws Exception {
-        String jsonBody = createRegistrationJson("newuser1", "newpassword", "wrongpassword");
-        performRequest("/api/auth/register", jsonBody)
+        String jsonBody = createRegistrationJson("newUser1", "newPassword", "wrongPassword");
+        performRequest("/api/user/register", jsonBody)
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -63,8 +64,8 @@ class AuthControllerTest extends BaseTest {
      */
     @Test
     void testLoginSuccess() throws Exception {
-        String jsonBody = createLoginJson("admin", "admin123");
-        performRequest("/api/auth/login", jsonBody)
+        String jsonBody = createLoginJson("admin", "123456");
+        performRequest("/api/user/login", jsonBody)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.token").exists());
@@ -79,8 +80,26 @@ class AuthControllerTest extends BaseTest {
     @Test
     void testLoginFailure() throws Exception {
         String jsonBody = createLoginJson("wrong", "wrong");
-        performRequest("/api/auth/login", jsonBody)
+        performRequest("/api/user/login", jsonBody)
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * 测试获取用户信息的情况
+     * 该测试方法会构建一个有效的请求，包含正确的用户名，
+     * 并发送到获取用户信息接口，期望返回状态码为 200（OK），且响应体中包含有效的 data 字段
+     * @throws Exception 当执行请求或验证结果时出现异常
+     */
+    @Test
+    void testGetUserInfoSuccess() throws Exception {
+        String username = "admin";
+        String jsonBody = String.format("{\"username\":\"%s\"}", username);
+        mockMvc.perform(post("/api/user/info")
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").exists());
     }
 }

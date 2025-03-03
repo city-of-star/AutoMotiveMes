@@ -88,18 +88,19 @@ public class ResponseUtils {
      */
     private static <T> ResponseEntity<CommonResponse<T>> buildResponse(HttpStatus status, T data, HttpHeaders headers, String errorMessage) {
         CommonResponse<T> response;
+
         // 如果状态码是2xx成功状态码
         if (status.is2xxSuccessful()) {
-            // 使用CommonResponse的success方法构建成功响应，包含数据
-            response = CommonResponse.success(data);
+            if (data != null) response = CommonResponse.success(data);
+            else response = CommonResponse.successWithoutData();
         } else {
             // 否则构建错误响应，使用状态码和错误信息（若未传入则使用状态码默认的原因短语）
             response = CommonResponse.error(status.value(), errorMessage!= null? errorMessage : status.getReasonPhrase());
         }
+
         // 如果响应头为null，创建一个新的HttpHeaders对象
-        if (headers == null) {
-            headers = new HttpHeaders();
-        }
+        if (headers == null) headers = new HttpHeaders();
+
         // 返回包含响应体、响应头和状态码的ResponseEntity对象
         return new ResponseEntity<>(response, headers, status);
     }

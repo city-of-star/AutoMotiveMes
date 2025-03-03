@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         // 查询用户权限列表
-        List<String> permissions = userMapper.selectUserPermissions(user.getUserId());
+        List<String> permissions = userMapper.selectUserPermissions(user.getUsername());
 
         return UserDetailsImpl.build(user, permissions);
     }

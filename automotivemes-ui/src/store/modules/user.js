@@ -1,59 +1,64 @@
-import service from '@/utils/request.js';
-
-// 过滤异步路由的函数，原代码中未定义，这里先简单定义一个空函数占位
-function filterAsyncRoutes(data) {
-    return data;
-}
+import service from '@/utils/request'
+import { ElMessage } from "element-plus";
+import router from "@/router";
 
 export default {
+    namespaced: true,
     state: {
-        id: null,
-        username: null,
-        token: localStorage.getItem('token'),
-        userInfo: null,
-        permissions: [],
-        isDynamicAdded: false,
-        routes: [],
-        realtimeData: [],
-        historyData: []
+        token: localStorage.getItem('token') || '',
+        username: '',
+        realName: '',
+        email: '',
+        phone: '',
     },
     getters: {
-        // 可以根据需要添加 getters
     },
     mutations: {
-        SET_TOKEN: (state, token) => {
-            state.token = token;
-            localStorage.setItem('token', token);
+        SET_TOKEN(state, token, username) {
+            state.token = token
+            state.username = username
+            localStorage.setItem('token', token)
         },
-        SET_USERINFO: (state, info) => {
-            state.userInfo = info;
+        SET_USERInfo(state, user) {
+            state.realName = user.realName
+            state.email = user.email
+            state.phone = user.phone
         },
-        SET_REALTIME_DATA: (state, data) => {
-            state.realtimeData = data;
+        CLEAR_AUTH(state) {
+            state.token = ''
+            state.user = null
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
         }
     },
     actions: {
-        login({ commit }, { username, password }) {
-            return service.post('/api/auth/login', { username, password })
-                .then(res => {
-                    commit('SET_TOKEN', res.data.token);
-                    return res;
-                });
+        async login({ commit }, data) {
+            const response = await service.post('/user/login', data);
+            if (response.message === 'Success') {  // 登录成功
+                ElMessage.success("登录成功!")
+                commit('SET_TOKEN', response.data, data.username)
+                await router.push('/')
+            } else {
+                ElMessage.error(response.message)
+            }
         },
-        async generateRoutes({ state }) {
-            // 从后端获取权限数据
-            const { data } = await service.get('/api/user/permissions');
-            const routes = filterAsyncRoutes(data);
-            state.routes = routes;
-            state.isDynamicAdded = true;
-            return routes;
+        async register(_, data){
+            const response = await service.post('/user/register', data);
+            if (response.message === 'Success') {  // 注册成功
+                ElMessage.success("注册成功!")
+            } else {
+                ElMessage.error(response.message)
+            }
         },
-        fetchRealtimeData({ commit }) {
-            return service.get('/api/devices/realtime')
-                .then(res => commit('SET_REALTIME_DATA', res.data));
+        async getUserInfo({commit}, data) {
+            const response = await service.post('/user/info', data);
+            commit('SET_USERInfo', response.data)
+            return response
+        },
+        logout({ commit }) {
+            commit('CLEAR_AUTH')
         }
     },
     modules: {
-        // 如果后续需要模块化，可以再添加
     }
-};
+}

@@ -1,6 +1,5 @@
 package com.automotivemes.config.security;
 
-import com.automotivemes.service.RbacService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -47,12 +45,6 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // 创建自定义的表达式处理器
-        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        // 将 RbacService 注册到表达式处理器中
-        expressionHandler.setDefaultRolePrefix("ROLE_");
-        expressionHandler.setPermissionEvaluator(new RbacPermissionEvaluator(rbacService));
-
         http
                 // 禁用 CSRF（跨站请求伪造）保护，因为在无状态的应用中通常不需要
                 .csrf(AbstractHttpConfigurer::disable)
@@ -64,7 +56,7 @@ public class SecurityConfig {
                 // 配置请求的授权规则
                 .authorizeHttpRequests(auth -> auth
                         // 允许 /api/auth/login 和 /api/auth/register 这两个接口匿名访问
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         // 其他所有请求都需要进行身份验证
                         .anyRequest().authenticated()
                 )

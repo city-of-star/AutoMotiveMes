@@ -1,29 +1,44 @@
 import axios from 'axios'
+// import { ElMessage } from 'element-plus'
 import store from '@/store'
-import router from '@/router'
+import router from "@/router";
 
 const service = axios.create({
-    baseURL: 'http://localhost:3000',
-    timeout: 10000
+    baseURL: 'http://localhost:3000/api',
+    timeout: 5000,
+    headers: {
+        'Content-Type': 'application/json'
+    }
 })
 
 // 请求拦截器
-service.interceptors.request.use(config => {
-    if (store.state.user.token) {
-        config.headers.Authorization = `Bearer ${store.state.user.token}`
+service.interceptors.request.use(
+    config => {
+        if (store.state.user.token) {
+            config.headers.Authorization = `Bearer ${store.state.user.token}`
+        }
+        return config
+    },
+    error => {
+        return Promise.reject(error)
     }
-    return config
-}, error => {
-    return Promise.reject(error)
-})
+)
 
 // 响应拦截器
 service.interceptors.response.use(
     response => {
-        return response.data
+        const res = response.data
+        if (response.status === 200) {
+            return res
+        } else {
+            // ElMessage.error(res.message || 'Error')
+            return Promise.reject(new Error(res.message || 'Error'))
+        }
     },
     error => {
-        if (error.response && error.response.status === 401) {
+        // ElMessage.error(error.response?.data?.message || error.message)
+        if (error.response?.status === 401) {
+            store.dispatch('logout')
             router.push('/login')
         }
         return Promise.reject(error)

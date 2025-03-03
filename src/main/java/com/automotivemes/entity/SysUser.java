@@ -43,6 +43,14 @@ public class SysUser {
      */
     private Integer status;
     /**
+     * 用户是否未锁定
+     */
+    private Boolean accountNonLocked;
+    /**
+     * 用户连续登录失败次数
+     */
+    private Integer loginAttempts;
+    /**
      * 用户最后一次登录的时间
      */
     private Date lastLogin;

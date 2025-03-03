@@ -10,7 +10,7 @@ class SecurityTest extends BaseTest {
     // 测试管理员权限接口
     @Test
     void testAdminAccess() throws Exception {
-        mockMvc.perform(get("/api/users")
+        mockMvc.perform(get("/api/")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk());
     }
@@ -18,7 +18,7 @@ class SecurityTest extends BaseTest {
     // 测试操作员无权访问管理员接口
     @Test
     void testOperatorForbidden() throws Exception {
-        mockMvc.perform(get("/api/users")
+        mockMvc.perform(get("/api/user")
                         .header("Authorization", "Bearer " + operatorToken))
                 .andExpect(status().isForbidden());
     }

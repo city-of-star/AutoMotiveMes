@@ -1,23 +1,22 @@
 package com.automotivemes.service.impl;
 
-import com.automotivemes.common.dto.LoginRequest;
-import com.automotivemes.common.dto.RegisterRequest;
-import com.automotivemes.common.dto.AuthResponse;
+import com.automotivemes.common.dto.*;
 import com.automotivemes.entity.SysUser;
 import com.automotivemes.common.exception.AuthException;
 import com.automotivemes.mapper.SysUserMapper;
-import com.automotivemes.service.AuthService;
+import com.automotivemes.service.UserService;
 import com.automotivemes.config.security.UserDetailsImpl;
 import com.automotivemes.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
+public class UserServiceImpl implements UserService {
 
     private final SysUserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -37,21 +36,39 @@ public class AuthServiceImpl implements AuthService {
         if (!Objects.equals(registerRequest.getPassword(), registerRequest.getConfirmPassword())) {
             throw new AuthException("注册失败，两次输入的密码不一致");
         }
+
+        // 注册用户到数据库
         SysUser user = new SysUser();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEmail(registerRequest.getEmail());
         user.setStatus(1); // 默认启用状态
+        user.setAccountNonLocked(true);  // 默认没有锁定
+        user.setLoginAttempts(0);  // 初始化连续登陆失败次数为 0
+        user.setCreateTime(new Date());
         userMapper.insert(user);
     }
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
+        // 验证用户的密码
         SysUser user = userMapper.selectByUsername(loginRequest.getUsername());
         if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new AuthException("用户名或密码错误");
         }
-        String token = jwtUtils.generateToken(UserDetailsImpl.build(user, userMapper.selectUserPermissions(user.getUserId())));
+
+        // 生成 token
+        String token = jwtUtils.generateToken(loginRequest.getUsername());
+
+        // 更新用户最后登录时间
+        user.setLastLogin(new Date());
+        userMapper.updateById(user);
+
         return new AuthResponse(token);
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo(UserInfoRequest userInfoRequest) {
+        return userMapper.getUserInfoByUsername(userInfoRequest.getUsername());
     }
 }
