@@ -107,6 +107,7 @@ CREATE TABLE alarm_log (
     FOREIGN KEY(eqp_id) REFERENCES equipment(eqp_id)
 );
 
+
 -- 插入用户数据（10个用户） 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, email, phone, status, account_non_locked, login_attempts, last_login) VALUES
     ('admin', '$2a$10$rDBX5B2M/6L.6Vq5kQhW3Ozv7vRkE7fH3kZ1Uw7JjHb1dL6aJq9Gm', '系统管理员', 'admin@mes.com', '13800138000', 1, false, 0, '2024-03-20 09:25:00'),
