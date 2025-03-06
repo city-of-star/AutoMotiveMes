@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "开发/git/创建新的git仓库.md",
+                "file": "挣钱/企业数字化代运营/第一版方案.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "创建新的git仓库"
+              "title": "第一版方案"
             }
           }
         ],
@@ -79,7 +79,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 293.5
   },
   "right": {
     "id": "b8625eec765bd5bf",
@@ -95,7 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "开发/git/创建新的git仓库.md",
+                "file": "开发/git/创建新的git仓库（详细版）.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +105,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "创建新的git仓库 的反向链接列表"
+              "title": "创建新的git仓库（详细版） 的反向链接列表"
             }
           },
           {
@@ -170,7 +170,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -185,30 +186,46 @@
   },
   "active": "80ae4b6cb16ceeda",
   "lastOpenFiles": [
+    "挣钱/企业数字化代运营/第三版方案.md",
+    "挣钱/企业数字化代运营/第二版方案.md",
+    "挣钱/企业数字化代运营/第一版方案.md",
+    "开发/git/创建新的git仓库（详细版）.md",
+    "挣钱/企业数字化代运营",
+    "挣钱",
+    "file/52/iBgaJcLjGrxZfoYRS1A87.png.md",
+    "附件/Pasted image 20250304140249.png",
+    "开发/git/创建新的git仓库（极简版）.md",
+    "附件/Pasted image 20250304140123.png",
+    "附件/Pasted image 20250304140111.png",
+    "附件/Pasted image 20250304140059.png",
+    "附件/Pasted image 20250304140048.png",
+    "附件/Pasted image 20250304140038.png",
+    "附件/Pasted image 20250304140021.png",
+    "附件/Pasted image 20250304140010.png",
+    "附件/Pasted image 20250304140007.png",
+    "附件/Pasted image 20250304135953.png",
+    "file/52",
+    "file",
+    "搬家/芜湖-合肥.md",
+    "开发/springboot/创建新项目的依赖.md",
     "每日任务/2025 02 18.md",
     "每日任务/2025 02 17.md",
     "每日任务/2025 02 16.md",
     "每日任务/临时任务.md",
-    "开发/git/创建新的git仓库.md",
     "每日任务/2025 02 15.md",
     "开发/obsidion/markdown语法.md",
     "开发/SpringSecurity.md",
-    "开发/springboot/创建新项目的依赖.md",
     "开发/springboot",
     "未命名.md",
     "每日任务",
-    "搬家/芜湖-合肥.md",
     "开发/git",
     "搬家",
     "英雄联盟/2025 02 14.md",
     "README.md",
     "英雄联盟",
     "附件",
-    "开发/obsidion",
-    "开发",
     "建立连接.md",
     "创建链接.md",
-    "欢迎.md",
-    "Recording 20250211143915.m4a"
+    "欢迎.md"
   ]
 }
