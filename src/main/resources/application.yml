@@ -1,0 +1,3 @@
+jwt:
+  secret: ThisIsASecretKeyWithAtLeast32BytesForHS256zyntm123lhy # 使用Base64编码的密钥
+  expiration: 86400 # 1天
