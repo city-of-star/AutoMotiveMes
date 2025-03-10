@@ -1,4 +1,4 @@
-package com.automotivemes.controller;
+package com.automotivemes.controller.user;
 
 import com.automotivemes.common.dto.user.*;
 import com.automotivemes.common.response.CommonResponse;

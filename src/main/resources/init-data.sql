@@ -86,14 +86,18 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('user:edit', '编辑用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'PUT'),
     ('user:delete', '删除用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'DELETE'),
 
+    -- 设备监控
+    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipments', 'GET'),
+    ('equipment:monitor', '注册设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
+    ('equipment:monitor', '移除设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
+    ('equipment:monitor', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
+    ('equipment:monitor', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/get', 'GET'),
+    ('equipment:history', '历史数据', 'MENU', 8, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
+
     -- 生产计划管理
     ('plan:manage', '生产计划', 'MENU', 0, '/production/plan', 'prod/Plan', '/api/plans', 'GET'),
     ('plan:add', '新建计划', 'BUTTON', 5, NULL, NULL, '/api/plans', 'POST'),
     ('plan:edit', '修改计划', 'BUTTON', 5, NULL, NULL, '/api/plans/*', 'PUT'),
-
-    -- 设备监控
-    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipments', 'GET'),
-    ('equipment:history', '历史数据', 'MENU', 8, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
 
     -- 质量管理
     ('quality:inspect', '质量检测', 'MENU', 0, '/quality/inspection', 'quality/Inspection', '/api/inspections', 'POST'),

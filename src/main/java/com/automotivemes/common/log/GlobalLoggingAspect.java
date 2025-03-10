@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class GlobalLoggingAspect {
-    private static final Logger logger = LoggerFactory.getLogger(GlobalLoggingAspect.class);
+    public static final Logger logger = LoggerFactory.getLogger(GlobalLoggingAspect.class);
 
     // 定义一个通用的切入点，匹配所有的服务类方法
     @Pointcut("execution(* com.automotivemes.service.*.*(..))")
