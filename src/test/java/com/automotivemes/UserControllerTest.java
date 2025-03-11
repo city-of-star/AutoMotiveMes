@@ -102,4 +102,13 @@ class UserControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists());
     }
+
+    @Test
+    void testGetAllEquipmentSuccess() throws Exception {
+        String username = "admin";
+        mockMvc.perform(get("/api/equipment/monitor/list")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").exists());
+    }
 }

@@ -87,12 +87,15 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('user:delete', '删除用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'DELETE'),
 
     -- 设备监控
-    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipments', 'GET'),
-    ('equipment:monitor', '注册设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
-    ('equipment:monitor', '移除设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
-    ('equipment:monitor', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
-    ('equipment:monitor', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/get', 'GET'),
-    ('equipment:history', '历史数据', 'MENU', 8, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
+    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipment', 'GET'),
+    ('equipment:monitor:add', '注册设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
+    ('equipment:monitor:delete', '移除设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
+    ('equipment:monitor:update', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
+    ('equipment:monitor:update-status', '修改设备状态信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update-status', 'PUT'),
+    ('equipment:monitor:list', '获取所有设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/list', 'GET'),
+    ('equipment:monitor:get', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/{id}', 'GET'),
+    ('equipment:history', '历史数据', 'MENU', 0, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
+    ('equipment:history:export', '导出历史数据', 'BUTTON', 0, NULL, NULL, '/api/equipments/history/export', 'GET'),
 
     -- 生产计划管理
     ('plan:manage', '生产计划', 'MENU', 0, '/production/plan', 'prod/Plan', '/api/plans', 'GET'),
@@ -117,7 +120,7 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     -- 工单管理
     ('order:manage', '工单跟踪', 'MENU', 0, '/production/orders', 'prod/Order', '/api/orders', 'GET'),
     ('order:start', '启动工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/start', 'POST'),
-('order:finish', '完成工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/finish', 'POST');
+    ('order:finish', '完成工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/finish', 'POST');
 
 -- 用户角色关系
 INSERT INTO sys_user_role (user_id, role_id) VALUES
@@ -133,16 +136,18 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES
 -- 角色权限关系
 INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     -- 超级管理员
-    (1, 1),(1, 2),(1, 3),(1, 4),(1, 5),(1, 6),(1, 7),(1, 8),(1, 9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),
+    (1, 1),(1, 2),(1, 3),(1, 4),(1, 5),(1, 6),(1, 7),(1, 8),(1, 9),(1,10),
+    (1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1, 20),
+    (1,21),(1,22),(1,23),(1,24),(1,25),(1,26),
+
+    -- 设备技术员
+    (4, 5),(4,6),(4,7),(4,8),(4,9),(4, 10),(4, 11),(4, 12),(4,13),
 
     -- 生产管理
     (2, 5),(2, 6),(2, 7),(2, 8),(2, 9),(2,17),(2,18),(2,19),
 
     -- 质量管理
     (3,10),(3,11),(3,12),(3,13),
-
-    -- 设备技术员
-    (4,8),(4,9),(4,13),(4,14),
 
     -- 物料管理
     (5,15),(5,16),
@@ -180,7 +185,7 @@ CREATE TABLE `equipment_realtime_data` (
 CREATE INDEX idx_equipment_id ON equipment_realtime_data (equipment_id);
 CREATE INDEX idx_timestamp ON equipment_realtime_data (timestamp);
 
--- 插入设备基础数据（示例）
+-- 插入设备基础数据
 INSERT INTO equipment (equipment_name, type, status, location, online_time, last_maintenance) VALUES
     ('冲压机-01', '冲压', '运行', 'A车间-1区', NOW(), DATE_SUB(NOW(), INTERVAL 7 DAY)),
     ('焊接机器人-02', '焊接', '待机', 'B车间-2区', NOW(), DATE_SUB(NOW(), INTERVAL 15 DAY)),

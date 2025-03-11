@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 允许 /api/auth/login 和 /api/auth/register 这两个接口匿名访问
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
+                        .requestMatchers("/api/equipment/real-time-data/simulate-create").permitAll()
                         // 其他所有请求都需要进行身份验证
                         .anyRequest().authenticated()
                 )

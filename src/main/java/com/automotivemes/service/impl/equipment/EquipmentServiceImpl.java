@@ -146,4 +146,5 @@ public class EquipmentServiceImpl implements EquipmentService {
 //    public List<AlarmStatisticsDTO> getAlarmStatistics() {
 //        return realtimeDataMapper.selectAlarmStatistics();
 //    }
+
 }
