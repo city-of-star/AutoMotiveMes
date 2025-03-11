@@ -1,6 +1,6 @@
 package com.automotivemes.config.security;
 
-import com.automotivemes.entity.SysUser;
+import com.automotivemes.entity.user.SysUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

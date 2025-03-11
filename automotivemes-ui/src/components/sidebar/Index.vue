@@ -60,18 +60,21 @@ const $route = useRoute()
 // 过滤需要显示的路由
 const filteredRoutes = computed(() => {
   return router.options.routes.filter(route =>
-      !['login', 'register'].includes(route.name) &&
-      route.meta?.requiresAuth
+      !['login', 'register'].includes(route.name) && route.meta?.requiresAuth
   )
 })
 </script>
 
 <style scoped>
 .sidebar {
-  width: 240px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 250px;
   height: 100vh;
   background: #ffffff;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.25);
   padding: 20px 0;
 }
 

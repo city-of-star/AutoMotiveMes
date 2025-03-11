@@ -1,6 +1,6 @@
-package com.automotivemes.mapper;
+package com.automotivemes.mapper.user;
 
-import com.automotivemes.entity.SysUserRole;
+import com.automotivemes.entity.user.SysUserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -1,11 +1,10 @@
-package com.automotivemes.service.impl;
+package com.automotivemes.service.impl.user;
 
-import com.automotivemes.common.dto.*;
-import com.automotivemes.entity.SysUser;
+import com.automotivemes.common.dto.user.*;
+import com.automotivemes.entity.user.SysUser;
 import com.automotivemes.common.exception.AuthException;
-import com.automotivemes.mapper.SysUserMapper;
-import com.automotivemes.service.UserService;
-import com.automotivemes.config.security.UserDetailsImpl;
+import com.automotivemes.mapper.user.SysUserMapper;
+import com.automotivemes.service.user.UserService;
 import com.automotivemes.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

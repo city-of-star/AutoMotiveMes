@@ -1,7 +1,7 @@
-package com.automotivemes.mapper;
+package com.automotivemes.mapper.user;
 
-import com.automotivemes.common.dto.UserInfoResponse;
-import com.automotivemes.entity.SysUser;
+import com.automotivemes.common.dto.user.UserInfoResponse;
+import com.automotivemes.entity.user.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

@@ -55,58 +55,6 @@ CREATE TABLE sys_role_permission (
     FOREIGN KEY (perm_id) REFERENCES sys_permission(perm_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 生产监控表 --
-CREATE TABLE production_line (
-    line_id INT PRIMARY KEY AUTO_INCREMENT,
-    line_name VARCHAR(50) NOT NULL,  -- e.g. 总装线-01
-    workshop VARCHAR(50),            -- 所属车间
-    capacity INT,                    -- 最大产能/小时
-    status ENUM('RUNNING','STOPPED','MAINTENANCE') DEFAULT 'STOPPED'
-);
-
-CREATE TABLE work_order (
-    order_id VARCHAR(20) PRIMARY KEY,  -- 工单号：YYYYMMDD-0001
-    product_model VARCHAR(50) NOT NULL, -- 车型号
-    planned_quantity INT NOT NULL,
-    completed_quantity INT DEFAULT 0,
-    start_time DATETIME,
-    end_time DATETIME,
-    status ENUM('PENDING','PROCESSING','COMPLETED','CANCELLED'),
-    line_id INT,
-    FOREIGN KEY(line_id) REFERENCES production_line(line_id)
-);
-
-CREATE TABLE equipment (
-    eqp_id VARCHAR(20) PRIMARY KEY,  -- 设备编号：EQP-001
-    eqp_name VARCHAR(50) NOT NULL,
-    eqp_type ENUM('ROBOT','CNC','ASSEMBLY'),
-    line_id INT,
-    status ENUM('NORMAL','WARNING','FAULT') DEFAULT 'NORMAL',
-    last_maintenance DATE,
-    FOREIGN KEY(line_id) REFERENCES production_line(line_id)
-);
-
--- 实时数据表（Redis辅助）--
-CREATE TABLE production_data (
-    data_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    eqp_id VARCHAR(20) NOT NULL,
-    param_name VARCHAR(50),  -- e.g. 温度, 压力
-    param_value DECIMAL(10,2),
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(eqp_id) REFERENCES equipment(eqp_id)
-);
-
-CREATE TABLE alarm_log (
-    alarm_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    eqp_id VARCHAR(20) NOT NULL,
-    alarm_code VARCHAR(20),    -- e.g. E001
-    alarm_desc VARCHAR(200),   -- e.g. 电机过载
-    start_time DATETIME,
-    end_time DATETIME,
-    status ENUM('ACTIVE','RESOLVED'),
-    FOREIGN KEY(eqp_id) REFERENCES equipment(eqp_id)
-);
-
 
 -- 插入用户数据（10个用户） 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, email, phone, status, account_non_locked, login_attempts, last_login) VALUES
@@ -138,14 +86,21 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('user:edit', '编辑用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'PUT'),
     ('user:delete', '删除用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'DELETE'),
 
+    -- 设备监控
+    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipment', 'GET'),
+    ('equipment:monitor:add', '注册设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
+    ('equipment:monitor:delete', '移除设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
+    ('equipment:monitor:update', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
+    ('equipment:monitor:update-status', '修改设备状态信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update-status', 'PUT'),
+    ('equipment:monitor:list', '获取所有设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/list', 'GET'),
+    ('equipment:monitor:get', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/{id}', 'GET'),
+    ('equipment:history', '历史数据', 'MENU', 0, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
+    ('equipment:history:export', '导出历史数据', 'BUTTON', 0, NULL, NULL, '/api/equipments/history/export', 'GET'),
+
     -- 生产计划管理
     ('plan:manage', '生产计划', 'MENU', 0, '/production/plan', 'prod/Plan', '/api/plans', 'GET'),
     ('plan:add', '新建计划', 'BUTTON', 5, NULL, NULL, '/api/plans', 'POST'),
     ('plan:edit', '修改计划', 'BUTTON', 5, NULL, NULL, '/api/plans/*', 'PUT'),
-
-    -- 设备监控
-    ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipments', 'GET'),
-    ('equipment:history', '历史数据', 'MENU', 8, '/equipment/history', 'equip/History', '/api/equipments/history', 'GET'),
 
     -- 质量管理
     ('quality:inspect', '质量检测', 'MENU', 0, '/quality/inspection', 'quality/Inspection', '/api/inspections', 'POST'),
@@ -165,7 +120,7 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     -- 工单管理
     ('order:manage', '工单跟踪', 'MENU', 0, '/production/orders', 'prod/Order', '/api/orders', 'GET'),
     ('order:start', '启动工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/start', 'POST'),
-('order:finish', '完成工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/finish', 'POST');
+    ('order:finish', '完成工单', 'BUTTON', 17, NULL, NULL, '/api/orders/*/finish', 'POST');
 
 -- 用户角色关系
 INSERT INTO sys_user_role (user_id, role_id) VALUES
@@ -181,7 +136,12 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES
 -- 角色权限关系
 INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     -- 超级管理员
-    (1, 1),(1, 2),(1, 3),(1, 4),(1, 5),(1, 6),(1, 7),(1, 8),(1, 9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),
+    (1, 1),(1, 2),(1, 3),(1, 4),(1, 5),(1, 6),(1, 7),(1, 8),(1, 9),(1,10),
+    (1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1, 20),
+    (1,21),(1,22),(1,23),(1,24),(1,25),(1,26),
+
+    -- 设备技术员
+    (4, 5),(4,6),(4,7),(4,8),(4,9),(4, 10),(4, 11),(4, 12),(4,13),
 
     -- 生产管理
     (2, 5),(2, 6),(2, 7),(2, 8),(2, 9),(2,17),(2,18),(2,19),
@@ -189,11 +149,44 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     -- 质量管理
     (3,10),(3,11),(3,12),(3,13),
 
-    -- 设备技术员
-    (4,8),(4,9),(4,13),(4,14),
-
     -- 物料管理
     (5,15),(5,16),
 
     -- 操作员
     (6,5),(6,8),(6,9),(6,17),(6,18);
+
+
+
+
+-- 设备表（equipment）
+CREATE TABLE `equipment` (
+    `equipment_id` INT PRIMARY KEY AUTO_INCREMENT COMMENT '设备ID',
+    `equipment_name` VARCHAR(50) NOT NULL COMMENT '设备名称',
+    `type` VARCHAR(20) NOT NULL COMMENT '设备类型（冲压/焊接/涂装/总装）',
+    `status` ENUM('运行','待机','故障','维护') NOT NULL DEFAULT '待机',
+    `location` VARCHAR(50) COMMENT '安装位置',
+    `online_time` DATETIME COMMENT '上线时间',
+    `last_maintenance` DATETIME COMMENT '最后维护时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 设备实时数据表（equipment_realtime_data）
+CREATE TABLE `equipment_realtime_data` (
+    `equipment_realtime_data_id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `equipment_id` INT NOT NULL COMMENT '设备ID',
+    `timestamp` DATETIME NOT NULL COMMENT '时间戳',
+    `status` ENUM('运行','待机','故障','维护') NOT NULL,
+    `temperature` DECIMAL(5,2) COMMENT '温度℃',
+    `rpm` INT COMMENT '转速RPM',
+    `is_alarm` TINYINT(1) DEFAULT 0 COMMENT '报警状态',
+    FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`equipment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 创建索引
+CREATE INDEX idx_equipment_id ON equipment_realtime_data (equipment_id);
+CREATE INDEX idx_timestamp ON equipment_realtime_data (timestamp);
+
+-- 插入设备基础数据
+INSERT INTO equipment (equipment_name, type, status, location, online_time, last_maintenance) VALUES
+    ('冲压机-01', '冲压', '运行', 'A车间-1区', NOW(), DATE_SUB(NOW(), INTERVAL 7 DAY)),
+    ('焊接机器人-02', '焊接', '待机', 'B车间-2区', NOW(), DATE_SUB(NOW(), INTERVAL 15 DAY)),
+    ('涂装设备-03', '涂装', '维护', 'C车间-3区', NOW(), NOW());

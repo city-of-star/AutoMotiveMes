@@ -14,10 +14,10 @@ export default {
     getters: {
     },
     mutations: {
-        SET_TOKEN(state, token, username) {
-            state.token = token
-            state.username = username
-            localStorage.setItem('token', token)
+        SET_TOKEN(state, payload) {
+            state.token = payload.token;
+            state.username = payload.username;
+            localStorage.setItem('token', payload.token);
         },
         SET_USERInfo(state, user) {
             state.realName = user.realName
@@ -36,7 +36,10 @@ export default {
             const response = await service.post('/user/login', data);
             if (response.message === 'Success') {  // 登录成功
                 ElMessage.success("登录成功!")
-                commit('SET_TOKEN', response.data, data.username)
+                commit('SET_TOKEN', {
+                    token: response.data.token,
+                    username: data.username
+                })
                 await router.push('/')
             } else {
                 ElMessage.error(response.message)
@@ -52,7 +55,11 @@ export default {
         },
         async getUserInfo({commit}, data) {
             const response = await service.post('/user/info', data);
-            commit('SET_USERInfo', response.data)
+            commit('SET_USERInfo', {
+                realName: response.data.realName,
+                email: response.data.email,
+                phone: response.data.phone
+            })
             return response
         },
         logout({ commit }) {

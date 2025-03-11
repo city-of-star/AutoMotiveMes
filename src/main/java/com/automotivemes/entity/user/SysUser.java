@@ -1,4 +1,4 @@
-package com.automotivemes.entity;
+package com.automotivemes.entity.user;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

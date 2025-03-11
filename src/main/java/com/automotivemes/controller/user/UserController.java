@@ -1,9 +1,9 @@
-package com.automotivemes.controller;
+package com.automotivemes.controller.user;
 
-import com.automotivemes.common.dto.*;
+import com.automotivemes.common.dto.user.*;
 import com.automotivemes.common.response.CommonResponse;
 import com.automotivemes.common.response.ResponseUtils;
-import com.automotivemes.service.UserService;
+import com.automotivemes.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
