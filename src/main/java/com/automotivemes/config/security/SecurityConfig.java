@@ -58,6 +58,7 @@ public class SecurityConfig {
                         // 允许 /api/auth/login 和 /api/auth/register 这两个接口匿名访问
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         .requestMatchers("/api/equipment/real-time-data/simulate-create").permitAll()
+                        .requestMatchers("/mes-websocket/**", "/topic/**", "/app/**").permitAll()
                         // 其他所有请求都需要进行身份验证
                         .anyRequest().authenticated()
                 )
@@ -106,6 +107,8 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*"));
         // 允许携带凭证（如 cookie）
         configuration.setAllowCredentials(true);
+        // 允许 WebSocket 相关头部
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin"));
         // 预检请求的有效期（秒）
         configuration.setMaxAge(3600L);
 

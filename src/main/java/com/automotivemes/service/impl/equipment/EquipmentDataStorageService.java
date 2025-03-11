@@ -1,11 +1,10 @@
 package com.automotivemes.service.impl.equipment;
 
-import com.automotivemes.entity.equipment.Equipment;
 import com.automotivemes.entity.equipment.EquipmentRealtimeData;
-import com.automotivemes.mapper.equipment.EquipmentMapper;
 import com.automotivemes.mapper.equipment.EquipmentRealtimeDataMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.sql.Date;
@@ -20,6 +19,7 @@ public class EquipmentDataStorageService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final EquipmentRealtimeDataMapper equipmentRealtimeDataMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // Redis键格式：equipment:realtime:{equipmentId}
     private static final String REDIS_KEY_PREFIX = "equipment:realtime:";
@@ -39,6 +39,9 @@ public class EquipmentDataStorageService {
         // 设置双重过期策略：整体key过期 + 保留最新1分钟数据
         redisTemplate.expire(redisKey, DATA_EXPIRE_MINUTES + 1, TimeUnit.MINUTES);
         trimOldData(redisKey);
+
+        // 推送WebSocket消息
+        messagingTemplate.convertAndSend("/topic/equipment/realtime", data);
     }
 
     /**

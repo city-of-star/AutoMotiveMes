@@ -1,4 +1,6 @@
 import service from '@/utils/request'
+import SockJS from 'sockjs-client'
+import { Client } from '@stomp/stompjs'
 
 export default {
     namespaced: true,
@@ -15,8 +17,12 @@ export default {
         SET_DEVICES(state, { equipmentList }) {
             state.equipmentList = equipmentList
         },
-        UPDATE_REALTIME_DATA(state, { equipmentId, data }) {
-            state.realtimeData[equipmentId] = data
+        UPDATE_REALTIME_DATA(state, payload) {
+            const { equipmentId, ...metrics } = payload
+            state.realtimeData = {
+                ...state.realtimeData,
+                [equipmentId]: metrics
+            }
         },
         SET_WS_STATUS(state, status) {
             state.wsConnected = status
@@ -30,18 +36,22 @@ export default {
             })
         },
         initWebSocket({ commit }) {
-            const ws = new WebSocket('ws://mes-websocket')
+            const socket = new SockJS('http://localhost:3000/mes-websocket')
+            const stompClient = new Client({
+                webSocketFactory: () => socket,
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+            })
 
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data)
-                commit('UPDATE_REALTIME_DATA', {
-                    deviceId: data.deviceId,
-                    data: data.metrics
+            stompClient.onConnect = () => {
+                stompClient.subscribe('/topic/equipment/realtime', (message) => {
+                    const data = JSON.parse(message.body)
+                    commit('UPDATE_REALTIME_DATA', data)
                 })
             }
 
-            ws.onopen = () => commit('SET_WS_STATUS', true)
-            ws.onclose = () => commit('SET_WS_STATUS', false)
+            stompClient.activate()
         }
     },
     modules: {

@@ -1,17 +1,14 @@
 <template>
   <div class="equipment-list">
     <div v-for="equipment in equipments"
-         :key="equipment.id"
+         :key="equipment.equipmentId"
          class="equipment-card"
-         :class="equipmentStatusClass(equipment.id)"
+         :class="equipmentStatusClass(equipment.equipmentId)"
     >
-      <h3 @click="goDetail(equipment.id)">{{ equipment.equipmentName }}</h3>
-      <div class="metrics">
-        <div v-for="(value, key) in realtimeData[equipment.id]"
-             :key="key" class="metric-item">
-          <span class="label">{{ key }}:</span>
-          <span class="value">{{ value }}</span>
-        </div>
+      <h3 @click="goDetail(equipment.equipmentId)">{{ equipment.equipmentName }}</h3>
+      <div v-if="realtimeData[equipment.equipmentId]">
+        <p>温度: {{ realtimeData[equipment.equipmentId].temperature }}℃</p>
+        <p>转速: {{ realtimeData[equipment.equipmentId].rpm }} RPM</p>
       </div>
     </div>
   </div>
