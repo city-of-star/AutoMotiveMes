@@ -1,16 +1,22 @@
 package com.automotivemes.service.impl.user;
 
 import com.automotivemes.common.dto.user.*;
+import com.automotivemes.config.security.UserDetailsImpl;
 import com.automotivemes.entity.user.SysUser;
 import com.automotivemes.common.exception.AuthException;
 import com.automotivemes.mapper.user.SysUserMapper;
 import com.automotivemes.service.user.UserService;
 import com.automotivemes.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -56,18 +62,53 @@ public class UserServiceImpl implements UserService {
             throw new AuthException("用户名或密码错误");
         }
 
+        // 查询用户的角色和权限
+        List<String> roles = userMapper.selectUserRoles(user.getUsername());
+        List<String> permissions = userMapper.selectUserPermissions(user.getUsername());
+
         // 生成 token
         String token = jwtUtils.generateToken(loginRequest.getUsername());
+
+        // 创建响应对象并设置角色和权限
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setRoles(roles.toArray(new String[0]));
+        response.setPermissions(permissions.toArray(new String[0]));
 
         // 更新用户最后登录时间
         user.setLastLogin(new Date());
         userMapper.updateById(user);
 
-        return new AuthResponse(token);
+        return response;
     }
 
     @Override
-    public UserInfoResponse getUserInfo(UserInfoRequest userInfoRequest) {
-        return userMapper.getUserInfoByUsername(userInfoRequest.getUsername());
+    public UserInfoResponse getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return userMapper.getUserInfoByUsername(authentication.getName());
+        }
+        throw new AuthException("用户尝试获取个人信息，但是用户未认证或认证失败");
+    }
+
+    @Override
+    public UserRoleAndPermissionResponse getUserRoleAndPermission() {
+        UserRoleAndPermissionResponse userRoleAndPermission = new UserRoleAndPermissionResponse();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                UserDetailsImpl userDetailsImpl = (UserDetailsImpl) principal;
+                userRoleAndPermission.setRoles(userDetailsImpl.getRoles().toArray(new String[0]));
+                userRoleAndPermission.setPermissions(
+                        userDetailsImpl.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toArray(String[]::new)
+                );
+                return userRoleAndPermission;
+            }
+        }
+        throw new AuthException("用户尝试获取个人角色和权限，但是用户未认证或认证失败");
     }
 }

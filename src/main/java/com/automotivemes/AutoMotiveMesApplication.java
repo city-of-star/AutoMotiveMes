@@ -16,10 +16,10 @@ public class AutoMotiveMesApplication {
         SpringApplication.run(AutoMotiveMesApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner init(EquipmentRealTimeDataSimulatorService simulatorService) {
-        return args -> {
-            simulatorService.startAllSimulators();
-        };
-    }
+//    @Bean
+//    public CommandLineRunner init(EquipmentRealTimeDataSimulatorService simulatorService) {
+//        return args -> {
+//            simulatorService.startAllSimulators();
+//        };
+//    }
 }

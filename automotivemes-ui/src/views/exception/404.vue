@@ -1,6 +1,6 @@
 <template>
   <div>
-    这里是首页
+    404
   </div>
 </template>
 

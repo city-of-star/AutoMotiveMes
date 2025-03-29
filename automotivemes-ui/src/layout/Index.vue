@@ -3,10 +3,10 @@
     <!-- 固定定位元素 -->
     <Sidebar />
     <TopBar />
-    <TabsNav />
+    <TabBar />
 
     <!-- 主要内容区域 -->
-    <main class="main-content">
+    <main class="main-content" :style="{ 'margin-left': left }">
       <div class="router-view-container">
         <router-view />
       </div>
@@ -17,28 +17,32 @@
 <script setup>
 import Sidebar from '@/components/sidebar/Index.vue'
 import TopBar from '@/components/topBar/Index.vue'
-import TabsNav from '@/components/tabsNav/Index.vue'
+import TabBar from '@/components/tabBar/Index.vue'
+
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const left = computed(() =>
+    store.state.app.sidebar.opened ? store.state.app.sidebar.widthFold - 8 + 'px' : store.state.app.sidebar.widthExpend - 8 + 'px'
+)
 </script>
 
 <style>
 .app-container {
-  position: relative;
+
 }
 
 .main-content {
   margin-left: 250px;
-  margin-top: 56px;
-  padding: 24px;
-  min-height: calc(100vh - 112px);
-  background: #f8f9fa;
+  margin-top: 100px;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
 }
 
 .router-view-container {
-  overflow: auto;
-  max-height: calc(100vh - 56px - 48px);
-  background: #fff;
-  border-radius: 8px;
+  background-color: #e5eefc;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
+
 </style>

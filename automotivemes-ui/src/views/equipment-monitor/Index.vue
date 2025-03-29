@@ -4,6 +4,7 @@
          :key="equipment.equipmentId"
          class="equipment-card"
          :class="equipmentStatusClass(equipment.equipmentId)"
+         style="height: 300px;"
     >
       <h3 @click="goDetail(equipment.equipmentId)">{{ equipment.equipmentName }}</h3>
       <div v-if="realtimeData[equipment.equipmentId]">
@@ -22,6 +23,8 @@ import { useRouter } from 'vue-router'
 const store = useStore()
 const router = useRouter()
 
+// store.dispatch('user/logout')
+
 // 获取设备数据
 store.dispatch('equipment/fetchEquipments')
 
@@ -30,12 +33,14 @@ const equipments = computed(() => store.state.equipment.equipmentList)
 const realtimeData = computed(() => store.state.equipment.realtimeData)
 
 // 根据缓存信息，更新设备状态样式
-const equipmentStatusClass = (equipmentId) => {
-  const status = store.state.equipment.statusMap.get(equipmentId)
+const equipmentStatusClass = () => {
+  const status = '运行';
+
   return {
-    'status-normal': status === 0,
-    'status-warning': status === 1,
-    'status-error': status === 2
+    'status-normal': status === '运行',
+    'status-maintenance': status === '维护',
+    'status-warning': status === '待机',
+    'status-error': status === '故障',
   }
 }
 
@@ -61,6 +66,7 @@ const goDetail = (id) => {
 }
 
 .status-normal { border-left: 4px solid #67C23A; }
+.status-maintenance { border-left: 4px solid #3a65c2; }
 .status-warning { border-left: 4px solid #E6A23C; }
 .status-error { border-left: 4px solid #F56C6C; }
 </style>

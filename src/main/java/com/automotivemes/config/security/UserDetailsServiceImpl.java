@@ -25,9 +25,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户不存在");
         }
 
-        // 查询用户权限列表
+        // 查询用户角色和权限列表
         List<String> permissions = userMapper.selectUserPermissions(user.getUsername());
+        List<String> roles = userMapper.selectUserRoles(user.getUsername());
 
-        return UserDetailsImpl.build(user, permissions);
+        return UserDetailsImpl.build(user, roles, permissions);
     }
 }

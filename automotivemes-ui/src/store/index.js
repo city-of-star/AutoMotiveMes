@@ -1,7 +1,9 @@
 import { createStore } from 'vuex'
-import user from '@/store/modules/user.js';
-import tabsNav from '@/store/modules/tabsNav.js'
-import equipment from "@/store/modules/equipment";
+import user from './modules/user.js';
+import equipment from "./modules/equipment.js";
+import theme from "./modules/theme.js";
+import app from "./modules/app.js";
+import tabBar from "./modules/tabBar.js";
 
 export default createStore({
   state: {
@@ -14,7 +16,9 @@ export default createStore({
   },
   modules: {
     user,
-    tabsNav,
     equipment,
+    theme,
+    app,
+    tabBar,
   }
 })

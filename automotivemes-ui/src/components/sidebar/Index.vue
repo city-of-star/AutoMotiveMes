@@ -1,129 +1,110 @@
 <template>
-  <aside class="sidebar">
-    <div class="logo-area">
-      <h1>智慧工厂MES</h1>
+  <div class="sidebar" :style="{ width: sidebarWidth }">
+    <div v-if="!isCollapse" class="logo-container">
+      <img class="logo" src="@/assets/logo.png" alt="logo" />
     </div>
+    <h3 v-if="!isCollapse" class="title">汽车 MES 生产监控中心</h3>
+    <el-menu
+        :default-active="$route.path"
+        class="el-menu-vertical-demo"
+        :collapse="isCollapse"
+        router
+        style="margin-top: 40px"
+    >
+      <template v-for="route in routes" :key="route.path">
+        <!-- 有子路由的情况 -->
+        <el-sub-menu
+            v-if="route.children"
+            :index="route.path"
+        >
+          <template #title>
+            <el-icon><Location /></el-icon>
+            <span>{{ route.meta?.title || route.name }}</span>
+          </template>
+          <el-menu-item
+              v-for="child in route.children"
+              :key="child.path"
+              :index="child.path"
+          >
+            {{ child.meta?.title || child.name }}
+          </el-menu-item>
+        </el-sub-menu>
 
-    <nav class="menu-container">
-      <router-link
-          v-for="item in filteredRoutes"
-          :key="item.path"
-          :to="item.path"
-          class="menu-item"
-          :class="{ 'active': $route.name === item.name }"
-      >
-        <component :is="routeIcons[item.name]" class="menu-icon" />
-        <span class="menu-text">{{ routeNames[item.name] }}</span>
-      </router-link>
-    </nav>
-  </aside>
+        <!-- 没有子路由的情况 -->
+        <el-menu-item
+            v-else
+            :index="route.path"
+        >
+          <el-icon><Location /></el-icon>
+          <span>{{ route.meta?.title || route.name }}</span>
+        </el-menu-item>
+      </template>
+    </el-menu>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import router from '@/router'
-import {
-  HomeIcon,
-  CpuChipIcon,
-  TruckIcon,
-  CalendarIcon,
-  BeakerIcon,
-  ChartBarIcon,
-  ClipboardDocumentIcon,
-} from '@heroicons/vue/24/outline'
+import { computed } from 'vue';
+import { useStore } from 'vuex'
+import { Location } from '@element-plus/icons-vue';
+// import {
+//   HomeIcon, CpuChipIcon, TruckIcon, CalendarIcon,
+//   BeakerIcon, ChartBarIcon, ClipboardDocumentIcon,
+// } from '@heroicons/vue/24/outline'
 
-// 路由显示名称映射
-const routeNames = {
-  'home': '首页',
-  'equipment-monitor': '设备监控',
-  'material-track': '物料追踪',
-  'production-plan': '生产计划',
-  'quality-inspect': '质量检测',
-  'report-analysis': '报告分析',
-  'work-order': '工单管理',
-}
-
-// 路由图标映射
-const routeIcons = {
-  'home': HomeIcon,
-  'equipment-monitor': CpuChipIcon,
-  'material-track': TruckIcon,
-  'production-plan': CalendarIcon,
-  'quality-inspect': BeakerIcon,
-  'report-analysis': ChartBarIcon,
-  'work-order': ClipboardDocumentIcon,
-}
-
-const $route = useRoute()
-
-// 过滤需要显示的路由
-const filteredRoutes = computed(() => {
-  return router.options.routes.filter(route =>
-      !['login', 'register'].includes(route.name) && route.meta?.requiresAuth
-  )
+const store = useStore()
+const routes = computed(() => store.state.user.routes)
+const isCollapse = computed({
+  get: () => store.state.app.sidebar.opened,
+  set: (val) => store.commit('app/TOGGLE_SIDEBAR', val)
 })
+const sidebarWidth = computed(() =>
+    isCollapse.value ? store.state.app.sidebar.widthFold + 'px' : store.state.app.sidebar.widthExpend + 'px'
+)
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/styles/layout.scss';
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
+  transition: width 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.logo-container {
   width: 250px;
-  height: 100vh;
-  background: #ffffff;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.25);
-  padding: 20px 0;
-}
-
-.logo-area {
-  padding: 0 24px;
-  margin-bottom: 32px;
-}
-
-.logo-area h1 {
-  font-size: 20px;
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.menu-container {
+  margin-top: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 12px;
-}
-
-.menu-item {
-  display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 12px 16px;
-  border-radius: 8px;
-  color: #606266;
-  text-decoration: none;
-  transition: all 0.3s ease;
+
+  .logo {
+    width: 100px;
+    height: 100px;
+    animation: slideInLeft 0.5s ease-out forwards;
+  }
 }
 
-.menu-item:hover {
-  background: #f5f7fa;
-  color: #1a1a1a;
-}
-
-.menu-item.active {
-  background: #ecf5ff;
-  color: #409eff;
-  font-weight: 500;
-}
-
-.menu-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
-}
-
-.menu-text {
-  font-size: 14px;
+.title {
+  width: 250px;
+  text-align: center;
+  margin-top: 10px;
+  animation: slideInLeft 0.5s ease-out forwards;
 }
 </style>

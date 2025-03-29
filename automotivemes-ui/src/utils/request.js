@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import store from '@/store'
 import router from "@/router";
 
@@ -38,8 +38,10 @@ service.interceptors.response.use(
     error => {
         // ElMessage.error(error.response?.data?.message || error.message)
         if (error.response?.status === 401) {
-            store.dispatch('logout')
+            store.dispatch('user/logout')
             router.push('/login')
+        } else if (error.response?.status === 403) {
+            ElMessage.error('权限不足，无法访问')
         }
         return Promise.reject(error)
     }

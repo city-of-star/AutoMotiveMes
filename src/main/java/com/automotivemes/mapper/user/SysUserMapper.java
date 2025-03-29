@@ -26,6 +26,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
           """)
     List<String> selectUserPermissions(String username);
 
+    @Select("SELECT r.role_code " +
+            "FROM sys_user_role ur " +
+            "JOIN sys_role r ON ur.role_id = r.role_id " +
+            "WHERE ur.user_id = (SELECT user_id FROM sys_user WHERE username = #{username})")
+    List<String> selectUserRoles(String username);
+
     @Select("SELECT * FROM sys_user WHERE username = #{username}")
     SysUser selectByUsername(String username);
 

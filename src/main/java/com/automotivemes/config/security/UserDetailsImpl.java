@@ -18,16 +18,18 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Integer status;
     private Boolean accountNonLocked;
+    private List<String> Roles;
     private List<GrantedAuthority> authorities;
 
     // 通过用户实体构建 UserDetailsImpl
-    public static UserDetailsImpl build(SysUser user, List<String> permissions) {
+    public static UserDetailsImpl build(SysUser user, List<String> roles, List<String> permissions) {
         UserDetailsImpl userDetails = new UserDetailsImpl();
         userDetails.setUserId(user.getUserId());
         userDetails.setUsername(user.getUsername());
         userDetails.setPassword(user.getPassword());
         userDetails.setStatus(user.getStatus());
         userDetails.setAccountNonLocked(user.getAccountNonLocked());
+        userDetails.setRoles(roles);
         // 将权限字符串转换为 GrantedAuthority
         userDetails.authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)

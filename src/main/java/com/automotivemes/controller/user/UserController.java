@@ -28,10 +28,15 @@ public class UserController {
         return ResponseUtils.ok(authResponse);
     }
 
-    @PreAuthorize("@rbacService.hasPermission(authentication, 'user:manage')")
     @PostMapping("/info")
-    public ResponseEntity<CommonResponse<Object>> info(@RequestBody UserInfoRequest infoRequest) {
-        UserInfoResponse userInfoResponse = userService.getUserInfo(infoRequest);
+    public ResponseEntity<CommonResponse<Object>> info() {
+        UserInfoResponse userInfoResponse = userService.getUserInfo();
         return ResponseUtils.ok(userInfoResponse);
+    }
+
+    @PostMapping("/getRoleAndPermission")
+    public ResponseEntity<CommonResponse<Object>> getRoleAndPermission() {
+        UserRoleAndPermissionResponse userRoleAndPermissionResponse = userService.getUserRoleAndPermission();
+        return ResponseUtils.ok(userRoleAndPermissionResponse);
     }
 }
