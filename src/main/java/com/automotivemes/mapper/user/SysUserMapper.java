@@ -1,6 +1,6 @@
 package com.automotivemes.mapper.user;
 
-import com.automotivemes.common.dto.user.UserInfoResponse;
+import com.automotivemes.common.dto.user.UserInfoResponseDto;
 import com.automotivemes.entity.user.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,5 +39,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     SysUser selectByEmail(String email);
 
     @Select("SELECT real_name, email, phone FROM sys_user WHERE username = #{username}")
-    UserInfoResponse getUserInfoByUsername(String username);
+    UserInfoResponseDto getUserInfoByUsername(String username);
 }

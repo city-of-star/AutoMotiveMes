@@ -1,14 +1,8 @@
 package com.automotivemes.service.equipment;
 
-import com.automotivemes.common.dto.equipment.AlarmStatisticsDTO;
-import com.automotivemes.common.dto.equipment.DailyReportDTO;
-import com.automotivemes.common.dto.equipment.DailyReportQueryDTO;
-import com.automotivemes.common.dto.equipment.HistoricalDataQueryDTO;
 import com.automotivemes.entity.equipment.Equipment;
-import com.automotivemes.entity.equipment.EquipmentRealtimeData;
 
 import java.util.List;
-import java.util.Map;
 
 public interface EquipmentService {
 
@@ -34,5 +28,5 @@ public interface EquipmentService {
 //
 //    // 统计报表
 //    List<DailyReportDTO> getDailyReport(DailyReportQueryDTO queryDTO);
-//    List<AlarmStatisticsDTO> getAlarmStatistics();
+//    List<AlarmStatisticsDto> getAlarmStatistics();
 }

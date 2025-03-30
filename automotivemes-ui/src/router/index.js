@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import store from "@/store";
 
 const routes  = [
@@ -11,16 +11,19 @@ const routes  = [
   {
     path: '/login',
     name: 'login',
+    meta: { title: '登录' },
     component: () => import('@/views/auth/Index.vue'),
   },
   {
     path: '/register',
     name: 'register',
+    meta: { title: '注册' },
     component: () => import('@/views/auth/Index.vue'),
   },
   {
     path: '/404',
     name: '404',
+    meta: { title: '404' },
     component: () => import('@/views/exception/404.vue')
   },
 ]
@@ -28,46 +31,16 @@ const routes  = [
 // 异步路由（需要权限控制）
 const asyncRoutes = [
   {
-    path: '/equipment-monitor',
+    path: '/equipment',
     meta: { title: '设备监控' },
     children: [
       {
-        path: '/equipment-monitor/list',
-        name: 'equipment-monitor-list',
-        component: () => import('@/views/equipment-monitor/Index.vue'),
-        meta: { roles: ['SUPER_ADMIN'], permissions: ['equipment:monitor'], title: '设备列表' },
-      }
+        path: '/equipment/manage',
+        name: 'equipment-manage',
+        component: () => import('@/views/equipment-monitor/Manage.vue'),
+        meta: { roles: ['SUPER_ADMIN'], permissions: ['equipment:manage'], title: '设备管理' },
+      },
     ]
-  },
-  {
-    path: '/material-track',
-    name: 'material-track',
-    component: () => import('@/views/material-track/Index.vue'),
-    meta: { roles: ['SUPER_ADMIN'], permissions: ['material:trace'], title: '物料追踪' }
-  },
-  {
-    path: '/production-plan',
-    name: 'production-plan',
-    component: () => import('@/views/production-plan/Index.vue'),
-    meta: { roles: ['SUPER_ADMIN'], permissions: ['plan:manage'], title: '生产计划' }
-  },
-  {
-    path: '/quality-inspect',
-    name: 'quality-inspect',
-    component: () => import('@/views/quality-inspect/Index.vue'),
-    meta: { roles: ['SUPER_ADMIN'], permissions: ['quality:inspect'], title: '质量检测' }
-  },
-  {
-    path: '/report-analysis',
-    name: 'report-analysis',
-    component: () => import('@/views/report-analysis/Index.vue'),
-    meta: { roles: ['SUPER_ADMIN'], permissions: ['report:production'], title: '报表分析' }
-  },
-  {
-    path: '/work-order',
-    name: 'work-order',
-    component: () => import('@/views/work-order/Index.vue'),
-    meta: { roles: ['SUPER_ADMIN'], permissions: ['order:manage'], title: '工单执行' }
   },
 ]
 
@@ -145,13 +118,9 @@ router.beforeEach(async (to, from, next) => {
 function filterRoutes(routes, roles, permissions) {
   return routes.filter(route => {
     if (route.meta) {
-      const hasRole = route.meta.roles
-          ? roles.some(role => route.meta.roles.includes(role))
-          : true
-      const hasPermission = route.meta.permissions
+      return route.meta.permissions
           ? permissions.some(p => route.meta.permissions.includes(p))
           : true
-      return hasRole && hasPermission
     }
     return true
   })

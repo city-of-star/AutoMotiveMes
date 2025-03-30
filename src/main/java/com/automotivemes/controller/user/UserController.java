@@ -1,12 +1,9 @@
 package com.automotivemes.controller.user;
 
 import com.automotivemes.common.dto.user.*;
-import com.automotivemes.common.response.CommonResponse;
-import com.automotivemes.common.response.ResponseUtils;
+import com.automotivemes.common.response.R;
 import com.automotivemes.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,26 +14,26 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<CommonResponse<Object>> register(@RequestBody RegisterRequest registerRequest) {
-        userService.register(registerRequest);
-        return ResponseUtils.okWithoutData();
+    public R register(@RequestBody RegisterRequestDto registerRequestDto) {
+        userService.register(registerRequestDto);
+        return R.successWithoutData();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<CommonResponse<Object>> login(@RequestBody LoginRequest loginRequest) {
-        AuthResponse authResponse = userService.login(loginRequest);
-        return ResponseUtils.ok(authResponse);
+    public R<AuthResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
+        AuthResponseDto authResponseDto = userService.login(loginRequestDto);
+        return R.success(authResponseDto);
     }
 
     @PostMapping("/info")
-    public ResponseEntity<CommonResponse<Object>> info() {
-        UserInfoResponse userInfoResponse = userService.getUserInfo();
-        return ResponseUtils.ok(userInfoResponse);
+    public R<UserInfoResponseDto> info() {
+        UserInfoResponseDto userInfoResponseDto = userService.getUserInfo();
+        return R.success(userInfoResponseDto);
     }
 
     @PostMapping("/getRoleAndPermission")
-    public ResponseEntity<CommonResponse<Object>> getRoleAndPermission() {
-        UserRoleAndPermissionResponse userRoleAndPermissionResponse = userService.getUserRoleAndPermission();
-        return ResponseUtils.ok(userRoleAndPermissionResponse);
+    public R<UserRoleAndPermissionResponseDto> getRoleAndPermission() {
+        UserRoleAndPermissionResponseDto userRoleAndPermissionResponseDto = userService.getUserRoleAndPermission();
+        return R.success(userRoleAndPermissionResponseDto);
     }
 }

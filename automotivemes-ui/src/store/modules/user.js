@@ -51,29 +51,30 @@ export default {
         async login({ commit }, data) {
             const response = await service.post('/user/login', data);
             console.log("response", response)
-            if (response.message === 'Success') {  // 登录成功
+            if (response.msg === 'success') {  // 登录成功
                 commit('SET_TOKEN', response.data.token)
                 commit('SET_ROLES', response.data.roles)
                 commit('SET_PERMISSIONS', response.data.permissions)
                 ElMessage.success("登录成功!")
+
                 await router.push('/').then(() => {
                     window.location.reload();  // 刷新页面
                 });
             } else {
-                ElMessage.error(response.data.message)
+                ElMessage.error(response.data.msg)
             }
         },
         async register(_, data){
             const response = await service.post('/user/register', data);
-            if (response.message === 'Success') {  // 注册成功
+            if (response.msg === 'success') {  // 注册成功
                 ElMessage.success("注册成功!")
             } else {
-                ElMessage.error(response.message)
+                ElMessage.error(response.msg)
             }
         },
         async getUserRoleAndPermission({ commit, state }) {
             const response = await service.post('/user/getRoleAndPermission');
-            if (response.message === 'Success') {
+            if (response.msg === 'success') {
                 commit('SET_ROLES', response.data.roles)
                 commit('SET_PERMISSIONS', response.data.permissions)
                 return {
@@ -81,12 +82,12 @@ export default {
                     permissions: state.permissions
                 }
             } else {
-                console.log("getUserRoleAndPermission", response.message)
+                console.log("getUserRoleAndPermission", response.msg)
             }
         },
         async getUserInfo({ commit }) {
             const response = await service.post('/user/info');
-            if (response.message === 'Success') {
+            if (response.msg === 'success') {
                 commit('SET_USERINFO', {
                     realName: response.data.realName,
                     email: response.data.email,
@@ -94,7 +95,7 @@ export default {
                 })
                 return response
             } else {
-                console.log("getUserInfo", response.message)
+                console.log("getUserInfo", response.msg)
             }
 
         },

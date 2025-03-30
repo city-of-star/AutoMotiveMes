@@ -38,10 +38,11 @@ const left = computed(() =>
   margin-top: 100px;
   padding: 20px;
   transition: margin-left 0.3s ease-in-out;
+  background-color: #ececec;
 }
 
 .router-view-container {
-  background-color: #e5eefc;
+  background-color: #ffffff;
   padding: 20px;
 }
 
