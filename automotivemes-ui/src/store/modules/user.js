@@ -13,6 +13,7 @@ export default {
         realName: '',
         email: '',
         phone: '',
+        theme_color: '#1890FF',
     },
     getters: {
     },

@@ -1,6 +1,6 @@
 <template>
-  <div class="equipment-list">
-    设备管理页面
+  <div>
+    这里是岗位管理页面
   </div>
 </template>
 
@@ -9,7 +9,5 @@
 </script>
 
 <style scoped>
-.equipment-list {
 
-}
 </style>

@@ -14,7 +14,7 @@
     "axios": "^1.7.9",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.13",
-    "element-plus": "^2.9.5",
+    "element-plus": "^2.9.7",
     "sockjs-client": "^1.6.1",
     "tinycolor2": "^1.6.0",
     "vue": "^3.2.13",

@@ -7,9 +7,7 @@
 
     <!-- 主要内容区域 -->
     <main class="main-content" :style="{ 'margin-left': left }">
-      <div class="router-view-container">
-        <router-view />
-      </div>
+      <router-view />
     </main>
   </div>
 </template>
@@ -38,12 +36,6 @@ const left = computed(() =>
   margin-top: 100px;
   padding: 20px;
   transition: margin-left 0.3s ease-in-out;
-  background-color: #ececec;
-}
-
-.router-view-container {
-  background-color: #ffffff;
-  padding: 20px;
 }
 
 </style>

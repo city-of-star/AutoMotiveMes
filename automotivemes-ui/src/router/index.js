@@ -31,10 +31,34 @@ const routes  = [
 // 异步路由（需要权限控制）
 const asyncRoutes = [
   {
-    path: '/user',
-    name: 'user-manage',
-    component: () => import('@/views/user/Index.vue'),
-    meta: { permissions: ['user:manage'], title: '用户管理' },
+    path: '/system',
+    meta: { title: '系统管理' },
+    children: [
+      {
+        path: '/system/user-manage',
+        name: 'user-manage',
+        component: () => import('@/views/system/user/Index.vue'),
+        meta: { permissions: ['system:user:manage'], title: '用户管理' },
+      },
+      {
+        path: '/system/role-manage',
+        name: 'role-manage',
+        component: () => import('@/views/system/role/Index.vue'),
+        meta: { permissions: ['system:role:manage'], title: '角色管理' },
+      },
+      {
+        path: '/system/dept-manage',
+        name: 'dept-manage',
+        component: () => import('@/views/system/dept/Index.vue'),
+        meta: { permissions: ['system:dept:manage'], title: '部门管理' },
+      },
+      {
+        path: '/system/post-manage',
+        name: 'post-manage',
+        component: () => import('@/views/system/post/Index.vue'),
+        meta: { permissions: ['system:post:manage'], title: '岗位管理' },
+      },
+    ]
   },
   {
     path: '/equipment',

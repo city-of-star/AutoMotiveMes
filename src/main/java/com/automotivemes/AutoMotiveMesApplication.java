@@ -1,6 +1,5 @@
 package com.automotivemes;
 
-import com.automotivemes.simulator.EquipmentRealTimeDataSimulatorService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
