@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             user.setEmail(registerRequestDto.getEmail());
             user.setStatus(1); // 默认启用状态
-            user.setAccountNonLocked(true);  // 默认没有锁定
+            user.setAccountLocked(true);  // 默认没有锁定
             user.setLoginAttempts(0);  // 初始化连续登陆失败次数为 0
             user.setCreateTime(new Date());
             userMapper.insert(user);

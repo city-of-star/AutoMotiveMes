@@ -31,6 +31,10 @@ public class SysUser {
      */
     private String realName;
     /**
+     * 用户的头像url
+     */
+    private String headImg;
+    /**
      * 用户的邮箱地址
      */
     private String email;
@@ -45,7 +49,7 @@ public class SysUser {
     /**
      * 用户是否未锁定
      */
-    private Boolean accountNonLocked;
+    private Boolean accountLocked;
     /**
      * 用户连续登录失败次数
      */

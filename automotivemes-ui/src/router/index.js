@@ -31,14 +31,20 @@ const routes  = [
 // 异步路由（需要权限控制）
 const asyncRoutes = [
   {
+    path: '/user',
+    name: 'user-manage',
+    component: () => import('@/views/user/Index.vue'),
+    meta: { permissions: ['user:manage'], title: '用户管理' },
+  },
+  {
     path: '/equipment',
     meta: { title: '设备监控' },
     children: [
       {
         path: '/equipment/manage',
         name: 'equipment-manage',
-        component: () => import('@/views/equipment-monitor/Manage.vue'),
-        meta: { roles: ['SUPER_ADMIN'], permissions: ['equipment:manage'], title: '设备管理' },
+        component: () => import('@/views/equipment/Manage.vue'),
+        meta: { permissions: ['equipment:manage'], title: '设备管理' },
       },
     ]
   },

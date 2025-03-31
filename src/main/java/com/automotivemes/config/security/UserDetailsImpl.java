@@ -28,7 +28,7 @@ public class UserDetailsImpl implements UserDetails {
         userDetails.setUsername(user.getUsername());
         userDetails.setPassword(user.getPassword());
         userDetails.setStatus(user.getStatus());
-        userDetails.setAccountNonLocked(user.getAccountNonLocked());
+        userDetails.setAccountNonLocked(user.getAccountLocked());
         userDetails.setRoles(roles);
         // 将权限字符串转换为 GrantedAuthority
         userDetails.authorities = permissions.stream()

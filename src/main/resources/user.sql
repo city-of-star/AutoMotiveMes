@@ -4,10 +4,11 @@ CREATE TABLE sys_user (
     username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
     password VARCHAR(100) NOT NULL COMMENT '加密密码',
     real_name VARCHAR(50) COMMENT '真实姓名',
+    head_img VARCHAR(200) COMMENT '头像URL',
     email VARCHAR(100) COMMENT '邮箱',
     phone VARCHAR(20) COMMENT '联系电话',
     status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
-    account_non_locked BOOLEAN DEFAULT 1 COMMENT '账户是否未锁定',
+    account_locked TINYINT(1) DEFAULT 1 COMMENT '账户是否锁定(0:已锁定;1:未锁定)',
     login_attempts INT DEFAULT 0 COMMENT '连续登录失败次数',
     last_login DATETIME COMMENT '最后登录时间',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -27,7 +28,7 @@ CREATE TABLE sys_permission (
     perm_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '权限ID',
     perm_code VARCHAR(200) NOT NULL UNIQUE COMMENT '权限编码',
     perm_name VARCHAR(50) NOT NULL COMMENT '权限名称',
-    perm_type ENUM('MENU','BUTTON','API') NOT NULL COMMENT '权限类型',
+    perm_type varchar(20) NOT NULL COMMENT '权限类型(MENU,BUTTON,API)',
     parent_id INT DEFAULT 0 COMMENT '父权限ID',
     path VARCHAR(100) COMMENT '前端路由路径',
     component VARCHAR(100) COMMENT '前端组件',
@@ -55,11 +56,43 @@ CREATE TABLE sys_role_permission (
     FOREIGN KEY (perm_id) REFERENCES sys_permission(perm_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 部门表
+CREATE TABLE sys_dept (
+    dept_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '部门ID',
+    dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
+    parent_id BIGINT COMMENT '父部门ID（支持树形层级）',
+    order_num INT DEFAULT 0 COMMENT '显示顺序',
+    status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
+    leader_id BIGINT COMMENT '负责人ID（关联用户）',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    FOREIGN KEY (parent_id) REFERENCES sys_dept(dept_id),
+    FOREIGN KEY (leader_id) REFERENCES sys_user(user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
-INSERT INTO sys_user (username, password, real_name, email, phone, status, account_non_locked, login_attempts, last_login) VALUES
-    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '系统管理员', '2722562862@qq.com', '18255097030', 1, false, 0, '2024-03-20 09:25:00'),
-    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', '2825646787@qq.com', '13855605201', 1, false, 0, '2024-03-20 08:45:00');
+-- 岗位表
+CREATE TABLE sys_post (
+    post_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '岗位ID',
+    post_name VARCHAR(50) NOT NULL COMMENT '岗位名称',
+    post_code VARCHAR(50) NOT NULL UNIQUE COMMENT '岗位编码',
+    dept_id BIGINT NOT NULL COMMENT '所属部门ID',
+    order_num INT DEFAULT 0 COMMENT '显示顺序',
+    status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    FOREIGN KEY (dept_id) REFERENCES sys_dept(dept_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 插入部门
+INSERT INTO sys_dept (dept_name, parent_id, order_num, status, leader_id) VALUES
+    ('总部', NULL, 1, 1, 1),     -- 顶级部门，负责人为admin
+    ('设备管理部', 1, 2, 1, 2);   -- 子部门，负责人为admin
+
+-- 插入岗位
+INSERT INTO sys_post (post_name, post_code, dept_id, order_num, status) VALUES
+    ('超级管理员', 'SUPER_ADMIN', 1, 1, 1),    -- 总部下的岗位
+    ('管理员', 'ADMIN', 1, 2, 1),    -- 总部下的岗位
+    ('设备运维', 'EQUIP_OPS', 2, 3, 1);     -- 设备管理部下的岗位
 
 -- 插入角色数据
 INSERT INTO sys_role (role_code, role_name, description) VALUES
@@ -82,6 +115,10 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('equipment:update', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
     ('equipment:list', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/list', 'GET');
 
+-- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
+INSERT INTO sys_user (username, password, real_name, email, phone, status, account_locked, login_attempts, last_login) VALUES
+    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00');
 
 -- 用户角色关系
 INSERT INTO sys_user_role (user_id, role_id) VALUES
