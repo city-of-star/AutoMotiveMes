@@ -76,16 +76,16 @@
               clearable
           />
         </div>
-        <el-button type="primary" :icon="Search">搜索</el-button>
-        <el-button>重置</el-button>
+        <el-button :icon="Search" type="primary">搜索</el-button>
+        <el-button :icon="Refresh">重置</el-button>
       </div>
 
       <div class="btn-container">
-        <el-button :color=theme_color plain>新增</el-button>
-        <el-button :color=btn_update_color plain>修改</el-button>
-        <el-button :color=btn_delete_color plain>删除</el-button>
-        <el-button :color=btn_import_color plain>导入</el-button>
-        <el-button :color=btn_export_color plain>导出</el-button>
+        <el-button :icon="Plus" :color=theme_color plain>新增</el-button>
+        <el-button :icon="Edit" :color=btn_update_color plain>修改</el-button>
+        <el-button :icon="Delete" :color=btn_delete_color plain>删除</el-button>
+        <el-button :icon="Download" :color=btn_import_color plain>导入</el-button>
+        <el-button :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
 
       <el-table class="table-container" :data="tableData" style="width: 100%">
@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import { Search  } from '@element-plus/icons-vue'
+import { Search, Refresh, Plus, Edit, Delete, Download, Upload  } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 
@@ -218,7 +218,7 @@ const defaultProps = {
   margin-top: 10px;
 }
 
-/deep/ .el-table__header th {
-  background-color: #F8F8F9 !important;
+.table-container :deep() th {
+  background-color: #e8ebec !important;
 }
 </style>

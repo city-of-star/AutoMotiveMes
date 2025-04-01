@@ -9,6 +9,8 @@ import com.automotivemes.common.exception.GlobalException;
 import com.automotivemes.mapper.user.SysUserMapper;
 import com.automotivemes.service.user.UserService;
 import com.automotivemes.utils.JwtUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -127,5 +129,23 @@ public class UserServiceImpl implements UserService {
             }
         }
         throw new AuthException("用户尝试获取个人角色和权限，但是用户未认证或认证失败");
+    }
+
+    @Override
+    public Page<SysUser> listSysUser(ListSysUserRequestDto listSysUserRequestDto) {
+        // 获取当前页码和分页大小
+        int pageNum = listSysUserRequestDto.getPage() != null ? listSysUserRequestDto.getPage() : 1;
+        int sizeNum = listSysUserRequestDto.getSize() != null ? listSysUserRequestDto.getSize() : 1;
+
+        // 创建分页对象
+        Page<SysUser> page = new Page<>(pageNum, sizeNum);
+
+        // 创建查询条件
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+
+        // 执行分页查询
+        Page<SysUser> result = userMapper.selectPage(page, queryWrapper);
+
+        return result;
     }
 }
