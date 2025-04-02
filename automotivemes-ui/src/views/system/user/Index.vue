@@ -218,7 +218,7 @@ const defaultProps = {
   margin-top: 10px;
 }
 
-/deep/ .el-table__header th {
+:deep(.el-table__header th)  {
   background-color: #F8F8F9 !important;
 }
 </style>
