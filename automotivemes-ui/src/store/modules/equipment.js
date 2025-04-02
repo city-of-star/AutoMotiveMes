@@ -1,4 +1,4 @@
-import service from '@/utils/request'
+import service from '@/utils/axios'
 import SockJS from 'sockjs-client'
 import { Client } from '@stomp/stompjs'
 

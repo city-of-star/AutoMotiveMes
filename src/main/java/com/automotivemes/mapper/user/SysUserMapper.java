@@ -2,7 +2,10 @@ package com.automotivemes.mapper.user;
 
 import com.automotivemes.common.dto.user.UserInfoResponseDto;
 import com.automotivemes.entity.user.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

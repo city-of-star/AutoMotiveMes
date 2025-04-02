@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service("rbacService")
 public class RbacService {
 
-
     public boolean hasPermission(Authentication authentication, String permissionCode) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;

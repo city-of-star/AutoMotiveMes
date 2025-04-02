@@ -183,7 +183,7 @@ document.addEventListener('click', () => {
   display: flex;
   align-items: center;
   background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   z-index: 998;
   overflow-x: auto;
   transition: all 0.3s ease-in-out;

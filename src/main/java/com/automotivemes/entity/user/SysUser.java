@@ -1,6 +1,7 @@
 package com.automotivemes.entity.user;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -30,6 +31,19 @@ public class SysUser {
      * 用户的真实姓名
      */
     private String realName;
+    /**
+     * 用户所属的部门id
+     */
+    private String deptId;
+    /**
+     * 用户所属的岗位id
+     */
+    private String postId;
+    /**
+     * 用户所属的部门名称
+     */
+    @TableField(exist = false)
+    private String deptName;
     /**
      * 用户的头像url
      */

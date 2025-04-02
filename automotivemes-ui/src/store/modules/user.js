@@ -1,4 +1,4 @@
-import service from '@/utils/request'
+import service from '@/utils/axios'
 import { ElMessage } from "element-plus";
 import router from "@/router";
 

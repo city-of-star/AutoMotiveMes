@@ -4,6 +4,8 @@ CREATE TABLE sys_user (
     username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
     password VARCHAR(100) NOT NULL COMMENT '加密密码',
     real_name VARCHAR(50) COMMENT '真实姓名',
+    dept_id BIGINT COMMENT '部门id',
+    post_id BIGINT COMMENT '岗位id',
     head_img VARCHAR(200) COMMENT '头像URL',
     email VARCHAR(100) COMMENT '邮箱',
     phone VARCHAR(20) COMMENT '联系电话',
@@ -74,24 +76,6 @@ CREATE TABLE sys_user_role (
     FOREIGN KEY (role_id) REFERENCES sys_role(role_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 用户部门关系表
-CREATE TABLE sys_user_dept (
-    user_id BIGINT NOT NULL ,
-    dept_id BIGINT NOT NULL ,
-    PRIMARY KEY (user_id, dept_id),
-    FOREIGN KEY (user_id) REFERENCES sys_user(user_id),
-    FOREIGN KEY (dept_id) REFERENCES sys_dept(dept_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 用户岗位关系表
-CREATE TABLE sys_user_post (
-    user_id BIGINT NOT NULL ,
-    post_id BIGINT NOT NULL ,
-    PRIMARY KEY (user_id, post_id),
-    FOREIGN KEY (user_id) REFERENCES sys_user(user_id),
-    FOREIGN KEY (post_id) REFERENCES sys_post(post_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- 角色权限关系表
 CREATE TABLE sys_role_permission (
     role_id INT NOT NULL,
@@ -152,13 +136,13 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('equipment:list', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/list', 'GET');
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
-INSERT INTO sys_user (username, password, real_name, email, phone, status, account_locked, login_attempts, last_login) VALUES
-    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00');
+INSERT INTO sys_user (username, password, real_name, dept_id, post_id, email, phone, status, account_locked, login_attempts, last_login) VALUES
+    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', 1, 1, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 2, 3, '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00');
 
 -- 插入部门
 INSERT INTO sys_dept (dept_name, parent_id, order_num, status, leader_id) VALUES
-    ('总部', NULL, 1, 1, 1),     -- 顶级部门，负责人为admin
+    ('总部', null, 1, 1, 1),     -- 顶级部门，负责人为admin
     ('设备管理部', 1, 2, 1, 2);   -- 子部门，负责人为lqh
 
 -- 插入岗位
@@ -171,16 +155,6 @@ INSERT INTO sys_post (post_name, post_code, dept_id, order_num, status) VALUES
 INSERT INTO sys_user_role (user_id, role_id) VALUES
     (1, 1),   -- admin -> SUPER_ADMIN
     (2, 2);   -- equip_1 -> EQUIP_MANAGE
-
--- 用户部门关系
-INSERT INTO sys_user_dept (user_id, dept_id) VALUES
-    (1, 1),   -- admin -> 本部
-    (2, 2);   -- lqh -> 设备管理部
-
--- 用户岗位关系
-INSERT INTO sys_user_post (user_id, post_id) VALUES
-    (1, 1),   -- admin -> 超级管理员
-    (2, 3);   -- lqh -> 设备管理员
 
 -- 角色权限关系
 INSERT INTO sys_role_permission (role_id, perm_id) VALUES

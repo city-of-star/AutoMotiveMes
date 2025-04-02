@@ -1,72 +1,49 @@
 <template>
-  <div style="display: flex; gap: 20px;">
+  <div class="main-container">
 
-    <div>
-      <el-input
-          v-model="input4"
-          placeholder="请输入部门名称"
-          class="input-dept"
-      >
+    <div class="left-container">
+      <el-input v-model="searchData.deptId" placeholder="请输入部门名称" class="input-dept">
         <template #prefix>
-          <el-icon class="el-input__icon"><search /></el-icon>
+          <el-icon class="el-input__icon"><Search /></el-icon>
         </template>
       </el-input>
-      <el-tree
-          :data="data"
-          :props="defaultProps"
-          @node-click="handleNodeClick"
-          class="el-tree"
-          clearable
-      />
+      <el-tree :data="deptData" :props="deptProps" @node-click="handleDeptNodeClick" clearable/>
     </div>
 
-    <div class="line"></div>
+    <div class="right-container">
 
-    <div>
       <div class="input-container">
         <div class="block">
-          <span class="demonstration">用户名称</span>
-          <el-input
-              v-model="input4"
-              placeholder="请输入用户名称"
-              class="input"
-              clearable
-          >
+          <span class="input-title">用户名称</span>
+          <el-input v-model="searchData.username" placeholder="请输入用户名称" class="input" clearable>
             <template #prefix>
-              <el-icon class="el-input__icon"><search /></el-icon>
+              <el-icon><Search /></el-icon>
             </template>
           </el-input>
         </div>
         <div class="block">
-          <span class="demonstration">手机号码</span>
-          <el-input
-              v-model="input4"
-              placeholder="请输入手机号码"
-              class="input"
-              clearable
-          >
+          <span class="input-title">手机号码</span>
+          <el-input v-model="searchData.phone" placeholder="请输入手机号码" class="input" clearable>
             <template #prefix>
-              <el-icon class="el-input__icon"><search /></el-icon>
+              <el-icon><Search /></el-icon>
             </template>
           </el-input>
         </div>
         <div class="block">
-          <span class="demonstration">用户状态</span>
-          <el-input
-              v-model="input4"
-              placeholder="用户状态"
-              class="input"
-              clearable
-          >
-            <template #prefix>
-              <el-icon class="el-input__icon"><search /></el-icon>
-            </template>
-          </el-input>
+          <span class="input-title">用户状态</span>
+          <el-select v-model="searchData.status" placeholder="用户状态" class="input" clearable>
+            <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
         </div>
         <div class="block">
-          <span class="demonstration">创建时间</span>
+          <span class="input-title">创建时间</span>
           <el-date-picker
-              v-model="value1"
+              v-model="searchData.time"
               type="daterange"
               range-separator="-"
               start-placeholder="开始日期"
@@ -76,35 +53,73 @@
               clearable
           />
         </div>
-        <el-button type="primary" :icon="Search">搜索</el-button>
-        <el-button>重置</el-button>
+        <el-button @click="search()" :icon="Search" type="primary">搜索</el-button>
+        <el-button @click="refresh()" :icon="Refresh">重置</el-button>
       </div>
 
       <div class="btn-container">
-        <el-button :color=theme_color plain>新增</el-button>
-        <el-button :color=btn_update_color plain>修改</el-button>
-        <el-button :color=btn_delete_color plain>删除</el-button>
-        <el-button :color=btn_import_color plain>导入</el-button>
-        <el-button :color=btn_export_color plain>导出</el-button>
+        <el-button v-if="hasPermission('system:user:add')"  :icon="Plus" :color=theme_color plain>新增</el-button>
+        <el-button v-if="hasPermission('system:user:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
+        <el-button v-if="hasPermission('system:user:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
+        <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
+        <el-button v-if="hasPermission('system:user:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
 
-      <el-table class="table-container" :data="tableData" style="width: 100%">
-        <el-table-column prop="date" label="用户编号" />
-        <el-table-column prop="name" label="用户名称" />
-        <el-table-column prop="address" label="真实姓名" />
-        <el-table-column prop="name" label="部门" />
-        <el-table-column prop="name" label="手机号码" width="180" />
-        <el-table-column prop="name" label="状态" />
-        <el-table-column prop="name" label="创建时间" width="180" />
-        <el-table-column prop="name" label="操作" width="180" />
+      <el-table v-loading="loading" class="table-container" :data="tableData">
+        <el-table-column width="80" align="center" header-align="center">
+          <!-- 自定义表头 -->
+          <template #header>
+            <el-checkbox v-model="headerSelect" />
+          </template>
+          <!-- 表格单元格内容 -->
+          <template #default="{ row }">
+            <el-checkbox v-model="row.select" />
+          </template>
+        </el-table-column>
+        <el-table-column label="用户编号" width="80" align="center" header-align="center">
+          <template #default="scope">
+            {{ (currentPage - 1) * pageSize + scope.$index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="username" label="用户名称" width="120" align="center" header-align="center"/>
+        <el-table-column prop="realName" label="真实姓名" width="120" align="center" header-align="center"/>
+        <el-table-column prop="deptName" label="部门" width="200" align="center" header-align="center" show-overflow-tooltip/>
+        <el-table-column prop="phone" label="手机号码" width="150" align="center" header-align="center"/>
+        <el-table-column prop="status" label="状态" width="120" align="center" header-align="center">
+          <template #default="scope">
+            <el-switch
+                v-model="scope.row.status"
+                :active-value="1"
+                :inactive-value="0"
+                @change="handleSwitchChange(scope.row.status)"
+                style="margin: 0 auto"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="180" align="center" header-align="center"/>
+        <el-table-column label="操作" width="180" align="center" header-align="center">
+
+        </el-table-column>
       </el-table>
+      <el-pagination
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+          style="float: right; margin-top: 30px"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { Search  } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { Search, Refresh, Plus, Edit, Delete, Download, Upload } from '@element-plus/icons-vue'
+import axios from '@/utils/axios'
+import {computed, onMounted, ref} from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -117,56 +132,138 @@ const btn_import_color = store.state.app.btn_import_color;
 const btn_export_color = store.state.app.btn_export_color;
 
 // 查询的条件值
-const value1 = ref('')
-const input4 = ref('')
+let searchData = ref({
+  deptId: null,
+  username: '',
+  phone: '',
+  status: null,
+  time: [],
+})
 
-const handleNodeClick = (data) => {
+// 状态选择器的选择框
+const statusOptions = [
+  {
+    value: 1,
+    label: '正常',
+  },
+  {
+    value: 0,
+    label: '停用',
+  },
+]
+
+// 分页相关变量
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const tableData = ref([])  // 用户列表
+let loading = ref(false)  // 加载状态
+
+// 部门树状组件数据
+const deptData = [];
+const deptProps = {
+  children: 'children',
+  label: 'label',
+  value: 'id'
+};
+
+// 获取权限数组
+const permissions = computed(() => store.state.user.permissions)
+
+// 权限验证函数(是否显示对应的按钮)
+const hasPermission = (permission) => {
+  return permissions.value.includes('system:user:manage') || permissions.value.includes(permission)
+}
+
+// 处理部门树状组件的点击事件
+const handleDeptNodeClick = (data) => {
   console.log(data);
 };
 
-const data = [
-  {
-    label: '总部',
-    children: [
-      {
-        label: '生产管理部门',
-        children: [
-          {
-            label: '生产计划科',
-          },
-          {
-            label: '车间执行组',
-          },
-        ],
-      },
-      {
-        label: '质量管控中心',
-        children: [
-          {
-            label: '质检科',
-          },
-        ],
-      },
-      {
-        label: '设备运维部',
-        children: [
-          {
-            label: '设备状态监控',
-          },
-        ],
-      },
-    ],
-  },
-];
+// 查询用户数据
+const search = async () => {
+  try {
+    loading.value = true
+    const res = await axios.post('/user/search', {
+      page: currentPage.value,
+      size: pageSize.value,
+      deptId: searchData.value.deptId,
+      username: searchData.value.username,
+      phone: searchData.value.phone,
+      status: searchData.value.status,
+      startTime: searchData.value.time ? searchData.value.time[0] : undefined,
+      endTime: searchData.value.time ? searchData.value.time[1] : undefined,
+    })
 
-const defaultProps = {
-  children: 'children',
-  label: 'label',
-};
+    tableData.value = res.data.records
+    total.value = res.data.total
 
+    loading.value = false
+  } catch (error) {
+    console.error('获取数据失败:', error)
+  } finally {
+    loading.value = false;  // 确保始终重置
+  }
+}
+
+// 重置按钮
+const refresh = () => {
+  searchData.value.deptId = null
+  searchData.value.username = ''
+  searchData.value.phone = ''
+  searchData.value.status = null
+  searchData.value.time = []
+  currentPage.value = 1  // 默认第 1 页
+  pageSize.value = 10  // 默认每页 10 条数据
+  search()
+}
+
+// 用户翻页
+const handleCurrentChange = (val) => {
+  currentPage.value = val
+  search()
+}
+
+// 用户调节分页大小
+const handleSizeChange = (val) => {
+  pageSize.value = val
+  currentPage.value = 1 // 每页条数改变时重置到第一页
+  search()
+}
+
+// 初始化加载数据
+onMounted(() => {
+  search()
+})
+
+const handleSwitchChange = (status) => {
+  if (status === 0) {
+    console.log(status)
+  } else {
+    console.log(status)
+  }
+}
 </script>
 
 <style scoped>
+.main-container {
+  display: flex;
+  gap: 20px;
+}
+
+.left-container {
+  border-right: 1px solid #d7d7d7;
+  padding-right: 20px;
+  height: 100%;
+}
+
+.right-container {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 0 20px;
+}
+
 .el-tree {
   width: 13vw;
   min-width: 170px;
@@ -182,15 +279,8 @@ const defaultProps = {
   width: 220px;
 }
 
-.line {
-  background-color: #d7d7d7;
-  width: 1px;
-  height: 300px;
-}
-
 .input-container {
   display: flex;
-  width: 67vw;
   gap: 16px; /* 统一控制元素间距 */
   flex-wrap: wrap; /* 允许换行 */
   align-items: center; /* 垂直居中 */
@@ -202,7 +292,7 @@ const defaultProps = {
   gap: 8px; /* 标签和输入框之间的间距 */
 }
 
-.demonstration {
+.input-title {
   min-width: 70px;  /* 统一标签宽度 */
   text-align: right;  /* 标签右对齐 */
   color: #606266;  /* Element Plus 默认文字颜色 */
@@ -218,7 +308,7 @@ const defaultProps = {
   margin-top: 10px;
 }
 
-:deep(.el-table__header th)  {
+:deep(.el-table__header th) {
   background-color: #F8F8F9 !important;
 }
 </style>

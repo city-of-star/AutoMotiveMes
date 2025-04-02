@@ -107,7 +107,8 @@ const handleCommand = (command) => {
   padding: 0 20px;
   transition: all 0.3s ease-in-out;
   z-index: 999;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
 
   .left-section {
     display: flex;
