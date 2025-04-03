@@ -197,7 +197,6 @@ const search = async () => {
 
     tableData.value = res.data.records
     total.value = res.data.total
-
     loading.value = false
   } catch (error) {
     console.error('获取数据失败:', error)

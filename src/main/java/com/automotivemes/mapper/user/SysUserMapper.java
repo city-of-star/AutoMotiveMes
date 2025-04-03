@@ -1,12 +1,14 @@
 package com.automotivemes.mapper.user;
 
+import com.automotivemes.common.dto.user.SearchSysUserListRequestDto;
 import com.automotivemes.common.dto.user.UserInfoResponseDto;
 import com.automotivemes.entity.user.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -43,4 +45,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     @Select("SELECT real_name, email, phone FROM sys_user WHERE username = #{username}")
     UserInfoResponseDto getUserInfoByUsername(String username);
+
+    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListRequestDto dto);
 }

@@ -137,36 +137,36 @@ public class UserServiceImpl implements UserService {
         // 创建分页对象
         Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(), dto.getSize() == null ? 10 : dto.getSize());
 
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+//        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+//
+//        // 部门条件处理
+//        if (dto.getDeptId() != null) {
+//            queryWrapper.eq("dept_id", dto.getDeptId());
+//        }
+//
+//        // 用户名模糊查询
+//        if (StringUtils.isNotBlank(dto.getUsername())) {
+//            queryWrapper.like("username", dto.getUsername());
+//        }
+//
+//        // 手机号模糊查询
+//        if (StringUtils.isNotBlank(dto.getPhone())) {
+//            queryWrapper.like("phone", dto.getPhone());
+//        }
+//
+//        // 状态查询
+//        if (dto.getStatus() != null) {
+//            queryWrapper.eq("status", dto.getStatus());
+//        }
+//
+//        // 时间范围查询
+//        if (StringUtils.isNotBlank(dto.getStartTime()) && StringUtils.isNotBlank(dto.getEndTime())) {
+//            queryWrapper.between("create_time", dto.getStartTime(), dto.getEndTime());
+//        }
+//
+//        // 添加排序规则
+//        queryWrapper.orderByDesc("create_time");
 
-        // 部门条件处理
-        if (dto.getDeptId() != null) {
-            queryWrapper.eq("dept_id", dto.getDeptId());
-        }
-
-        // 用户名模糊查询
-        if (StringUtils.isNotBlank(dto.getUsername())) {
-            queryWrapper.like("username", dto.getUsername());
-        }
-
-        // 手机号模糊查询
-        if (StringUtils.isNotBlank(dto.getPhone())) {
-            queryWrapper.like("phone", dto.getPhone());
-        }
-
-        // 状态查询
-        if (dto.getStatus() != null) {
-            queryWrapper.eq("status", dto.getStatus());
-        }
-
-        // 时间范围查询
-        if (StringUtils.isNotBlank(dto.getStartTime()) && StringUtils.isNotBlank(dto.getEndTime())) {
-            queryWrapper.between("create_time", dto.getStartTime(), dto.getEndTime());
-        }
-
-        // 添加排序规则
-        queryWrapper.orderByDesc("create_time");
-
-        return userMapper.selectPage(page, queryWrapper);
+        return userMapper.selectUserList(page, dto);
     }
 }
