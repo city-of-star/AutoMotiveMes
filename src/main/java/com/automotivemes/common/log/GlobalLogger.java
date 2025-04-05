@@ -3,6 +3,12 @@ package com.automotivemes.common.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 实现功能【全局日志封装类】
+ *
+ * @author li.hongyu
+ * @date 2025-03-30 15:56:27
+ */
 public class GlobalLogger {
 
     public static Logger getLogger() {

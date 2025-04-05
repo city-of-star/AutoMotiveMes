@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 实现功能【用户认证业务实现类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 10:15:49
+ */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {

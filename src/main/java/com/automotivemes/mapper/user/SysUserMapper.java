@@ -1,6 +1,7 @@
 package com.automotivemes.mapper.user;
 
 import com.automotivemes.common.dto.user.SearchSysUserListRequestDto;
+import com.automotivemes.common.dto.user.SearchSysUserListRequestDto;
 import com.automotivemes.common.dto.user.UserInfoResponseDto;
 import com.automotivemes.entity.user.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,10 +10,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * 实现功能【用户表 mapper】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:46:14
+ */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
     @Select("""

@@ -21,8 +21,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 /**
- * Spring Security 配置类，用于配置应用的安全策略，
- * 包括请求的访问规则、会话管理、密码编码器和认证管理器等。
+ * 实现功能【Spring Security核心配置类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 09:57:15
  */
 @Configuration
 @EnableWebSecurity  // 启用 Spring Security 的 Web 安全功能

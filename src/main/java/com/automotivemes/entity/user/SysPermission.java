@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 系统权限实体类，对应数据库中的 sys_permission 表，包含菜单权限、操作权限等
+ * 实现功能【权限实体类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:25:13
  */
 @Data
 @TableName("sys_permission")

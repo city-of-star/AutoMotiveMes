@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 系统角色权限关联实体类，对应数据库中的 sys_role_permission 表，用于维护角色和权限的多对多关系
+ * 实现功能【角色权限关联实体类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:28:53
  */
 @Data
 @TableName("sys_role_permission")

@@ -9,8 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+/**
+ * 实现功能【用户认证服务controller】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 17:04:34
+ */
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor

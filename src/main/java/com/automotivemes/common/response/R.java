@@ -5,6 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 实现功能【返回体封装类】
+ *
+ * @author li.hongyu
+ * @date 2025-03-30 15:25:35
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

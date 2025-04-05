@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 系统用户角色关联实体类，对应数据库中的 sys_user_role 表，用于维护用户和角色的多对多关系
+ * 实现功能【用户角色关联实体类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:27:04
  */
 @Data
 @TableName("sys_user_role")

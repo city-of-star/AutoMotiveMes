@@ -7,11 +7,12 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * WebSocket 配置类，用于配置 WebSocket 消息代理和 STOMP 端点
- * 该类实现了 WebSocketMessageBrokerConfigurer 接口，并重写了相关方法来完成具体配置
+ * 实现功能【WebSocket 配置类】
+ *
+ * @author li.hongyu
+ * @date 2025-03-04 19:46:37
  */
 @Configuration
-// 启用 WebSocket 消息代理功能，允许使用消息代理来处理消息的路由和分发
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 

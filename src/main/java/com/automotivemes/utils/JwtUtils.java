@@ -13,6 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * 实现功能【JWT 工具类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 10:13:17
+ */
 @Component
 public class JwtUtils {
 

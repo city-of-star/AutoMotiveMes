@@ -9,7 +9,10 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 系统用户实体类，对应数据库中的 sys_user 表
+ * 实现功能【用户实体类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:23:30
  */
 @Data
 @TableName("sys_user")
@@ -34,11 +37,11 @@ public class SysUser {
     /**
      * 用户所属的部门id
      */
-    private String deptId;
+    private Long deptId;
     /**
      * 用户所属的岗位id
      */
-    private String postId;
+    private Long postId;
     /**
      * 用户所属的部门名称
      */

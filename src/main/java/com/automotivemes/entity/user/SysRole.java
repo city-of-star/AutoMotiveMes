@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * 系统角色实体类，对应数据库中的 sys_role 表
+ * 实现功能【角色实体类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 15:24:31
  */
 @Data
 @TableName("sys_role")

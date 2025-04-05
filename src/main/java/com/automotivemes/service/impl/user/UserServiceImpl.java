@@ -9,8 +9,6 @@ import com.automotivemes.common.exception.GlobalException;
 import com.automotivemes.mapper.user.SysUserMapper;
 import com.automotivemes.service.user.UserService;
 import com.automotivemes.utils.JwtUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +23,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 实现功能【用户认证服务实现类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 16:57:15
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -60,7 +64,7 @@ public class UserServiceImpl implements UserService {
             user.setCreateTime(new Date());
             userMapper.insert(user);
 
-            log.info("---------- 用户注册成功: {} ----------", registerRequestDto);
+            log.info("用户注册成功: {}", registerRequestDto);
         } catch (Exception e) {
             throw new GlobalException("用户注册失败 || " + e.getMessage());
         }
@@ -93,7 +97,7 @@ public class UserServiceImpl implements UserService {
             user.setLastLogin(date);
             userMapper.updateById(user);
 
-            log.info("---------- 用户登录成功: {用户名：{}，登录时间：{}} ----------",
+            log.info("用户登录成功: {用户名：{}，登录时间：{}}",
                     loginRequestDto.getUsername(), date);
 
             return response;
@@ -134,39 +138,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<SysUser> searchSysUserList(SearchSysUserListRequestDto dto) {
-        // 创建分页对象
-        Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(), dto.getSize() == null ? 10 : dto.getSize());
+        // 定义返回值
+        Page<SysUser> res = null;
 
-//        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-//
-//        // 部门条件处理
-//        if (dto.getDeptId() != null) {
-//            queryWrapper.eq("dept_id", dto.getDeptId());
-//        }
-//
-//        // 用户名模糊查询
-//        if (StringUtils.isNotBlank(dto.getUsername())) {
-//            queryWrapper.like("username", dto.getUsername());
-//        }
-//
-//        // 手机号模糊查询
-//        if (StringUtils.isNotBlank(dto.getPhone())) {
-//            queryWrapper.like("phone", dto.getPhone());
-//        }
-//
-//        // 状态查询
-//        if (dto.getStatus() != null) {
-//            queryWrapper.eq("status", dto.getStatus());
-//        }
-//
-//        // 时间范围查询
-//        if (StringUtils.isNotBlank(dto.getStartTime()) && StringUtils.isNotBlank(dto.getEndTime())) {
-//            queryWrapper.between("create_time", dto.getStartTime(), dto.getEndTime());
-//        }
-//
-//        // 添加排序规则
-//        queryWrapper.orderByDesc("create_time");
+        try {
+            // 创建分页对象
+            Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+                    dto.getSize() == null ? 10 : dto.getSize());
 
-        return userMapper.selectUserList(page, dto);
+            res = userMapper.selectUserList(page, dto);
+        } catch (Exception e) {
+            throw new GlobalException("查询用户列表出错:" + e.getMessage());
+        }
+        return res;
     }
 }

@@ -5,6 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 实现功能【全局异常捕获处理类】
+ *
+ * @author li.hongyu
+ * @date 2025-03-30 15:36:58
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,7 +22,7 @@ public class GlobalExceptionHandler {
         return R.serverError(e.getMessage());
     }
 
-    // 401
+    // 400
     @ExceptionHandler(BadRequestException.class)
     public R handleBadRequestException(AuthException e) {
         log.error("---------- 错误请求响应：{{}} ----------", e.getMessage());

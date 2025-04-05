@@ -10,6 +10,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 实现功能【用户认证信息封装类】
+ *
+ * @author li.hongyu
+ * @date 2025-02-15 10:13:27
+ */
 @Data
 public class UserDetailsImpl implements UserDetails {
 
