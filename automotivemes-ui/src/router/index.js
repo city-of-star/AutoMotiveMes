@@ -35,8 +35,8 @@ const asyncRoutes = [
     meta: { title: '系统管理' },
     children: [
       {
-        path: '/system/user-manage',
-        name: 'user-manage',
+        path: '/system/auth-manage',
+        name: 'auth-manage',
         component: () => import('@/views/system/user/Index.vue'),
         meta: { permissions: ['system:user:manage'], title: '用户管理' },
       },
@@ -123,7 +123,7 @@ router.beforeEach(async (to, from, next) => {
         // 添加新路由
         accessedRoutes.forEach(route => router.addRoute(route))
 
-        // 将新路由添加到 user 全局变量
+        // 将新路由添加到 auth 全局变量
         store.commit('user/SET_ROUTES', accessedRoutes)
 
         // 添加通配符路由

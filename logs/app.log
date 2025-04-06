@@ -1,0 +1,47 @@
+2025-04-06 13:17:00 [main] INFO  c.a.AutoMotiveMesApplication - Starting AutoMotiveMesApplication using Java 17.0.13 with PID 17048 (D:\project\AutoMotiveMes\target\classes started by Administrator in D:\project\AutoMotiveMes)
+2025-04-06 13:17:00 [main] DEBUG c.a.AutoMotiveMesApplication - Running with Spring Boot v3.4.2, Spring v6.2.2
+2025-04-06 13:17:00 [main] INFO  c.a.AutoMotiveMesApplication - No active profile set, falling back to 1 default profile: "default"
+2025-04-06 13:17:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-06 13:17:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-06 13:17:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2025-04-06 13:17:01 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 3000 (http)
+2025-04-06 13:17:01 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-3000"]
+2025-04-06 13:17:01 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-04-06 13:17:01 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.34]
+2025-04-06 13:17:01 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-04-06 13:17:01 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 938 ms
+2025-04-06 13:17:01 [main] DEBUG c.a.config.security.JwtAuthFilter - Filter 'jwtAuthFilter' configured for use
+2025-04-06 13:17:01 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-04-06 13:17:02 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2025-04-06 13:17:02 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@56a9b662]]
+2025-04-06 13:17:02 [main] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2025-04-06 13:17:02 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3000"]
+2025-04-06 13:17:02 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 3000 (http) with context path '/'
+2025-04-06 13:17:02 [main] INFO  c.a.AutoMotiveMesApplication - Started AutoMotiveMesApplication in 2.223 seconds (process running for 2.682)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7be85216
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectByUsername - ==>  Preparing: SELECT * FROM sys_user WHERE username = ?
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectByUsername - ==> Parameters: admin(String)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectByUsername - <==      Total: 1
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserRoles - ==>  Preparing: SELECT r.role_code FROM sys_user_role ur JOIN sys_role r ON ur.role_id = r.role_id WHERE ur.user_id = (SELECT user_id FROM sys_user WHERE username = ?)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserRoles - ==> Parameters: admin(String)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserRoles - <==      Total: 1
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserPermissions - ==>  Preparing: SELECT sp.perm_code FROM sys_user su LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id LEFT JOIN sys_role_permission srp ON sur.role_id = srp.role_id LEFT JOIN sys_permission sp ON srp.perm_id = sp.perm_id WHERE su.username = ?
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserPermissions - ==> Parameters: admin(String)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.u.S.selectUserPermissions - <==      Total: 26
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.user.SysUserMapper.updateById - ==>  Preparing: UPDATE sys_user SET username=?, password=?, real_name=?, dept_id=?, post_id=?, email=?, phone=?, status=?, account_locked=?, login_attempts=?, last_login=?, create_time=?, update_time=? WHERE user_id=?
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.user.SysUserMapper.updateById - ==> Parameters: admin(String), $2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa(String), 超级管理员(String), 1(Long), 1(Long), 2722562862@qq.com(String), 18255097030(String), 1(Integer), false(Boolean), 0(Integer), 2025-04-06 13:17:14.428(Timestamp), 2025-04-05 23:07:36.0(Timestamp), 2025-04-06 13:02:09.0(Timestamp), 1(Long)
+2025-04-06 13:17:14 [http-nio-3000-exec-1] DEBUG c.a.m.user.SysUserMapper.updateById - <==    Updates: 1
+2025-04-06 13:17:14 [http-nio-3000-exec-1] INFO  c.a.s.impl.auth.AuthServiceImpl - 用户登录成功: {用户名：admin，登录时间：Sun Apr 06 13:17:14 CST 2025}
+2025-04-06 13:18:02 [MessageBroker-1] INFO  o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-06 13:18:15 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@56a9b662]]
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-04-06 13:18:15 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

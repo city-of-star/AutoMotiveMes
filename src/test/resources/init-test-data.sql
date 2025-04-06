@@ -90,10 +90,10 @@ INSERT INTO sys_role (role_code, role_name, description) VALUES
 -- 插入权限数据（20个权限）
 INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, component, api_path, method) VALUES
                                                                                                                -- 用户管理模块
-                                                                                                               ('user:manage', '用户管理', 'MENU', 0, '/system/user', 'system/User', '/api/users', 'GET'),
-                                                                                                               ('user:add', '新增用户', 'BUTTON', 1, NULL, NULL, '/api/users', 'POST'),
-                                                                                                               ('user:edit', '编辑用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'PUT'),
-                                                                                                               ('user:delete', '删除用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'DELETE'),
+                                                                                                               ('auth:manage', '用户管理', 'MENU', 0, '/system/auth', 'system/User', '/api/users', 'GET'),
+                                                                                                               ('auth:add', '新增用户', 'BUTTON', 1, NULL, NULL, '/api/users', 'POST'),
+                                                                                                               ('auth:edit', '编辑用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'PUT'),
+                                                                                                               ('auth:delete', '删除用户', 'BUTTON', 1, NULL, NULL, '/api/users/*', 'DELETE'),
 
                                                                                                                -- 设备监控
                                                                                                                ('equipment:monitor', '设备监控', 'MENU', 0, '/equipment/monitor', 'equip/Monitor', '/api/equipment', 'GET'),

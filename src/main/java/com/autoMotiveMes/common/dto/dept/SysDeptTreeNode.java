@@ -1,0 +1,20 @@
+package com.autoMotiveMes.common.dto.dept;
+
+import lombok.Data;
+
+import java.util.List;
+
+/**
+ * 实现功能【部门树节点】
+ *
+ * @author li.hongyu
+ * @date 2025-04-05 18:17:07
+ */
+@Data
+public class SysDeptTreeNode {
+    private Long deptId;
+    private String deptName;
+    private Long parentId;
+    private Integer orderNum;
+    private List<SysDeptTreeNode> children;
+}

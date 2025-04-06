@@ -96,13 +96,14 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:manage', '系统管理', 'MENU', 0, '/system', NULL, '/api/system', NULL),
 
     -- 用户管理模块
-    ('system:user:manage', '用户管理', 'MENU', 1, '/system/user', '/Index.vue', '/api/system/user', NULL),  -- 2
-    ('system:user:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/add', 'POST'),
-    ('system:user:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/delete', 'POST'),
-    ('system:user:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/update', 'POST'),
-    ('system:user:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/list', 'GET'),
-    ('system:user:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/import', 'POST'),
-    ('system:user:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/export', 'GET'),
+    ('system:user:manage', '用户管理', 'MENU', 1, '/system/auth', '/Index.vue', '/api/system/auth', NULL),  -- 2
+    ('system:user:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/add', 'POST'),
+    ('system:user:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/delete', 'POST'),
+    ('system:user:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/update', 'POST'),
+    ('system:user:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/list', 'GET'),
+    ('system:user:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/import', 'POST'),
+    ('system:user:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/export', 'GET'),
+
 
     -- 角色管理模块
     ('system:role:manage', '角色管理', 'MENU', 1, '/system/role', '/Index.vue', '/api/system/role', NULL),  -- 9
@@ -161,7 +162,11 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     -- 超级管理员
     (1, 1),(1, 2),(1, 3),(1, 4),
     (1, 5),(1, 6),(1, 7),(1, 8),
-    (1, 9),(1,10),
+    (1, 9),(1,10),(1, 11),(1, 12),
+    (1, 13),(1, 14),(1, 15),(1, 16),
+    (1, 17),(1, 18),(1, 19),(1, 20),
+    (1, 21),(1, 22),(1, 23),(1, 24),
+    (1, 25),(1, 26),
 
     -- 设备管理员
     (2, 5),(2,6),(2,7),(2,8),

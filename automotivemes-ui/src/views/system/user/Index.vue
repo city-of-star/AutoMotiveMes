@@ -2,12 +2,19 @@
   <div class="main-container">
 
     <div class="left-container">
-      <el-input v-model="searchData.deptId" placeholder="请输入部门名称" class="input-dept">
+      <el-input v-model="searchData.deptId" placeholder="请输入部门名称" class="input-dept" clearable>
         <template #prefix>
           <el-icon class="el-input__icon"><Search /></el-icon>
         </template>
       </el-input>
-      <el-tree :data="deptData" :props="deptProps" @node-click="handleDeptNodeClick" clearable/>
+      <el-tree
+          :data="deptData"
+          :props="deptProps"
+          @node-click="handleDeptNodeClick"
+          :highlight-current="true"
+          node-key="deptId"
+          class="tree-container"
+      />
     </div>
 
     <div class="right-container">
@@ -67,11 +74,12 @@
 
       <el-table v-loading="loading" class="table-container" :data="tableData">
         <el-table-column width="80" align="center" header-align="center">
-          <!-- 自定义表头 -->
           <template #header>
-            <el-checkbox v-model="headerSelect" />
+            <el-checkbox
+                v-model="headerSelect"
+                :indeterminate="tableData.some(row => row.select) && !headerSelect"
+            />
           </template>
-          <!-- 表格单元格内容 -->
           <template #default="{ row }">
             <el-checkbox v-model="row.select" />
           </template>
@@ -160,25 +168,55 @@ const tableData = ref([])  // 用户列表
 let loading = ref(false)  // 加载状态
 
 // 部门树状组件数据
-const deptData = [];
+const deptData = ref([])
 const deptProps = {
   children: 'children',
-  label: 'label',
-  value: 'id'
-};
+  label: 'deptName',
+  value: 'deptId'
+}
+
+// 全选计算属性
+const headerSelect = computed({
+  get() {
+    return tableData.value.length > 0 &&
+        tableData.value.every(row => row.select)
+  },
+  set(value) {
+    tableData.value.forEach(row => {
+      row.select = value
+    })
+  }
+})
+
+// 获取选中数据（返回一个只包含userId的数组）
+// const selectedRows = computed(() =>
+//     tableData.value.filter(row => row.select).map(row => row.userId)
+// )
 
 // 获取权限数组
 const permissions = computed(() => store.state.user.permissions)
 
 // 权限验证函数(是否显示对应的按钮)
 const hasPermission = (permission) => {
-  return permissions.value.includes('system:user:manage') || permissions.value.includes(permission)
+  return permissions.value.includes(permission)
 }
 
-// 处理部门树状组件的点击事件
+// 获取部门树
+const fetchDeptTree = async () => {
+  console.log(store.state.user.permissions)
+  try {
+    const res = await axios.get('/dept/tree')
+    deptData.value = res.data
+  } catch (error) {
+    console.error('获取部门树失败:', error)
+  }
+}
+
+// 处理部门节点点击
 const handleDeptNodeClick = (data) => {
-  console.log(data);
-};
+  searchData.value.deptId = data.deptId
+  search()
+}
 
 // 查询用户数据
 const search = async () => {
@@ -195,9 +233,13 @@ const search = async () => {
       endTime: searchData.value.time ? searchData.value.time[1] : undefined,
     })
 
-    tableData.value = res.data.records
+    // 添加select属性
+    tableData.value = res.data.records.map(item => ({
+      ...item,
+      select: false
+    }))
+
     total.value = res.data.total
-    loading.value = false
   } catch (error) {
     console.error('获取数据失败:', error)
   } finally {
@@ -233,6 +275,7 @@ const handleSizeChange = (val) => {
 // 初始化加载数据
 onMounted(() => {
   search()
+  fetchDeptTree()
 })
 
 const handleSwitchChange = (status) => {

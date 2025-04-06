@@ -50,8 +50,7 @@ export default {
     },
     actions: {
         async login({ commit }, data) {
-            const response = await service.post('/user/login', data);
-            console.log("response", response)
+            const response = await service.post('/auth/login', data);
             if (response.msg === 'success') {  // 登录成功
                 commit('SET_TOKEN', response.data.token)
                 commit('SET_ROLES', response.data.roles)
@@ -61,12 +60,14 @@ export default {
                 await router.push('/').then(() => {
                     window.location.reload();  // 刷新页面
                 });
+
+                console.log(response)
             } else {
                 ElMessage.error(response.data.msg)
             }
         },
         async register(_, data){
-            const response = await service.post('/user/register', data);
+            const response = await service.post('/auth/register', data);
             if (response.msg === 'success') {  // 注册成功
                 ElMessage.success("注册成功!")
             } else {
@@ -74,7 +75,7 @@ export default {
             }
         },
         async getUserRoleAndPermission({ commit, state }) {
-            const response = await service.post('/user/getRoleAndPermission');
+            const response = await service.post('/auth/getRoleAndPermission');
             if (response.msg === 'success') {
                 commit('SET_ROLES', response.data.roles)
                 commit('SET_PERMISSIONS', response.data.permissions)
@@ -87,7 +88,7 @@ export default {
             }
         },
         async getUserInfo({ commit }) {
-            const response = await service.post('/user/info');
+            const response = await service.post('/auth/info');
             if (response.msg === 'success') {
                 commit('SET_USERINFO', {
                     realName: response.data.realName,
