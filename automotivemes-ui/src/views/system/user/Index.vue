@@ -13,7 +13,7 @@
           @node-click="handleDeptNodeClick"
           :highlight-current="true"
           node-key="deptId"
-          class="tree-container"
+          class="tree-container el-tree"
       />
     </div>
 
@@ -67,7 +67,7 @@
       <div class="btn-container">
         <el-button v-if="hasPermission('system:user:add')"  :icon="Plus" :color=theme_color plain>新增</el-button>
         <el-button v-if="hasPermission('system:user:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
-        <el-button v-if="hasPermission('system:user:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
+        <el-button @click="deleteUser()" v-if="hasPermission('system:user:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
         <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
         <el-button v-if="hasPermission('system:user:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
@@ -121,10 +121,11 @@
 </template>
 
 <script setup>
-import { Search, Refresh, Plus, Edit, Delete, Download, Upload } from '@element-plus/icons-vue'
+import {Delete, Download, Edit, Plus, Refresh, Search, Upload} from '@element-plus/icons-vue'
 import axios from '@/utils/axios'
 import {computed, onMounted, ref} from 'vue'
-import { useStore } from 'vuex'
+import {useStore} from 'vuex'
+import {ElMessage} from "element-plus";
 
 const store = useStore()
 
@@ -199,12 +200,7 @@ const hasPermission = (permission) => {
 
 // 获取部门树
 const fetchDeptTree = async () => {
-  try {
-    const res = await axios.get('/dept/tree')
-    deptData.value = res.data
-  } catch (error) {
-    console.error('获取部门树失败:', error)
-  }
+  deptData.value = await axios.get('/dept/tree')
 }
 
 // 处理部门节点点击
@@ -229,14 +225,14 @@ const search = async () => {
     })
 
     // 添加select属性
-    tableData.value = res.data.records.map(item => ({
+    tableData.value = res.records.map(item => ({
       ...item,
       select: false
     }))
 
-    total.value = res.data.total
+    total.value = res.total
   } catch (error) {
-    console.error('获取数据失败:', error)
+    console.error('查询操作失败:', error)
   } finally {
     loading.value = false;  // 确保始终重置
   }
@@ -244,7 +240,15 @@ const search = async () => {
 
 // 删除按钮
 const deleteUser = async () => {
-
+  try {
+    await axios.post('/user/delete', {
+      userIds: selectedRows.value
+    })
+    ElMessage.success('删除成功')
+    await search()
+  } catch (error) {
+    console.error('删除操作失败:', error)
+  }
 }
 
 // 重置按钮

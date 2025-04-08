@@ -1,6 +1,7 @@
 package com.autoMotiveMes.controller.system;
 
-import com.autoMotiveMes.common.dto.user.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.user.DeleteUserRequestDto;
+import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.entity.user.SysUser;
 import com.autoMotiveMes.service.system.UserService;
@@ -29,5 +30,12 @@ public class UserController {
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
     public R<Page<SysUser>> searchSysUserList(@RequestBody SearchSysUserListRequestDto searchSysUserListRequestDto) {
         return R.success(userService.searchSysUserList(searchSysUserListRequestDto));
+    }
+
+    @PostMapping("/delete")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:delete')")
+    public R<?> deleteSysUser(@RequestBody DeleteUserRequestDto dto) {
+        userService.deleteUserByID(dto);
+        return R.successWithoutData();
     }
 }

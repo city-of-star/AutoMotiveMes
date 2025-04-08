@@ -1,9 +1,9 @@
 package com.autoMotiveMes.service.impl.auth;
 
-import com.autoMotiveMes.common.dto.user.*;
 import com.autoMotiveMes.common.exception.AuthException;
 import com.autoMotiveMes.common.exception.BadRequestException;
 import com.autoMotiveMes.config.security.UserDetailsImpl;
+import com.autoMotiveMes.dto.user.*;
 import com.autoMotiveMes.entity.user.SysUser;
 import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.mapper.user.SysUserMapper;
@@ -112,7 +112,9 @@ public class AuthServiceImpl implements AuthService {
         if (authentication != null && authentication.isAuthenticated()) {
             return userMapper.getUserInfoByUsername(authentication.getName());
         }
-        log.warn("用户 {} 尝试获取个人信息，但是用户未认证或认证失败", authentication.getName());
+        if (authentication != null) {
+            log.warn("用户 {} 尝试获取个人信息，但是用户未认证或认证失败", authentication.getName());
+        }
         throw new AuthException("登录信息过期，请重新登录");
     }
 
@@ -134,7 +136,9 @@ public class AuthServiceImpl implements AuthService {
                 return userRoleAndPermission;
             }
         }
-        log.warn("用户 {} 尝试获取个人角色和权限，但是用户未认证或认证失败", authentication.getName());
+        if (authentication != null) {
+            log.warn("用户 {} 尝试获取个人角色和权限，但是用户未认证或认证失败", authentication.getName());
+        }
         throw new AuthException("登录信息过期，请重新登录");
     }
 }

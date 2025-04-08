@@ -1,7 +1,7 @@
 package com.autoMotiveMes.controller.auth;
 
-import com.autoMotiveMes.common.dto.user.*;
 import com.autoMotiveMes.common.response.R;
+import com.autoMotiveMes.dto.user.*;
 import com.autoMotiveMes.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public R register(@RequestBody RegisterRequestDto registerRequestDto) {
+    public R<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
         authService.register(registerRequestDto);
         return R.successWithoutData();
     }

@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.common.dto.dept.SysDeptTreeNode;
+import com.autoMotiveMes.dto.dept.SysDeptTreeNode;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ import java.util.List;
  * @date 2025-04-05 18:18:37
  */
 public interface DeptService {
-    public List<SysDeptTreeNode> getDeptTree();
+    List<SysDeptTreeNode> getDeptTree();
 }

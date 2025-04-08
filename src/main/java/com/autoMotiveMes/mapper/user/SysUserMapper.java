@@ -1,7 +1,7 @@
 package com.autoMotiveMes.mapper.user;
 
-import com.autoMotiveMes.common.dto.user.SearchSysUserListRequestDto;
-import com.autoMotiveMes.common.dto.user.UserInfoResponseDto;
+import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.user.UserInfoResponseDto;
 import com.autoMotiveMes.entity.user.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

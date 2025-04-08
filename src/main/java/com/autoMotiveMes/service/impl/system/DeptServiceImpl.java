@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.common.dto.dept.SysDeptTreeNode;
+import com.autoMotiveMes.dto.dept.SysDeptTreeNode;
 import com.autoMotiveMes.entity.user.SysDept;
 import com.autoMotiveMes.mapper.user.SysDeptMapper;
 import com.autoMotiveMes.service.system.DeptService;
