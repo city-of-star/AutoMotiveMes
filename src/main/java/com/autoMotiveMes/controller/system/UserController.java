@@ -26,7 +26,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/search")
-//    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
     public R<Page<SysUser>> searchSysUserList(@RequestBody SearchSysUserListRequestDto searchSysUserListRequestDto) {
         return R.success(userService.searchSysUserList(searchSysUserListRequestDto));
     }

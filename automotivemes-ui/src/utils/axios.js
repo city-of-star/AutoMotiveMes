@@ -18,32 +18,29 @@ service.interceptors.request.use(
             config.headers.Authorization = `Bearer ${store.state.user.token}`
         }
         return config
-    },
-    error => {
-        return Promise.reject(error)
     }
 )
 
 // 响应拦截器
 service.interceptors.response.use(
     response => {
-        const res = response.data
         if (response.status === 200) {
-            return res
-        } else {
-            // ElMessage.error(res.message || 'Error')
-            return Promise.reject(new Error(res.message || 'Error'))
+            return response.data
         }
     },
     error => {
-        // ElMessage.error(error.response?.data?.message || error.message)
-        if (error.response?.status === 401) {
+        if (error.response?.data.code === 400) {
+            ElMessage.error(error.response?.data.msg)
+        } else if (error.response?.data.code === 401) {
+            ElMessage.error('登录信息过期，请重新登录')
             store.dispatch('user/logout')
-            router.push('/login')
-        } else if (error.response?.status === 403) {
+            router.push({name: 'login'})
+        } else if (error.response?.data.code === 403) {
             ElMessage.error('权限不足，无法访问')
+        } else if (error.response?.data.code === 404) {
+            router.push({name: '404'})
         }
-        return Promise.reject(error)
+        return error.response.data
     }
 )
 

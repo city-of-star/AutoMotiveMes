@@ -5,7 +5,7 @@ const routes  = [
   {
     path: '/',
     name: 'home',
-    meta: { title: '首页' },
+    meta: { title: '首页', icon: 'HomeIcon' },
     component: () => import('@/views/HomeView.vue'),
   },
   {
@@ -32,43 +32,43 @@ const routes  = [
 const asyncRoutes = [
   {
     path: '/system',
-    meta: { title: '系统管理' },
+    meta: { title: '系统管理', icon: 'Cog6ToothIcon' },
     children: [
       {
         path: '/system/auth-manage',
         name: 'auth-manage',
         component: () => import('@/views/system/user/Index.vue'),
-        meta: { permissions: ['system:user:manage'], title: '用户管理' },
+        meta: { permissions: ['system:user:manage'], title: '用户管理', icon: 'UserGroupIcon' },
       },
       {
         path: '/system/role-manage',
         name: 'role-manage',
         component: () => import('@/views/system/role/Index.vue'),
-        meta: { permissions: ['system:role:manage'], title: '角色管理' },
+        meta: { permissions: ['system:role:manage'], title: '角色管理', icon: 'IdentificationIcon' },
       },
       {
         path: '/system/dept-manage',
         name: 'dept-manage',
         component: () => import('@/views/system/dept/Index.vue'),
-        meta: { permissions: ['system:dept:manage'], title: '部门管理' },
+        meta: { permissions: ['system:dept:manage'], title: '部门管理', icon: 'BuildingOffice2Icon' },
       },
       {
         path: '/system/post-manage',
         name: 'post-manage',
         component: () => import('@/views/system/post/Index.vue'),
-        meta: { permissions: ['system:post:manage'], title: '岗位管理' },
+        meta: { permissions: ['system:post:manage'], title: '岗位管理', icon: 'BriefcaseIcon' },
       },
     ]
   },
   {
     path: '/equipment',
-    meta: { title: '设备监控' },
+    meta: { title: '设备监控', icon: 'ComputerDesktopIcon' },
     children: [
       {
         path: '/equipment/manage',
         name: 'equipment-manage',
         component: () => import('@/views/equipment/Manage.vue'),
-        meta: { permissions: ['equipment:manage'], title: '设备管理' },
+        meta: { permissions: ['equipment:manage'], title: '设备管理', icon: 'WrenchScrewdriverIcon' },
       },
     ]
   },
@@ -109,9 +109,7 @@ router.beforeEach(async (to, from, next) => {
 
         // 添加首页路由
         const homeRoute = routes.find(route => route.name === 'home')
-        if (homeRoute) {
-          accessedRoutes.unshift(homeRoute)
-        }
+        if (homeRoute) { accessedRoutes.unshift(homeRoute) }
 
         // 清空旧路由
         router.getRoutes().forEach(route => {

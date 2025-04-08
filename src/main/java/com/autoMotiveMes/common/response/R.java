@@ -31,17 +31,16 @@ public class R<T> {
     }
 
     // 400 错误请求响应
-    public static <T> R<T> badRequest(String message) {
-        return new R<>(400, message, null);
-    }
+    public static <T> R<T> badRequest(String message) { return new R<>(400, message, null); }
 
     // 401 未授权响应
     public static <T> R<T> unauthorized(String message) {
         return new R<>(401, message, null);
     }
 
+    // 403 禁止访问响应
+    public static <T> R<T> forbidden(String message) { return new R<>(403, message, null); }
+
     // 500 服务器内部错误响应
-    public static <T> R<T> serverError(String message) {
-        return new R<>(500, message, null);
-    }
+    public static <T> R<T> serverError(String message) { return new R<>(500, message, null); }
 }

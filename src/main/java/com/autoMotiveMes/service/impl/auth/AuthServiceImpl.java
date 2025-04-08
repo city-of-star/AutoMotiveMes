@@ -41,15 +41,15 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequestDto registerRequestDto) {
         // 检查用户名是否已存在
         if (userMapper.selectByUsername(registerRequestDto.getUsername()) != null) {
-            throw new BadRequestException("用户注册失败，用户名已存在");
+            throw new BadRequestException("注册失败，用户名已存在");
         }
         // 检查邮箱是否已存在
         if (userMapper.selectByEmail(registerRequestDto.getEmail()) != null) {
-            throw new BadRequestException("用户注册失败，邮箱已存在");
+            throw new BadRequestException("注册失败，邮箱已存在");
         }
         // 检查两次输入的密码是否一致
         if (!Objects.equals(registerRequestDto.getPassword(), registerRequestDto.getConfirmPassword())) {
-            throw new BadRequestException("用户注册失败，两次输入的密码不一致");
+            throw new BadRequestException("注册失败，两次输入的密码不一致");
         }
 
         try {
@@ -63,9 +63,10 @@ public class AuthServiceImpl implements AuthService {
             user.setCreateTime(new Date());
             userMapper.insert(user);
 
-            log.info("用户注册成功: {}", registerRequestDto);
+            log.info("用户 {} 注册成功", registerRequestDto.getUsername());
         } catch (Exception e) {
-            throw new GlobalException("用户注册失败 || " + e.getMessage());
+            log.warn("用户 {} 注册失败 || {}", registerRequestDto.getUsername(), e.getMessage());
+            throw new GlobalException("注册失败 || " + e.getMessage());
         }
     }
 
@@ -96,10 +97,11 @@ public class AuthServiceImpl implements AuthService {
             user.setLastLogin(date);
             userMapper.updateById(user);
 
-            log.info("用户登录成功: {用户名：{}，登录时间：{}}", loginRequestDto.getUsername(), date);
+            log.info("用户 {} 登录成功", loginRequestDto.getUsername());
 
             return response;
         } catch (Exception e) {
+            log.warn("用户 {} 登录失败 || {}", loginRequestDto.getUsername(), e.getMessage());
             throw new GlobalException("用户登录失败 || " + e.getMessage());
         }
     }
@@ -110,7 +112,8 @@ public class AuthServiceImpl implements AuthService {
         if (authentication != null && authentication.isAuthenticated()) {
             return userMapper.getUserInfoByUsername(authentication.getName());
         }
-        throw new AuthException("用户尝试获取个人信息，但是用户未认证或认证失败");
+        log.warn("用户 {} 尝试获取个人信息，但是用户未认证或认证失败", authentication.getName());
+        throw new AuthException("登录信息过期，请重新登录");
     }
 
     @Override
@@ -131,6 +134,7 @@ public class AuthServiceImpl implements AuthService {
                 return userRoleAndPermission;
             }
         }
-        throw new AuthException("用户尝试获取个人角色和权限，但是用户未认证或认证失败");
+        log.warn("用户 {} 尝试获取个人角色和权限，但是用户未认证或认证失败", authentication.getName());
+        throw new AuthException("登录信息过期，请重新登录");
     }
 }

@@ -84,15 +84,11 @@
             <el-checkbox v-model="row.select" />
           </template>
         </el-table-column>
-        <el-table-column label="用户编号" width="80" align="center" header-align="center">
-          <template #default="scope">
-            {{ (currentPage - 1) * pageSize + scope.$index + 1 }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="username" label="用户名称" width="120" align="center" header-align="center"/>
-        <el-table-column prop="realName" label="真实姓名" width="120" align="center" header-align="center"/>
-        <el-table-column prop="deptName" label="部门" width="200" align="center" header-align="center" show-overflow-tooltip/>
-        <el-table-column prop="phone" label="手机号码" width="150" align="center" header-align="center"/>
+        <el-table-column prop="userId" label="用户编号" width="80" align="center" header-align="center" />
+        <el-table-column prop="username" label="用户名称" width="120" align="center" header-align="center" />
+        <el-table-column prop="realName" label="真实姓名" width="120" align="center" header-align="center" />
+        <el-table-column prop="deptName" label="部门" width="200" align="center" header-align="center" show-overflow-tooltip />
+        <el-table-column prop="phone" label="手机号码" width="150" align="center" header-align="center" />
         <el-table-column prop="status" label="状态" width="120" align="center" header-align="center">
           <template #default="scope">
             <el-switch
@@ -189,9 +185,9 @@ const headerSelect = computed({
 })
 
 // 获取选中数据（返回一个只包含userId的数组）
-// const selectedRows = computed(() =>
-//     tableData.value.filter(row => row.select).map(row => row.userId)
-// )
+const selectedRows = computed(() =>
+    tableData.value.filter(row => row.select).map(row => row.userId)
+)
 
 // 获取权限数组
 const permissions = computed(() => store.state.user.permissions)
@@ -203,7 +199,6 @@ const hasPermission = (permission) => {
 
 // 获取部门树
 const fetchDeptTree = async () => {
-  console.log(store.state.user.permissions)
   try {
     const res = await axios.get('/dept/tree')
     deptData.value = res.data
@@ -247,6 +242,11 @@ const search = async () => {
   }
 }
 
+// 删除按钮
+const deleteUser = async () => {
+
+}
+
 // 重置按钮
 const refresh = () => {
   searchData.value.deptId = null
@@ -278,6 +278,7 @@ onMounted(() => {
   fetchDeptTree()
 })
 
+// 切换用户状态
 const handleSwitchChange = (status) => {
   if (status === 0) {
     console.log(status)

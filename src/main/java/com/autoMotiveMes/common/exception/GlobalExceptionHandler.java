@@ -15,25 +15,31 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 500
-    @ExceptionHandler(GlobalException.class)
-    public R handleGlobalException(GlobalException e) {
-        log.error("---------- 系统内部错误：{{}} ----------", e.getMessage());
-        return R.serverError(e.getMessage());
-    }
-
     // 400
     @ExceptionHandler(BadRequestException.class)
-    public R handleBadRequestException(AuthException e) {
-        log.error("---------- 错误请求响应：{{}} ----------", e.getMessage());
+    public R<?> handleBadRequestException(BadRequestException e) {
+        log.warn("错误请求响应：{{}}", e.getMessage());
         return R.badRequest(e.getMessage());
     }
 
     // 401
     @ExceptionHandler(AuthException.class)
-    public R handleAuthException(AuthException e) {
-        log.error("---------- 权限验证失败：{{}} ----------", e.getMessage());
+    public R<?> handleAuthException(AuthException e) {
+        log.warn("登录验证失败：{{}}", e.getMessage());
         return R.unauthorized(e.getMessage());
+    }
+
+    // 403
+    @ExceptionHandler(ForbiddenException.class)
+    public R<?> handleForbiddenException(ForbiddenException e) {
+        log.warn("权限验证失败：{{}}", e.getMessage());
+        return R.forbidden(e.getMessage());
+    }
+    // 500
+    @ExceptionHandler(GlobalException.class)
+    public R<?> handleGlobalException(GlobalException e) {
+        log.error("系统内部错误：{{}}", e.getMessage());
+        return R.serverError(e.getMessage());
     }
 
 }

@@ -63,7 +63,7 @@ export default {
 
                 console.log(response)
             } else {
-                ElMessage.error(response.data.msg)
+                ElMessage.error(response.msg)
             }
         },
         async register(_, data){

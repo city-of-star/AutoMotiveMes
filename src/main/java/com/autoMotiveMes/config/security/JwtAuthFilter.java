@@ -58,13 +58,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         if (token.isEmpty()) {
             log.error("Token为空");
-            throw new AuthException("Token为空");
+            throw new AuthException("token为空");
         }
 
         try {
             // 验证Token有效性
             if (!jwtUtils.validateToken(token)) {
-                throw new AuthException("Token无效或已过期");
+                throw new AuthException("token无效或已过期");
             }
 
             // 从Token中解析用户名并加载用户信息
@@ -82,10 +82,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 继续执行后续过滤器
             filterChain.doFilter(request, response);
         } catch (AuthException e) {
-            log.error("认证失败: {}", e.getMessage());
+            log.warn("认证失败: {}", e.getMessage());
             throw new AuthException("认证失败: " + e.getMessage());
         } catch (UsernameNotFoundException e) {
-            log.error("用户不存在: {}", e.getMessage());
+            log.warn("用户不存在: {}", e.getMessage());
             throw new AuthException("用户不存在: " + e.getMessage());
         } catch (Exception e) {
             log.error("处理认证时发生未知错误", e);
