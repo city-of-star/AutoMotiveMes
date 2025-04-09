@@ -66,11 +66,19 @@
       </div>
 
       <div class="btn-container">
-        <el-button v-if="hasPermission('system:system:add')"  :icon="Plus" :color=theme_color plain>新增</el-button>
-        <el-button v-if="hasPermission('system:system:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
-        <el-button @click="deleteUser()" v-if="hasPermission('system:system:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
-        <el-button v-if="hasPermission('system:system:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
-        <el-button v-if="hasPermission('system:system:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
+        <el-button v-if="hasPermission('system:user:add')" :icon="Plus" :color=theme_color plain>新增</el-button>
+        <el-button v-if="hasPermission('system:user:update')" :icon="Edit" :color=btn_update_color plain>修改</el-button>
+        <el-button
+            v-if="hasPermission('system:user:delete')"
+            :icon="Delete"
+            :color=btn_delete_color
+            :disabled="selectedRows.length === 0"
+            @click="deleteUser()"
+            plain
+        >删除
+        </el-button>
+        <el-button v-if="hasPermission('system:user:import')" :icon="Download" :color=btn_import_color plain>导入</el-button>
+        <el-button v-if="hasPermission('system:user:export')" :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
 
       <el-table v-loading="loading" class="table-container" :data="tableData">
@@ -120,6 +128,7 @@
     </div>
   </div>
 
+  <!--  切换用户状态提示弹框-->
   <el-dialog
       v-model="centerDialogVisible"
       :title="currentNewStatus === 1 ? '启用用户' : '停用用户'"
