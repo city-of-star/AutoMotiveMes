@@ -35,10 +35,10 @@ const asyncRoutes = [
     meta: { title: '系统管理', icon: 'Cog6ToothIcon' },
     children: [
       {
-        path: '/system/user-manage',
-        name: 'user-manage',
+        path: '/system/system-manage',
+        name: 'system-manage',
         component: () => import('@/views/system/user/Index.vue'),
-        meta: { permissions: ['system:user:manage'], title: '用户管理', icon: 'UserGroupIcon' },
+        meta: { permissions: ['system:system:manage'], title: '用户管理', icon: 'UserGroupIcon' },
       },
       {
         path: '/system/role-manage',

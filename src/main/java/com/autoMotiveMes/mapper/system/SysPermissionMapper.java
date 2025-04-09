@@ -1,10 +1,8 @@
-package com.autoMotiveMes.mapper.user;
+package com.autoMotiveMes.mapper.system;
 
-import com.autoMotiveMes.entity.user.SysPermission;
+import com.autoMotiveMes.entity.system.SysPermission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * 实现功能【权限表 mapper】
@@ -15,5 +13,4 @@ import java.util.List;
 @Mapper
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
 
-    List<SysPermission>  selectByRoleIds(Integer roleId);
 }

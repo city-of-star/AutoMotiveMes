@@ -1,6 +1,6 @@
 package com.autoMotiveMes.config.security;
 
-import com.autoMotiveMes.entity.user.SysUser;
+import com.autoMotiveMes.entity.system.SysUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +23,7 @@ public class UserDetailsImpl implements UserDetails {
     private String username;
     private String password;
     private Integer status;
-    private Boolean accountNonLocked;
+    private Integer accountNonLocked;
     private List<String> Roles;
     private List<GrantedAuthority> authorities;
 
@@ -65,7 +65,7 @@ public class UserDetailsImpl implements UserDetails {
     }  // 账号永不会过期
 
     @Override
-    public boolean isAccountNonLocked() { return accountNonLocked; }  // 状态 1 表示启用（返回 true 表示账号永不会锁定）
+    public boolean isAccountNonLocked() { return accountNonLocked == 1; }  // 状态 1 表示未锁定（返回 true 表示账号永不会锁定）
 
     @Override
     public boolean isCredentialsNonExpired() {

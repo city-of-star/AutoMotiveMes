@@ -1,7 +1,7 @@
 package com.autoMotiveMes.config.security;
 
-import com.autoMotiveMes.entity.user.SysUser;
-import com.autoMotiveMes.mapper.user.SysUserMapper;
+import com.autoMotiveMes.entity.system.SysUser;
+import com.autoMotiveMes.mapper.system.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,10 +1,11 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.dto.user.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
+import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
 import com.autoMotiveMes.common.exception.GlobalException;
-import com.autoMotiveMes.entity.user.SysUser;
-import com.autoMotiveMes.mapper.user.SysUserMapper;
+import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
+import com.autoMotiveMes.entity.system.SysUser;
+import com.autoMotiveMes.mapper.system.SysUserMapper;
 import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,25 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             log.error("删除用户出错: {}", e.getMessage());
             throw new GlobalException("删除用户出错: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void switchUserStatus(SwitchUserStatusRequestDto dto) {
+        try {
+            SysUser user = userMapper.selectById(dto.getUserId());
+            if (user == null) {
+                throw new GlobalException("修改失败，该用户不存在");
+            } else if (user.getStatus() == 1) {
+                user.setStatus(0);
+            } else if (user.getStatus() == 0) {
+                user.setStatus(1);
+            } else {
+                throw new GlobalException("修改失败，非法的用户状态");
+            }
+            userMapper.updateById(user);
+        } catch (Exception e) {
+            log.error("切换用户状态出错: {}", e.getMessage());
         }
     }
 }

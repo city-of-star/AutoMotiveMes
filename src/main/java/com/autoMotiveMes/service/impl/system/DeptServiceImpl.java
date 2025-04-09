@@ -1,8 +1,8 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.dto.dept.SysDeptTreeNode;
-import com.autoMotiveMes.entity.user.SysDept;
-import com.autoMotiveMes.mapper.user.SysDeptMapper;
+import com.autoMotiveMes.dto.system.SysDeptTreeNode;
+import com.autoMotiveMes.entity.system.SysDept;
+import com.autoMotiveMes.mapper.system.SysDeptMapper;
 import com.autoMotiveMes.service.system.DeptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

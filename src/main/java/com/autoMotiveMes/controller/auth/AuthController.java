@@ -1,7 +1,7 @@
 package com.autoMotiveMes.controller.auth;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.user.*;
+import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

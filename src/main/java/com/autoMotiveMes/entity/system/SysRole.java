@@ -1,4 +1,4 @@
-package com.autoMotiveMes.entity.user;
+package com.autoMotiveMes.entity.system;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

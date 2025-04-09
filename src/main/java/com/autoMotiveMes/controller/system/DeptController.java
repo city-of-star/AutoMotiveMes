@@ -1,6 +1,6 @@
 package com.autoMotiveMes.controller.system;
 
-import com.autoMotiveMes.dto.dept.SysDeptTreeNode;
+import com.autoMotiveMes.dto.system.SysDeptTreeNode;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.service.system.DeptService;
 import lombok.RequiredArgsConstructor;

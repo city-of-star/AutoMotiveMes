@@ -1,4 +1,4 @@
-package com.autoMotiveMes.dto.user;
+package com.autoMotiveMes.dto.system;
 
 import lombok.Data;
 

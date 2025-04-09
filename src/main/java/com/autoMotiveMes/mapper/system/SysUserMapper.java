@@ -1,8 +1,8 @@
-package com.autoMotiveMes.mapper.user;
+package com.autoMotiveMes.mapper.system;
 
-import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
-import com.autoMotiveMes.dto.user.UserInfoResponseDto;
-import com.autoMotiveMes.entity.user.SysUser;
+import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.UserInfoResponseDto;
+import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,18 +20,12 @@ import java.util.List;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
     @Select("""
-          SELECT
-              sp.perm_code
-          FROM
-              sys_user su
-          LEFT JOIN
-              sys_user_role sur ON su.user_id = sur.user_id
-          LEFT JOIN
-              sys_role_permission srp ON sur.role_id = srp.role_id
-          LEFT JOIN
-              sys_permission sp ON srp.perm_id = sp.perm_id
-          WHERE
-              su.username = #{username}
+          SELECT sp.perm_code
+          FROM sys_user su
+          LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+          LEFT JOIN sys_role_permission srp ON sur.role_id = srp.role_id
+          LEFT JOIN sys_permission sp ON srp.perm_id = sp.perm_id
+          WHERE su.username = #{username}
           """)
     List<String> selectUserPermissions(String username);
 

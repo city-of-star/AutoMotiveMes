@@ -1,4 +1,4 @@
-package com.autoMotiveMes.entity.user;
+package com.autoMotiveMes.entity.system;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -64,9 +64,9 @@ public class SysUser {
      */
     private Integer status;
     /**
-     * 用户是否未锁定
+     * 用户是否锁定(0:已锁定;1:未锁定)
      */
-    private Boolean accountLocked;
+    private Integer accountLocked;
     /**
      * 用户连续登录失败次数
      */

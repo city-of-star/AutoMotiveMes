@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.auth;
 
-import com.autoMotiveMes.dto.user.*;
+import com.autoMotiveMes.dto.system.*;
 
 /**
  * 实现功能【用户认证服务接口】

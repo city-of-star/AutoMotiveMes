@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.dept.SysDeptTreeNode;
+import com.autoMotiveMes.dto.system.SysDeptTreeNode;
 
 import java.util.List;
 

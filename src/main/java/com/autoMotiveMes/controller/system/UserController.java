@@ -1,9 +1,10 @@
 package com.autoMotiveMes.controller.system;
 
-import com.autoMotiveMes.dto.user.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
+import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.entity.user.SysUser;
+import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
+import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,13 @@ public class UserController {
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:delete')")
     public R<?> deleteSysUser(@RequestBody DeleteUserRequestDto dto) {
         userService.deleteUserByID(dto);
+        return R.successWithoutData();
+    }
+
+    @PostMapping("/switch")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
+    public R<?> switchUserStatus(@RequestBody SwitchUserStatusRequestDto dto) {
+        userService.switchUserStatus(dto);
         return R.successWithoutData();
     }
 }

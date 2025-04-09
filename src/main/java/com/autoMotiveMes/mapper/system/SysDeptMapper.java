@@ -1,6 +1,6 @@
-package com.autoMotiveMes.mapper.user;
+package com.autoMotiveMes.mapper.system;
 
-import com.autoMotiveMes.entity.user.SysDept;
+import com.autoMotiveMes.entity.system.SysDept;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

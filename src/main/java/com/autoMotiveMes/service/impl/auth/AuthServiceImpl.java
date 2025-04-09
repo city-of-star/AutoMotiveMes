@@ -3,10 +3,10 @@ package com.autoMotiveMes.service.impl.auth;
 import com.autoMotiveMes.common.exception.AuthException;
 import com.autoMotiveMes.common.exception.BadRequestException;
 import com.autoMotiveMes.config.security.UserDetailsImpl;
-import com.autoMotiveMes.dto.user.*;
-import com.autoMotiveMes.entity.user.SysUser;
+import com.autoMotiveMes.dto.system.*;
+import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.common.exception.GlobalException;
-import com.autoMotiveMes.mapper.user.SysUserMapper;
+import com.autoMotiveMes.mapper.system.SysUserMapper;
 import com.autoMotiveMes.service.auth.AuthService;
 import com.autoMotiveMes.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
             user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
             user.setEmail(registerRequestDto.getEmail());
             user.setStatus(1); // 默认启用状态
-            user.setAccountLocked(true);  // 默认没有锁定
+            user.setAccountLocked(1);  // 默认没有锁定
             user.setLoginAttempts(0);  // 初始化连续登陆失败次数为 0
             user.setCreateTime(new Date());
             userMapper.insert(user);

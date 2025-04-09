@@ -96,13 +96,13 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:manage', '系统管理', 'MENU', 0, '/system', NULL, '/api/system', NULL),
 
     -- 用户管理模块
-    ('system:user:manage', '用户管理', 'MENU', 1, '/system/auth', '/Index.vue', '/api/system/auth', NULL),  -- 2
-    ('system:user:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/add', 'POST'),
-    ('system:user:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/delete', 'POST'),
-    ('system:user:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/update', 'POST'),
-    ('system:user:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/list', 'GET'),
-    ('system:user:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/import', 'POST'),
-    ('system:user:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/export', 'GET'),
+    ('system:system:manage', '用户管理', 'MENU', 1, '/system/auth', '/Index.vue', '/api/system/auth', NULL),  -- 2
+    ('system:system:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/add', 'POST'),
+    ('system:system:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/delete', 'POST'),
+    ('system:system:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/update', 'POST'),
+    ('system:system:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/list', 'GET'),
+    ('system:system:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/import', 'POST'),
+    ('system:system:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/export', 'GET'),
 
 
     -- 角色管理模块

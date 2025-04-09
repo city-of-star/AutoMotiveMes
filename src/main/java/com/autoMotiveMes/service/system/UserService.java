@@ -1,8 +1,9 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.user.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.user.SearchSysUserListRequestDto;
-import com.autoMotiveMes.entity.user.SysUser;
+import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
+import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
+import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -17,4 +18,7 @@ public interface UserService {
 
     // 删除用户
     void deleteUserByID(DeleteUserRequestDto dto);
+
+    // 切换用户状态
+    void switchUserStatus(SwitchUserStatusRequestDto dto);
 }

@@ -2,7 +2,7 @@
   <div class="main-container">
 
     <div class="left-container">
-      <el-input v-model="searchData.deptId" placeholder="请输入部门名称" class="input-dept" clearable>
+      <el-input v-model="searchData.deptId" placeholder="请输入部门名称" class="input-dept" @clear="search" clearable>
         <template #prefix>
           <el-icon class="el-input__icon"><Search /></el-icon>
         </template>
@@ -22,7 +22,7 @@
       <div class="input-container">
         <div class="block">
           <span class="input-title">用户名称</span>
-          <el-input v-model="searchData.username" placeholder="请输入用户名称" class="input" clearable>
+          <el-input v-model="searchData.username" placeholder="请输入用户名称" class="input" @clear="search" clearable>
             <template #prefix>
               <el-icon><Search /></el-icon>
             </template>
@@ -30,7 +30,7 @@
         </div>
         <div class="block">
           <span class="input-title">手机号码</span>
-          <el-input v-model="searchData.phone" placeholder="请输入手机号码" class="input" clearable>
+          <el-input v-model="searchData.phone" placeholder="请输入手机号码" class="input" @clear="search" clearable>
             <template #prefix>
               <el-icon><Search /></el-icon>
             </template>
@@ -38,7 +38,7 @@
         </div>
         <div class="block">
           <span class="input-title">用户状态</span>
-          <el-select v-model="searchData.status" placeholder="用户状态" class="input" clearable>
+          <el-select v-model="searchData.status" placeholder="用户状态" class="input" @clear="search" clearable>
             <el-option
                 v-for="item in statusOptions"
                 :key="item.value"
@@ -57,6 +57,7 @@
               end-placeholder="结束日期"
               size="default"
               style="width: 220px;"
+              @clear="search"
               clearable
           />
         </div>
@@ -65,11 +66,11 @@
       </div>
 
       <div class="btn-container">
-        <el-button v-if="hasPermission('system:user:add')"  :icon="Plus" :color=theme_color plain>新增</el-button>
-        <el-button v-if="hasPermission('system:user:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
-        <el-button @click="deleteUser()" v-if="hasPermission('system:user:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
-        <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
-        <el-button v-if="hasPermission('system:user:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
+        <el-button v-if="hasPermission('system:system:add')"  :icon="Plus" :color=theme_color plain>新增</el-button>
+        <el-button v-if="hasPermission('system:system:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
+        <el-button @click="deleteUser()" v-if="hasPermission('system:system:delete')"  :icon="Delete" :color=btn_delete_color plain>删除</el-button>
+        <el-button v-if="hasPermission('system:system:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
+        <el-button v-if="hasPermission('system:system:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
 
       <el-table v-loading="loading" class="table-container" :data="tableData">
@@ -92,10 +93,10 @@
         <el-table-column prop="status" label="状态" width="120" align="center" header-align="center">
           <template #default="scope">
             <el-switch
-                v-model="scope.row.status"
+                :model-value="scope.row.status"
                 :active-value="1"
                 :inactive-value="0"
-                @change="handleSwitchChange(scope.row.status)"
+                @click="handleSwitchClick(scope.row)"
                 style="margin: 0 auto"
             />
           </template>
@@ -118,6 +119,21 @@
       />
     </div>
   </div>
+
+  <el-dialog
+      v-model="centerDialogVisible"
+      :title="currentNewStatus === 1 ? '启用用户' : '停用用户'"
+      width="500"
+      align-center
+  >
+    <span>确认要{{ currentNewStatus === 1 ? '启用' : '停用' }}此用户吗？</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="cancelSwitch">取消</el-button>
+        <el-button type="primary" @click="confirmSwitch">确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -135,6 +151,12 @@ const btn_update_color = store.state.app.btn_update_color;
 const btn_delete_color = store.state.app.btn_delete_color;
 const btn_import_color = store.state.app.btn_import_color;
 const btn_export_color = store.state.app.btn_export_color;
+
+// 用户状态相关
+const centerDialogVisible = ref(false)  // 是否显示弹框
+const currentUserId = ref(null)
+const currentNewStatus = ref(null)
+const currentRow = ref(null) // 用于保存当前操作的行数据
 
 // 查询的条件值
 let searchData = ref({
@@ -251,6 +273,38 @@ const deleteUser = async () => {
   }
 }
 
+// 切换用户状态点击事件处理
+const handleSwitchClick = (row) => {
+  currentRow.value = row
+  currentUserId.value = row.userId
+  currentNewStatus.value = row.status === 1 ? 0 : 1
+  centerDialogVisible.value = true
+
+  // 直接更新本地数据避免重新请求
+  currentRow.value.status = currentNewStatus.value
+}
+
+// 确认状态修改
+const confirmSwitch = async () => {
+  try {
+    await axios.post('/user/switch', {
+      userId: currentUserId.value,
+      status: currentNewStatus.value
+    })
+    ElMessage.success('状态修改成功')
+    centerDialogVisible.value = false
+  } catch (error) {
+    console.error('状态修改失败:', error)
+  }
+}
+
+// 取消修改时恢复原始状态
+const cancelSwitch = () => {
+  currentRow.value = null
+  centerDialogVisible.value = false
+  search() // 重新加载数据确保状态一致
+}
+
 // 重置按钮
 const refresh = () => {
   searchData.value.deptId = null
@@ -281,15 +335,6 @@ onMounted(() => {
   search()
   fetchDeptTree()
 })
-
-// 切换用户状态
-const handleSwitchChange = (status) => {
-  if (status === 0) {
-    console.log(status)
-  } else {
-    console.log(status)
-  }
-}
 </script>
 
 <style scoped>
