@@ -22,10 +22,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.secret}") // 在 application.yml 中配置
+    @Value("${security.jwt.secret}") // 在 application.yml 中配置
     private String secret;
 
-    @Value("${jwt.expiration}") // 过期时间（秒）
+    @Value("${security.jwt.expiration}") // 过期时间（秒）
     private int expiration;
 
     // 生成密钥

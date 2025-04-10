@@ -128,7 +128,6 @@
     </div>
   </div>
 
-  <!--  切换用户状态提示弹框-->
   <el-dialog
       v-model="centerDialogVisible"
       :title="currentNewStatus === 1 ? '启用用户' : '停用用户'"
