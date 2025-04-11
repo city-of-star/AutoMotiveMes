@@ -1,16 +1,24 @@
 package com.autoMotiveMes.service.impl.system;
 
+import com.autoMotiveMes.common.exception.BadRequestException;
+import com.autoMotiveMes.dto.system.AddUserRequestDto;
 import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
 import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
 import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
 import com.autoMotiveMes.entity.system.SysUser;
+import com.autoMotiveMes.entity.system.SysUserRole;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
+import com.autoMotiveMes.mapper.system.SysUserRoleMapper;
 import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * 实现功能【用户管理服务实现类】
@@ -24,6 +32,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final SysUserMapper userMapper;
+    private final SysUserRoleMapper userRoleMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Page<SysUser> searchSysUserList(SearchSysUserListRequestDto dto) {
@@ -38,7 +48,7 @@ public class UserServiceImpl implements UserService {
             res = userMapper.selectUserList(page, dto);
         } catch (Exception e) {
             log.error("查询用户列表出错: {}", e.getMessage());
-            throw new GlobalException("查询用户列表出错: " + e.getMessage());
+            throw new GlobalException("查询用户列表出错 || " + e.getMessage());
         }
         return res;
     }
@@ -51,7 +61,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             log.error("删除用户出错: {}", e.getMessage());
-            throw new GlobalException("删除用户出错: " + e.getMessage());
+            throw new GlobalException("删除用户出错 || " + e.getMessage());
         }
     }
 
@@ -71,6 +81,43 @@ public class UserServiceImpl implements UserService {
             userMapper.updateById(user);
         } catch (Exception e) {
             log.error("切换用户状态出错: {}", e.getMessage());
+            throw new GlobalException("切换用户状态出错 || " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void addUser(AddUserRequestDto dto) {
+        if (userMapper.selectByUsername(dto.getUsername()) != null) {
+            throw new BadRequestException("用户名已存在");
+        }
+        if (userMapper.selectByPhone(dto.getPhone()) != null) {
+            throw new BadRequestException("手机号码已存在");
+        }
+        if (userMapper.selectByEmail(dto.getEmail()) != null) {
+            throw new BadRequestException("邮箱已存在");
+        }
+
+        try {
+            SysUser user = new SysUser();
+            user.setUsername(dto.getUsername());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.setPhone(dto.getPhone());
+            user.setEmail(dto.getEmail());
+            user.setRealName(dto.getRealName());
+            user.setHeadImg("https://img0.baidu.com/it/u=3440970623,2745306240&fm=253&fmt=auto&app=138&f=JPEG?w=260&h=260");  // 默认网图
+            user.setStatus(dto.getStatus());
+            user.setAccountLocked(1);  //  默认未锁定
+            user.setLoginAttempts(0);  // 默认连续登陆失败次数为0
+            user.setDeptId(dto.getDeptId());
+            user.setPostId(dto.getPostId());
+            user.setCreateTime(new Date());
+            userMapper.insert(user);
+            Long userId = userMapper.selectByUsername(user.getUsername()).getUserId();  // 获取userId
+            SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
+            userRoleMapper.insert(userRole);  // 添加用户角色关系
+        } catch (Exception e) {
+            log.error("用户注册失败: {}", e.getMessage());
+            throw new GlobalException("注册失败 || " +  e.getMessage());
         }
     }
 }

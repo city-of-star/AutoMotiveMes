@@ -1,4 +1,4 @@
-package com.autoMotiveMes.dto.system;
+package com.autoMotiveMes.dto.auth;
 
 import lombok.Data;
 

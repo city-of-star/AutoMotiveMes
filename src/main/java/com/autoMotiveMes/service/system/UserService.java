@@ -1,5 +1,6 @@
 package com.autoMotiveMes.service.system;
 
+import com.autoMotiveMes.dto.system.AddUserRequestDto;
 import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
 import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
 import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
@@ -21,4 +22,7 @@ public interface UserService {
 
     // 切换用户状态
     void switchUserStatus(SwitchUserStatusRequestDto dto);
+
+    // 新增用户
+    void addUser(AddUserRequestDto dto);
 }

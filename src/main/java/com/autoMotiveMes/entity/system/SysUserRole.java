@@ -3,6 +3,7 @@ package com.autoMotiveMes.entity.system;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -13,6 +14,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_user_role")
+@AllArgsConstructor
 public class SysUserRole {
     /**
      * 用户 ID，关联 sys_user 表的用户 ID

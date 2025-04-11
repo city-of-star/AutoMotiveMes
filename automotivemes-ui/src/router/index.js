@@ -32,31 +32,31 @@ const routes  = [
 const asyncRoutes = [
   {
     path: '/system',
-    meta: { title: '系统管理', icon: 'Cog6ToothIcon' },
+    meta: { permissions: 'system:manage', title: '系统管理', icon: 'Cog6ToothIcon' },
     children: [
       {
-        path: '/system/system-manage',
-        name: 'system-manage',
+        path: '/system/user-manage',
+        name: 'user-manage',
         component: () => import('@/views/system/user/Index.vue'),
-        meta: { permissions: ['system:system:manage'], title: '用户管理', icon: 'UserGroupIcon' },
+        meta: { permissions: 'system:user:manage', title: '用户管理', icon: 'UserGroupIcon' },
       },
       {
         path: '/system/role-manage',
         name: 'role-manage',
         component: () => import('@/views/system/role/Index.vue'),
-        meta: { permissions: ['system:role:manage'], title: '角色管理', icon: 'IdentificationIcon' },
+        meta: { permissions: 'system:role:manage', title: '角色管理', icon: 'IdentificationIcon' },
       },
       {
         path: '/system/dept-manage',
         name: 'dept-manage',
         component: () => import('@/views/system/dept/Index.vue'),
-        meta: { permissions: ['system:dept:manage'], title: '部门管理', icon: 'BuildingOffice2Icon' },
+        meta: { permissions: 'system:dept:manage', title: '部门管理', icon: 'BuildingOffice2Icon' },
       },
       {
         path: '/system/post-manage',
         name: 'post-manage',
         component: () => import('@/views/system/post/Index.vue'),
-        meta: { permissions: ['system:post:manage'], title: '岗位管理', icon: 'BriefcaseIcon' },
+        meta: { permissions: 'system:post:manage', title: '岗位管理', icon: 'BriefcaseIcon' },
       },
     ]
   },
@@ -68,7 +68,7 @@ const asyncRoutes = [
         path: '/equipment/manage',
         name: 'equipment-manage',
         component: () => import('@/views/equipment/Manage.vue'),
-        meta: { permissions: ['equipment:manage'], title: '设备管理', icon: 'WrenchScrewdriverIcon' },
+        meta: { permissions: 'equipment:manage', title: '设备管理', icon: 'WrenchScrewdriverIcon' },
       },
     ]
   },

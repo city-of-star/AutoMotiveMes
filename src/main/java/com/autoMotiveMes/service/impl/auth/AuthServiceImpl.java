@@ -3,7 +3,7 @@ package com.autoMotiveMes.service.impl.auth;
 import com.autoMotiveMes.common.exception.AuthException;
 import com.autoMotiveMes.common.exception.BadRequestException;
 import com.autoMotiveMes.config.security.UserDetailsImpl;
-import com.autoMotiveMes.dto.system.*;
+import com.autoMotiveMes.dto.auth.*;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.mapper.system.SysUserMapper;

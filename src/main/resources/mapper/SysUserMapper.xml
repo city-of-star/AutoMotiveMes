@@ -13,8 +13,8 @@
     FROM sys_user u
     LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
     <where>
-        <if test="query.deptId != null">
-            AND u.dept_id = #{query.deptId}
+        <if test="query.deptName != null and query.deptName != ''">
+            AND d.dept_name LIKE CONCAT('%', #{query.deptName}, '%')
         </if>
         <if test="query.username != null and query.username != ''">
             AND u.username LIKE CONCAT('%', #{query.username}, '%')

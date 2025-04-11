@@ -87,7 +87,8 @@ CREATE TABLE sys_role_permission (
 
 -- 插入角色数据
 INSERT INTO sys_role (role_code, role_name, description) VALUES
-    ('SUPER_ADMIN', '超级管理员', '拥有系统所有权限'),
+    ('SUPER_ADMIN', '超级管理员', '拥有系统所有权限(系统初始化的唯一角色)'),
+    ('ADMIN', '管理员', '拥有系统所有权限'),
     ('EQUIP_MANAGE', '设备管理员', '拥有设备监控与维护权限');
 
 -- 插入权限数据
@@ -96,13 +97,13 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:manage', '系统管理', 'MENU', 0, '/system', NULL, '/api/system', NULL),
 
     -- 用户管理模块
-    ('system:system:manage', '用户管理', 'MENU', 1, '/system/auth', '/Index.vue', '/api/system/auth', NULL),  -- 2
-    ('system:system:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/add', 'POST'),
-    ('system:system:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/delete', 'POST'),
-    ('system:system:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/update', 'POST'),
-    ('system:system:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/list', 'GET'),
-    ('system:system:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/import', 'POST'),
-    ('system:system:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/auth/export', 'GET'),
+    ('system:user:manage', '用户管理', 'MENU', 1, '/system', '/Index.vue', '/api/system', NULL),  -- 2
+    ('system:user:add', '新增用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/add', 'POST'),
+    ('system:user:delete', '删除用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/delete', 'POST'),
+    ('system:user:update', '编辑用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/update', 'POST'),
+    ('system:user:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/list', 'GET'),
+    ('system:user:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/import', 'POST'),
+    ('system:user:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/export', 'GET'),
 
 
     -- 角色管理模块
@@ -130,16 +131,26 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:post:export', '导出岗位', 'BUTTON', 21, NULL, NULL, '/api/system/post/export', 'GET'),
 
     -- 设备监控
-    ('equipment:manage', '设备管理与维护', 'MENU', 0, '/equipment/manage', 'equip/manage', '/api/equipment', NULL),
-    ('equipment:add', '注册设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
-    ('equipment:delete', '移除设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
-    ('equipment:update', '修改设备信息', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
-    ('equipment:list', '查询设备', 'BUTTON', 0, NULL, NULL, '/api/equipment/monitor/list', 'GET');
+    ('equipment:manage', '设备管理与维护', 'MENU', 0, '/equipment/manage', 'equip/manage', '/api/equipment', NULL),  -- 27
+    ('equipment:add', '注册设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
+    ('equipment:delete', '移除设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
+    ('equipment:update', '修改设备信息', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
+    ('equipment:list', '查询设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/list', 'GET');
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, dept_id, post_id, email, phone, status, account_locked, login_attempts, last_login) VALUES
     ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', 1, 1, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 2, 3, '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00');
+    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 1, 2, '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00'),
+    ('ydf', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨东风', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('yjq', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨佳倩', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('yzz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨智喆', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wjx', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '汪俊祥', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('ljb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李佳宝', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wwb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王雯博', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('lkw', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘楷雯', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('cj', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '曹静', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('dty', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '董婷英', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wcz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '吴成周', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00');
 
 -- 插入部门
 INSERT INTO sys_dept (dept_name, parent_id, order_num, status, leader_id) VALUES
@@ -155,7 +166,17 @@ INSERT INTO sys_post (post_name, post_code, dept_id, order_num, status) VALUES
 -- 用户角色关系
 INSERT INTO sys_user_role (user_id, role_id) VALUES
     (1, 1),   -- admin -> SUPER_ADMIN
-    (2, 2);   -- equip_1 -> EQUIP_MANAGE
+    (2, 2),   -- lqh -> ADMIN
+    (3, 3),   -- ydf -> EQUIP_MANAGE
+    (4, 3),   -- yjq -> EQUIP_MANAGE
+    (5, 3),   -- yzz -> EQUIP_MANAGE
+    (6, 3),   -- wjx -> EQUIP_MANAGE
+    (7, 3),   -- ljb -> EQUIP_MANAGE
+    (8, 3),   -- wwb -> EQUIP_MANAGE
+    (9, 3),   -- lkw -> EQUIP_MANAGE
+    (10, 3),   -- cj -> EQUIP_MANAGE
+    (11, 3),   -- dty -> EQUIP_MANAGE
+    (12, 3);   -- wcz -> EQUIP_MANAGE
 
 -- 角色权限关系
 INSERT INTO sys_role_permission (role_id, perm_id) VALUES
@@ -168,6 +189,15 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (1, 21),(1, 22),(1, 23),(1, 24),
     (1, 25),(1, 26),
 
+    -- 管理员
+    (2, 1),(2, 2),(2, 3),(2, 4),
+    (2, 5),(2, 6),(2, 7),(2, 8),
+    (2, 9),(2,10),(2, 11),(2, 12),
+    (2, 13),(2, 14),(2, 15),(2, 16),
+    (2, 17),(2, 18),(2, 19),(2, 20),
+    (2, 21),(2, 22),(2, 23),(2, 24),
+    (2, 25),(2, 26),
+
     -- 设备管理员
-    (2, 5),(2,6),(2,7),(2,8),
-    (2,9),(2, 10);
+    (3, 27),(3, 28),(3, 29),(3, 30),
+    (3, 31);

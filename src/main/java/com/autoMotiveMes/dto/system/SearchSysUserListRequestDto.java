@@ -12,7 +12,7 @@ import lombok.Data;
 public class SearchSysUserListRequestDto {
     private Integer page;
     private Integer size;
-    private Integer deptId;
+    private String deptName;
     private String username;
     private String phone;
     private Integer status;
