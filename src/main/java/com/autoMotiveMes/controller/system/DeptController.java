@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2025-04-05 21:03:35
  */
 @RestController
-@RequestMapping("/api/dept")
+@RequestMapping("/api/system/dept")
 @RequiredArgsConstructor
 public class DeptController {
     private final DeptService deptService;

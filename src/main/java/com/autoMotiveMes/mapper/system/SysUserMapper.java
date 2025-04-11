@@ -1,7 +1,7 @@
 package com.autoMotiveMes.mapper.system;
 
 import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
-import com.autoMotiveMes.dto.system.UserInfoResponseDto;
+import com.autoMotiveMes.dto.auth.UserInfoResponseDto;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,22 +27,25 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
           LEFT JOIN sys_permission sp ON srp.perm_id = sp.perm_id
           WHERE su.username = #{username}
           """)
-    List<String> selectUserPermissions(String username);
+    List<String> selectUserPermissions(@Param("username") String username);
 
     @Select("SELECT r.role_code " +
             "FROM sys_user_role ur " +
             "JOIN sys_role r ON ur.role_id = r.role_id " +
             "WHERE ur.user_id = (SELECT user_id FROM sys_user WHERE username = #{username})")
-    List<String> selectUserRoles(String username);
+    List<String> selectUserRoles(@Param("username") String username);
 
     @Select("SELECT * FROM sys_user WHERE username = #{username}")
-    SysUser selectByUsername(String username);
+    SysUser selectByUsername(@Param("username") String username);
 
     @Select("SELECT * FROM sys_user WHERE email = #{email}")
-    SysUser selectByEmail(String email);
+    SysUser selectByEmail(@Param("email") String email);
+
+    @Select("SELECT * FROM sys_user WHERE phone = #{phone}")
+    SysUser selectByPhone(@Param("phone") String phone);
 
     @Select("SELECT real_name, email, phone FROM sys_user WHERE username = #{username}")
-    UserInfoResponseDto getUserInfoByUsername(String username);
+    UserInfoResponseDto getUserInfoByUsername(@Param("username") String username);
 
     Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListRequestDto dto);
 }

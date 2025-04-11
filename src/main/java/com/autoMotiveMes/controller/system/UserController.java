@@ -1,5 +1,6 @@
 package com.autoMotiveMes.controller.system;
 
+import com.autoMotiveMes.dto.system.AddUserRequestDto;
 import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
 import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
 import com.autoMotiveMes.common.response.R;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2025-04-05 17:59:04
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/system/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -40,10 +41,17 @@ public class UserController {
         return R.successWithoutData();
     }
 
-    @PostMapping("/switch")
+    @PostMapping("/switchStatus")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
     public R<?> switchUserStatus(@RequestBody SwitchUserStatusRequestDto dto) {
         userService.switchUserStatus(dto);
+        return R.successWithoutData();
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:add')")
+    public R<?> addUser(@RequestBody AddUserRequestDto dto) {
+        userService.addUser(dto);
         return R.successWithoutData();
     }
 }

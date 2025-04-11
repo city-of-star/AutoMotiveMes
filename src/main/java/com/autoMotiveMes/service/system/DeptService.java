@@ -11,5 +11,7 @@ import java.util.List;
  * @date 2025-04-05 18:18:37
  */
 public interface DeptService {
+
+    // 获取部门树状结构
     List<SysDeptTreeNode> getDeptTree();
 }
