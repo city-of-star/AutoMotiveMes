@@ -61,17 +61,136 @@ const asyncRoutes = [
     ]
   },
   {
-    path: '/equipment',
-    meta: { title: '设备监控', icon: 'ComputerDesktopIcon' },
+    path: '/production',
+    meta: { permissions: 'production:monitor', title: '生产监控', icon: 'BuildingOfficeIcon' },
     children: [
       {
-        path: '/equipment/manage',
-        name: 'equipment-manage',
-        component: () => import('@/views/equipment/Manage.vue'),
-        meta: { permissions: 'equipment:manage', title: '设备管理', icon: 'WrenchScrewdriverIcon' },
+        path: '/production/real-time',
+        name: 'real-time-monitor',
+        component: () => import('@/views/production/real-time/Index.vue'),
+        meta: {
+          permissions: 'production:monitor:real-time',
+          title: '实时监控',
+          icon: 'ChartBarIcon',
+          keepAlive: false
+        },
       },
+      {
+        path: '/production/history',
+        name: 'history-query',
+        component: () => import('@/views/production/history/Index.vue'),
+        meta: {
+          permissions: 'production:monitor:history',
+          title: '历史查询',
+          icon: 'ClockIcon'
+        },
+      }
     ]
   },
+  {
+    path: '/scheduling',
+    meta: { permissions: 'scheduling:manage', title: '生产排程', icon: 'CalendarIcon' },
+    children: [
+      {
+        path: '/scheduling/orders',
+        name: 'work-order',
+        component: () => import('@/views/scheduling/orders/Index.vue'),
+        meta: {
+          permissions: 'scheduling:order:manage',
+          title: '工单管理',
+          icon: 'ClipboardDocumentListIcon'
+        },
+      },
+      {
+        path: '/scheduling/plan',
+        name: 'scheduling-plan',
+        component: () => import('@/views/scheduling/plan/Index.vue'),
+        meta: {
+          permissions: 'scheduling:plan:manage',
+          title: '排程计划',
+          icon: 'TableCellsIcon'
+        },
+      }
+    ]
+  },
+  {
+    path: '/equipment',
+    meta: { permissions: 'equipment:manage', title: '设备管理', icon: 'CpuChipIcon' },
+    children: [
+      {
+        path: '/equipment/status',
+        name: 'equipment-status',
+        component: () => import('@/views/equipment/status/Index.vue'),
+        meta: {
+          permissions: 'equipment:status:view',
+          title: '设备状态',
+          icon: 'PowerIcon'
+        },
+      },
+      {
+        path: '/equipment/maintenance',
+        name: 'equipment-maintenance',
+        component: () => import('@/views/equipment/maintenance/Index.vue'),
+        meta: {
+          permissions: 'equipment:maintenance:manage',
+          title: '维护记录',
+          icon: 'WrenchScrewdriverIcon'
+        },
+      }
+    ]
+  },
+  {
+    path: '/alarm',
+    meta: { permissions: 'alarm:manage', title: '报警中心', icon: 'BellAlertIcon' },
+    children: [
+      {
+        path: '/alarm/current',
+        name: 'current-alarm',
+        component: () => import('@/views/alarm/current/Index.vue'),
+        meta: {
+          permissions: 'alarm:current:view',
+          title: '实时报警',
+          icon: 'ExclamationTriangleIcon'
+        },
+      },
+      {
+        path: '/alarm/history',
+        name: 'alarm-history',
+        component: () => import('@/views/alarm/history/Index.vue'),
+        meta: {
+          permissions: 'alarm:history:view',
+          title: '报警历史',
+          icon: 'ArchiveBoxIcon'
+        },
+      }
+    ]
+  },
+  {
+    path: '/report',
+    meta: { permissions: 'report:view', title: '生产报表', icon: 'DocumentChartBarIcon' },
+    children: [
+      {
+        path: '/report/daily',
+        name: 'daily-report',
+        component: () => import('@/views/report/daily/Index.vue'),
+        meta: {
+          permissions: 'report:daily:view',
+          title: '生产日报',
+          icon: 'SunIcon'
+        },
+      },
+      {
+        path: '/report/quality',
+        name: 'quality-report',
+        component: () => import('@/views/report/quality/Index.vue'),
+        meta: {
+          permissions: 'report:quality:view',
+          title: '质量分析',
+          icon: 'ChartPieIcon'
+        },
+      }
+    ]
+  }
 ]
 
 const whiteList = ['/login', '/register', '/404'];  // 手动定义白名单路径
@@ -103,9 +222,8 @@ router.beforeEach(async (to, from, next) => {
         await store.dispatch('user/getUserRoleAndPermission')
 
         // 重新生成动态路由
-        const roles = store.state.user.roles
         const permissions = store.state.user.permissions
-        const accessedRoutes = filterRoutes(asyncRoutes, roles, permissions)
+        const accessedRoutes = filterRoutes(asyncRoutes, permissions)
 
         // 添加首页路由
         const homeRoute = routes.find(route => route.name === 'home')
@@ -143,15 +261,31 @@ router.beforeEach(async (to, from, next) => {
 })
 
 // 权限过滤函数
-function filterRoutes(routes, roles, permissions) {
-  return routes.filter(route => {
-    if (route.meta) {
-      return route.meta.permissions
-          ? permissions.some(p => route.meta.permissions.includes(p))
-          : true
-    }
-    return true
-  })
+function filterRoutes(routes, permissions) {
+  return routes
+      .map(route => ({
+        ...route,
+        children: route.children ? [...route.children] : undefined,
+      }))
+      .filter(route => {
+        // 检查当前路由权限
+        const hasPermission = route.meta?.permissions
+            ? permissions.some(p => route.meta.permissions.includes(p))
+            : true
+
+        // 递归处理子路由
+        if (route.children) {
+          const filteredChildren = filterRoutes(route.children, permissions)
+          route.children = filteredChildren
+
+          // 如果子路由全部被过滤，则父路由也不保留
+          if (filteredChildren.length === 0) {
+            return false
+          }
+        }
+
+        return hasPermission
+      })
 }
 
 export default router

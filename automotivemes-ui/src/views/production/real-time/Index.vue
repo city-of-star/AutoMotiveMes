@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>这里是物料追踪页面</div>
+    实时监控
   </div>
 </template>
 

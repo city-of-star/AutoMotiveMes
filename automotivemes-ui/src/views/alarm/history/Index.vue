@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>这里是生产报表分析页面</div>
+    报警历史
   </div>
 </template>
 

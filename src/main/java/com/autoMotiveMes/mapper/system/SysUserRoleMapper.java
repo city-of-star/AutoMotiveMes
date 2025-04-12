@@ -2,7 +2,9 @@ package com.autoMotiveMes.mapper.system;
 
 import com.autoMotiveMes.entity.system.SysUserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 实现功能【用户角色关联表 mapper】
@@ -12,4 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
+    @Delete("delete from auto_motive_mes.sys_user_role where user_id = #{userId}")
+    void deleteByUserId(@Param("userId") Long userId);
 }

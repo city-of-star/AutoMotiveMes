@@ -89,7 +89,9 @@ CREATE TABLE sys_role_permission (
 INSERT INTO sys_role (role_code, role_name, description) VALUES
     ('SUPER_ADMIN', '超级管理员', '拥有系统所有权限(系统初始化的唯一角色)'),
     ('ADMIN', '管理员', '拥有系统所有权限'),
-    ('EQUIP_MANAGE', '设备管理员', '拥有设备监控与维护权限');
+    ('PRODUCTION_STAFF', '生产人员', '生产车间操作人员'),
+    ('MAINTENANCE_STAFF', '设备维护', '设备维护人员'),
+    ('QUALITY_STAFF', '质检人员', '质量检验人员');
 
 -- 插入权限数据
 INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, component, api_path, method) VALUES
@@ -104,7 +106,6 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:user:list', '查询用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/list', 'GET'),
     ('system:user:import', '导入用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/import', 'POST'),
     ('system:user:export', '导出用户', 'BUTTON', 2, NULL, NULL, '/api/system/user/export', 'GET'),
-
 
     -- 角色管理模块
     ('system:role:manage', '角色管理', 'MENU', 1, '/system/role', '/Index.vue', '/api/system/role', NULL),  -- 9
@@ -130,53 +131,102 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('system:post:list', '查询岗位', 'BUTTON', 21, NULL, NULL, '/api/system/post/list', 'GET'),
     ('system:post:export', '导出岗位', 'BUTTON', 21, NULL, NULL, '/api/system/post/export', 'GET'),
 
-    -- 设备监控
-    ('equipment:manage', '设备管理与维护', 'MENU', 0, '/equipment/manage', 'equip/manage', '/api/equipment', NULL),  -- 27
-    ('equipment:add', '注册设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/add', 'POST'),
-    ('equipment:delete', '移除设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/delete', 'DELETE'),
-    ('equipment:update', '修改设备信息', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/update', 'PUT'),
-    ('equipment:list', '查询设备', 'BUTTON', 27, NULL, NULL, '/api/equipment/monitor/list', 'GET');
+    -- 生产监控模块
+    ('production:monitor', '生产监控', 'MENU', 0, '/production', 'Layout', '/api/production', NULL), -- 27
+    ('production:monitor:real-time', '实时监控', 'MENU', 27, 'real-time', '@/views/production/real-time/Index.vue', '/api/production/realtime', 'GET'), -- 28
+    ('production:monitor:history', '历史查询', 'MENU', 27, 'history', '@/views/production/history/Index.vue', '/api/production/history', 'GET'), -- 29
+
+    -- 生产排程模块
+    ('scheduling:manage', '生产排程', 'MENU', 0, '/scheduling', 'Layout', '/api/scheduling', NULL), -- 30
+    ('scheduling:order:manage', '工单管理', 'MENU', 30, 'orders', '@/views/scheduling/orders/Index.vue', '/api/scheduling/orders', 'GET'), -- 31
+    ('scheduling:plan:manage', '排程计划', 'MENU', 30, 'plan', '@/views/scheduling/plan/Index.vue', '/api/scheduling/plan', 'GET'), -- 32
+
+    -- 设备管理模块
+    ('equipment:manage', '设备管理', 'MENU', 0, '/equipment', 'Layout', '/api/equipment', NULL), -- 33
+    ('equipment:status:view', '设备状态', 'MENU', 33, 'status', '@/views/equipment/status/Index.vue', '/api/equipment/status', 'GET'), -- 34
+    ('equipment:maintenance:manage', '维护记录', 'MENU', 33, 'maintenance', '@/views/equipment/maintenance/Index.vue', '/api/equipment/maintenance', 'GET'), -- 35
+
+    -- 报警中心模块
+    ('alarm:manage', '报警中心', 'MENU', 0, '/alarm', 'Layout', '/api/alarm', NULL), -- 36
+    ('alarm:current:view', '实时报警', 'MENU', 36, 'current', '@/views/alarm/current/Index.vue', '/api/alarm/current', 'GET'), -- 37
+    ('alarm:history:view', '报警历史', 'MENU', 36, 'history', '@/views/alarm/history/Index.vue', '/api/alarm/history', 'GET'), -- 38
+
+    -- 生产报表模块
+    ('report:view', '生产报表', 'MENU', 0, '/report', 'Layout', '/api/report', NULL), -- 39
+    ('report:daily:view', '生产日报', 'MENU', 39, 'daily', '@/views/report/daily/Index.vue', '/api/report/daily', 'GET'), -- 40
+    ('report:quality:view', '质量分析', 'MENU', 39, 'quality', '@/views/report/quality/Index.vue', '/api/report/quality', 'GET'); -- 41
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, dept_id, post_id, email, phone, status, account_locked, login_attempts, last_login) VALUES
+    -- 超级管理员(1-3)
     ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', 1, 1, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 1, 2, '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00'),
-    ('ydf', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨东风', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('yjq', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨佳倩', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('yzz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨智喆', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('wjx', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '汪俊祥', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('ljb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李佳宝', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('wwb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王雯博', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('lkw', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘楷雯', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('cj', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '曹静', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('dty', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '董婷英', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
-    ('wcz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '吴成周', 2, 3, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00');
+    ('lhy', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李鸿羽', 1, 1, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 08:45:00'),
+    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 1, 1, '2825646787@qq.com', '13855605201',  1, false, 0, '2024-03-20 08:45:00'),
+
+    -- 管理员(4-13)
+    ('ydf', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨东风', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('yjq', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨佳倩', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('yzz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨智喆', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wjx', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '汪俊祥', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('ljb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李佳宝', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wwb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王雯博', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('lkw', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘楷雯', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('cj', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '曹静', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('dty', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '董婷英', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+    ('wcz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '吴成周', 1, 2, '2722562862@qq.com', '18255097030',  1, false, 0, '2024-03-20 09:25:00'),
+
+    -- 生产部用户(14-15)
+    ('worker1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '张强', 5, 7, 'worker1@factory.com', '13800138001', 1, 0, 0, '2024-03-20 09:25:00'),
+    ('worker2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李娜', 5, 7, 'worker2@factory.com', '13800138002', 1, 0, 0, '2024-03-20 09:25:00'),
+
+    -- 设备部用户(16-17)
+    ('engineer1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '陈磊', 3, 9, 'engineer1@factory.com', '13800138003', 1, 0, 0, '2024-03-20 09:25:00'),
+    ('engineer2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王芳', 3, 9, 'engineer2@factory.com', '13800138004', 1, 0, 0, '2024-03-20 09:25:00'),
+
+    -- 质量部用户(18-19)
+    ('inspector1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '赵敏', 4, 11, 'inspector1@factory.com', '13800138005', 1, 0, 0, '2024-03-20 09:25:00'),
+    ('inspector2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '周杰', 4, 11, 'inspector2@factory.com', '13800138006', 1, 0, 0, '2024-03-20 09:25:00');
 
 -- 插入部门
 INSERT INTO sys_dept (dept_name, parent_id, order_num, status, leader_id) VALUES
-    ('总部', null, 1, 1, 1),     -- 顶级部门，负责人为admin
-    ('设备管理部', 1, 2, 1, 2);   -- 子部门，负责人为lqh
+    ('总部', null, 1, 1, 1),  -- 顶级部门，负责人为admin
+    ('生产部', 1, 2, 1, 3),  -- dept_id=2 父部门是总部，负责人杨东风
+    ('设备部', 1, 3, 1, 5),  -- dept_id=3 父部门是总部，负责人杨智喆
+    ('质量部', 1, 4, 1, 7),  -- dept_id=4 父部门是总部，负责人李佳宝
+    ('生产一部', 2, 1, 1, 6),  -- dept_id=5 父部门是生产部，负责人汪俊祥
+    ('生产二部', 2, 2, 1, 9);  -- dept_id=6 父部门是生产部，负责人刘楷雯
 
 -- 插入岗位
 INSERT INTO sys_post (post_name, post_code, dept_id, order_num, status) VALUES
-    ('超级管理员', 'SUPER_ADMIN', 1, 1, 1),    -- 总部下的岗位
-    ('管理员', 'ADMIN', 1, 2, 1),    -- 总部下的岗位
-    ('设备运维', 'EQUIP_OPS', 2, 3, 1);     -- 设备管理部下的岗位
+    -- 总部岗位
+    ('超级管理员', 'SUPER_ADMIN', 1, 1, 1),
+    ('管理员', 'ADMIN', 1, 2, 1),
+
+    -- 生产部岗位
+    ('生产经理', 'PRODUCTION_MANAGER', 2, 1, 1),
+    ('车间主任', 'WORKSHOP_DIRECTOR', 5, 2, 1),
+    ('操作员', 'OPERATOR', 5, 3, 1),
+
+    -- 设备部岗位
+    ('设备主管', 'EQUIPMENT_LEADER', 3, 1, 1),
+    ('维护工程师', 'MAINTENANCE_ENGINEER', 3, 2, 1),
+
+    -- 质量部岗位
+    ('质量总监', 'QUALITY_DIRECTOR', 4, 1, 1),
+    ('检验员', 'INSPECTOR', 4, 2, 1);
 
 -- 用户角色关系
 INSERT INTO sys_user_role (user_id, role_id) VALUES
-    (1, 1),   -- admin -> SUPER_ADMIN
-    (2, 2),   -- lqh -> ADMIN
-    (3, 3),   -- ydf -> EQUIP_MANAGE
-    (4, 3),   -- yjq -> EQUIP_MANAGE
-    (5, 3),   -- yzz -> EQUIP_MANAGE
-    (6, 3),   -- wjx -> EQUIP_MANAGE
-    (7, 3),   -- ljb -> EQUIP_MANAGE
-    (8, 3),   -- wwb -> EQUIP_MANAGE
-    (9, 3),   -- lkw -> EQUIP_MANAGE
-    (10, 3),   -- cj -> EQUIP_MANAGE
-    (11, 3),   -- dty -> EQUIP_MANAGE
-    (12, 3);   -- wcz -> EQUIP_MANAGE
+    (1, 1),(2, 1),(3, 1),
+
+    (4, 2),(5, 2),(6, 2),(7, 2),(8, 2),
+    (9, 2),(10, 2),(11, 2),(12, 2),(13, 2),
+
+    (14, 3),(15, 3),
+
+    (16, 4),(17, 4),
+
+    (18, 5),(19, 5);
 
 -- 角色权限关系
 INSERT INTO sys_role_permission (role_id, perm_id) VALUES
@@ -187,7 +237,11 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (1, 13),(1, 14),(1, 15),(1, 16),
     (1, 17),(1, 18),(1, 19),(1, 20),
     (1, 21),(1, 22),(1, 23),(1, 24),
-    (1, 25),(1, 26),
+    (1, 25),(1, 26),(1, 27),(1, 28),
+    (1, 29),(1, 30),(1, 31),(1, 32),
+    (1, 33),(1, 34),(1, 35),(1, 36),
+    (1, 37),(1, 38),(1, 39),(1, 40),
+    (1, 41),
 
     -- 管理员
     (2, 1),(2, 2),(2, 3),(2, 4),
@@ -196,8 +250,19 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (2, 13),(2, 14),(2, 15),(2, 16),
     (2, 17),(2, 18),(2, 19),(2, 20),
     (2, 21),(2, 22),(2, 23),(2, 24),
-    (2, 25),(2, 26),
+    (2, 25),(2, 26),(2, 27),(2, 28),
+    (2, 29),(2, 30),(2, 31),(2, 32),
+    (2, 33),(2, 34),(2, 35),(2, 36),
+    (2, 37),(2, 38),(2, 39),(2, 40),
+    (2, 41),
 
-    -- 设备管理员
-    (3, 27),(3, 28),(3, 29),(3, 30),
-    (3, 31);
+    -- 生产人员
+    (3, 27),(3, 28),(3, 29),
+    (3, 30),(3, 31),(3, 32),
+
+    -- 设备维护人员
+    (4, 33),(4, 34),(4, 35),
+    (4, 36),(4, 37),(4, 38),
+
+    -- 质检人员
+    (5, 39),(5, 40),(5, 41);

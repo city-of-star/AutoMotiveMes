@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.autoMotiveMes.mapper.system.SysUserMapper">
-<select id="selectUserList" resultType="com.autoMotiveMes.entity.system.SysUser">
-    SELECT
-    u.user_id,
-    u.username,
-    u.real_name,
-    d.dept_name,
-    u.phone,
-    u.status,
-    u.create_time
-    FROM sys_user u
-    LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
-    <where>
-        <if test="query.deptName != null and query.deptName != ''">
-            AND d.dept_name LIKE CONCAT('%', #{query.deptName}, '%')
-        </if>
-        <if test="query.username != null and query.username != ''">
-            AND u.username LIKE CONCAT('%', #{query.username}, '%')
-        </if>
-        <if test="query.phone != null and query.phone != ''">
-            AND u.phone LIKE CONCAT('%', #{query.phone}, '%')
-        </if>
-        <if test="query.status != null">
-            AND u.status = #{query.status}
-        </if>
-        <if test="query.startTime != null and query.endTime != null and query.startTime != '' and query.endTime != ''">
-            AND u.create_time BETWEEN #{query.startTime} AND #{query.endTime}
-        </if>
-    </where>
-    ORDER BY u.create_time DESC
-</select>
+    <select id="selectUserList" resultType="com.autoMotiveMes.entity.system.SysUser">
+        SELECT
+        u.user_id,
+        u.username,
+        u.real_name,
+        d.dept_name,
+        u.phone,
+        u.status,
+        u.create_time
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        <where>
+            <if test="query.deptName != null and query.deptName != ''">
+                AND u.dept_id IN (
+                    SELECT dept_id FROM (
+                        WITH RECURSIVE dept_cte AS (
+                            SELECT dept_id, dept_name
+                            FROM sys_dept
+                            WHERE dept_name = #{query.deptName}
+                            UNION ALL
+                            SELECT d.dept_id, d.dept_name
+                            FROM sys_dept d
+                            INNER JOIN dept_cte c ON d.parent_id = c.dept_id
+                        )
+                        SELECT dept_id FROM dept_cte
+                    ) temp
+                )
+            </if>
+            <if test="query.username != null and query.username != ''">
+                AND u.username LIKE CONCAT('%', #{query.username}, '%')
+            </if>
+            <if test="query.phone != null and query.phone != ''">
+                AND u.phone LIKE CONCAT('%', #{query.phone}, '%')
+            </if>
+            <if test="query.status != null">
+                AND u.status = #{query.status}
+            </if>
+            <if test="query.startTime != null and query.endTime != null and query.startTime != '' and query.endTime != ''">
+                AND u.create_time BETWEEN #{query.startTime} AND #{query.endTime}
+            </if>
+        </where>
+        ORDER BY u.create_time DESC
+    </select>
 </mapper>

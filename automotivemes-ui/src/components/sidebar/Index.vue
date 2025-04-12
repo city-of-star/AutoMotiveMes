@@ -8,8 +8,9 @@
         :default-active="$route.path"
         class="el-menu-vertical-demo"
         :collapse="isCollapse"
-        router
+        :unique-opened="true"
         style="margin-top: 40px"
+        router
     >
       <template v-for="route in routes" :key="route.path">
         <!-- 有子路由的情况 -->
@@ -39,15 +40,26 @@ import { computed } from 'vue';
 import { useStore } from 'vuex'
 import {
   HomeIcon,
-  UserGroupIcon,
   Cog6ToothIcon,
+  UserGroupIcon,
+  IdentificationIcon,
   BuildingOffice2Icon,
   BriefcaseIcon,
-  ComputerDesktopIcon,
-  CpuChipIcon,
+  BuildingOfficeIcon,
   ChartBarIcon,
-  IdentificationIcon,
-  WrenchScrewdriverIcon
+  ClockIcon,
+  CalendarIcon,
+  ClipboardDocumentListIcon,
+  TableCellsIcon,
+  CpuChipIcon,
+  PowerIcon,
+  WrenchScrewdriverIcon,
+  BellAlertIcon,
+  ExclamationTriangleIcon,
+  ArchiveBoxIcon,
+  DocumentChartBarIcon,
+  SunIcon,
+  ChartPieIcon,
 } from '@heroicons/vue/24/outline'
 
 const store = useStore()
@@ -56,15 +68,26 @@ const routes = computed(() => store.state.user.routes)
 // 创建图标映射表
 const icons = {
   HomeIcon,
-  UserGroupIcon,
   Cog6ToothIcon,
+  UserGroupIcon,
+  IdentificationIcon,
   BuildingOffice2Icon,
   BriefcaseIcon,
-  ComputerDesktopIcon,
-  CpuChipIcon,
+  BuildingOfficeIcon,
   ChartBarIcon,
-  IdentificationIcon,
-  WrenchScrewdriverIcon
+  ClockIcon,
+  CalendarIcon,
+  ClipboardDocumentListIcon,
+  TableCellsIcon,
+  CpuChipIcon,
+  PowerIcon,
+  WrenchScrewdriverIcon,
+  BellAlertIcon,
+  ExclamationTriangleIcon,
+  ArchiveBoxIcon,
+  DocumentChartBarIcon,
+  SunIcon,
+  ChartPieIcon
 }
 
 // 获取图标

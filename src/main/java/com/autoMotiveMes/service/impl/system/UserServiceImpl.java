@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * 实现功能【用户管理服务实现类】
@@ -33,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     private final SysUserMapper userMapper;
     private final SysUserRoleMapper userRoleMapper;
+    private final SysUserRoleMapper UserRoleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUserByID(DeleteUserRequestDto dto) {
         try {
             for (Long userId : dto.getUserIds()) {
+                UserRoleMapper.deleteByUserId(userId);
                 userMapper.deleteById(userId);
             }
         } catch (Exception e) {

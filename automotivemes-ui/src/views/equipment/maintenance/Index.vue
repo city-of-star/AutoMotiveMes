@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>这里是生产计划页面</div>
+    维护记录
   </div>
 </template>
 

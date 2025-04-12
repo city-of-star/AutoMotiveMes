@@ -83,7 +83,7 @@
             :disabled="selectedRows.length === 0"
             @click="deleteUser()"
             plain
-        >删除
+        >删除</el-button>
         <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
         <el-button v-if="hasPermission('system:user:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
       </div>
@@ -251,10 +251,10 @@
     </el-form>
 
     <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="addDialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="submitAddUser">确定</el-button>
-    </span>
+      <span class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAddUser">确定</el-button>
+      </span>
     </template>
   </el-dialog>
 </template>
@@ -314,7 +314,7 @@ const deptData = ref([])
 const deptProps = {
   children: 'children',
   label: 'deptName',
-  value: 'deptName'
+  value: 'deptId'
 }
 
 // 全选计算属性
@@ -355,7 +355,7 @@ const addForm = ref({
 })
 
 // 表单验证规则
-const validatePassword = (value, callback) => {
+const validatePassword = (rule, value, callback) => {
   if (value !== addForm.value.password) {
     callback(new Error('两次输入的密码不一致'))
   } else {
