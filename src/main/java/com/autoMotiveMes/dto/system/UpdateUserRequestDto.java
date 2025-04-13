@@ -10,5 +10,12 @@ import lombok.Data;
  */
 @Data
 public class UpdateUserRequestDto {
-
+    private String userId;
+    private String realName;
+    private Integer roleId;
+    private String phone;
+    private String email;
+    private Long deptId;
+    private Long postId;
+    private Integer status;
 }

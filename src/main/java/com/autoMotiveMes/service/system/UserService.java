@@ -1,9 +1,6 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.system.AddUserRequestDto;
-import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
-import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
+import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -25,4 +22,10 @@ public interface UserService {
 
     // 新增用户
     void addUser(AddUserRequestDto dto);
+
+    // 修改用户
+    void updateUser(UpdateUserRequestDto dto);
+
+    // 通过userId获取用户信息
+    GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto);
 }

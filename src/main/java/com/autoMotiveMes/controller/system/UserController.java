@@ -1,10 +1,7 @@
 package com.autoMotiveMes.controller.system;
 
-import com.autoMotiveMes.dto.system.AddUserRequestDto;
-import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -53,5 +50,18 @@ public class UserController {
     public R<?> addUser(@RequestBody AddUserRequestDto dto) {
         userService.addUser(dto);
         return R.successWithoutData();
+    }
+
+    @PostMapping("/update")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:update')")
+    public R<?> updateUser(@RequestBody UpdateUserRequestDto dto) {
+        userService.updateUser(dto);
+        return R.successWithoutData();
+    }
+
+    @PostMapping("/getInfo")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
+    public R<?> getUserInfo(@RequestBody GetUserInfoRequestDto dto) {
+        return R.success(userService.getUserInfo(dto));
     }
 }

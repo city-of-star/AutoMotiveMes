@@ -68,20 +68,25 @@
       <div class="btn-container">
         <el-button
             v-if="hasPermission('system:user:add')"
+            @click="openAddDialog"
             :icon="Plus"
             :color="theme_color"
             plain
-            @click="openAddDialog"
-        >
-          新增
-        </el-button>
-        <el-button v-if="hasPermission('system:user:update')"  :icon="Edit" :color=btn_update_color plain>修改</el-button>
+        >新增</el-button>
+        <el-button
+            v-if="hasPermission('system:user:update')"
+            @click="openEditDialog"
+            :color=btn_update_color
+            :icon="Edit"
+            :disabled="selectedRows.length === 0"
+            plain
+        >修改</el-button>
         <el-button
             v-if="hasPermission('system:user:delete')"
+            @click="deleteUser()"
             :icon="Delete"
             :color=btn_delete_color
             :disabled="selectedRows.length === 0"
-            @click="deleteUser()"
             plain
         >删除</el-button>
         <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
@@ -255,6 +260,94 @@
         <el-button @click="addDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitAddUser">确定</el-button>
       </span>
+    </template>
+  </el-dialog>
+
+  <!-- 修改用户对话框 -->
+  <el-dialog
+      v-model="editDialogVisible"
+      title="修改用户"
+      width="800px"
+  >
+    <el-form
+        ref="editFormRef"
+        :model="editForm"
+        :rules="editFormRules"
+        label-width="100px"
+        label-position="right"
+        status-icon
+    >
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="真实姓名" prop="realName">
+            <el-input v-model="editForm.realName" placeholder="请输入真实姓名" />
+          </el-form-item>
+          <el-form-item label="所属部门" prop="deptId">
+            <el-tree-select
+                v-model="editForm.deptId"
+                :data="deptData"
+                :props="deptProps"
+                check-strictly
+                placeholder="请选择部门"
+            />
+          </el-form-item>
+          <el-form-item label="岗位" prop="postId">
+            <el-select
+                v-model="editForm.postId"
+                placeholder="请选择岗位"
+                style="width: 100%"
+            >
+              <el-option
+                  v-for="post in postOptions"
+                  :key="post.postId"
+                  :label="post.postName"
+                  :value="post.postId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="角色" prop="roleId">
+            <el-select
+                v-model="editForm.roleId"
+                placeholder="请选择角色"
+                style="width: 100%"
+            >
+              <el-option
+                  v-for="role in roleOptions"
+                  :key="role.roleId"
+                  :label="role.roleName"
+                  :value="role.roleId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="状态" prop="status">
+            <el-radio-group v-model="editForm.status">
+              <el-radio :value="1">启用</el-radio>
+              <el-radio :value="0">禁用</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="手机号码" prop="phone">
+            <el-input v-model="editForm.phone" placeholder="请输入手机号码" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="editForm.email" placeholder="请输入邮箱" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+
+    <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="editDialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="submitEditUser">确定</el-button>
+    </span>
     </template>
   </el-dialog>
 </template>
@@ -453,6 +546,86 @@ const submitAddUser = async () => {
     await search() // 刷新列表
   } catch (error) {
     console.error('新增用户失败:', error)
+  }
+}
+
+// 修改相关状态
+const editDialogVisible = ref(false)
+const editFormRef = ref(null)
+const editForm = ref({
+  userId: null,
+  realName: '',
+  deptId: null,
+  postId: null,
+  roleId: null,
+  phone: '',
+  email: '',
+  status: 1
+})
+
+// 表单验证规则（去掉了密码相关校验）
+const editFormRules = {
+  realName: [
+    { required: true, message: '请输入真实姓名', trigger: 'blur' }
+  ],
+  deptId: [
+    { required: true, message: '请选择部门', trigger: 'change' }
+  ],
+  postId: [
+    { required: true, message: '请选择岗位', trigger: 'change' }
+  ],
+  roleId: [
+    { required: true, message: '请选择角色', trigger: 'change' }
+  ],
+  phone: [
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+  ],
+  email: [
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+  ]
+}
+
+// 打开修改对话框
+const openEditDialog = async () => {
+  if (selectedRows.value.length !== 1) {
+    ElMessage.warning('请选择一条记录进行修改')
+    return
+  }
+  try {
+    // 获取用户详细信息
+    const response = await axios.post('/system/user/getInfo', {
+      userId: selectedRows.value[0]
+    })
+    // 填充表单数据
+    editForm.value = {
+      userId: response.userId,
+      realName: response.realName,
+      deptId: response.deptId,
+      postId: response.postId,
+      roleId: response.roleId,
+      phone: response.phone,
+      email: response.email,
+      status: response.status
+    }
+    await fetchOptions()
+    editDialogVisible.value = true
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  }
+}
+
+// 提交修改
+const submitEditUser = async () => {
+  try {
+    await editFormRef.value.validate()
+
+    await axios.post('/system/user/update', editForm.value)
+
+    ElMessage.success('修改用户成功')
+    editDialogVisible.value = false
+    await search() // 刷新列表
+  } catch (error) {
+    console.error('修改用户失败:', error)
   }
 }
 

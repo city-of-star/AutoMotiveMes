@@ -3,6 +3,7 @@ package com.autoMotiveMes.controller.auth;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.dto.auth.*;
 import com.autoMotiveMes.service.auth.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,11 @@ public class AuthController {
     public R<UserRoleAndPermissionResponseDto> getRoleAndPermission() {
         UserRoleAndPermissionResponseDto userRoleAndPermissionResponseDto = authService.getUserRoleAndPermission();
         return R.success(userRoleAndPermissionResponseDto);
+    }
+
+    @PostMapping("/isValidToken")
+    public R<?> isValidToken(HttpServletRequest request) {
+        authService.isValidToken(request);
+        return R.successWithoutData();
     }
 }

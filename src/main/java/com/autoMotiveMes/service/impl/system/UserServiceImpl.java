@@ -1,11 +1,8 @@
 package com.autoMotiveMes.service.impl.system;
 
 import com.autoMotiveMes.common.exception.BadRequestException;
-import com.autoMotiveMes.dto.system.AddUserRequestDto;
-import com.autoMotiveMes.dto.system.DeleteUserRequestDto;
-import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.common.exception.GlobalException;
-import com.autoMotiveMes.dto.system.SwitchUserStatusRequestDto;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.entity.system.SysUserRole;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
@@ -14,6 +11,8 @@ import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
     private final SysUserMapper userMapper;
     private final SysUserRoleMapper userRoleMapper;
-    private final SysUserRoleMapper UserRoleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -47,7 +45,6 @@ public class UserServiceImpl implements UserService {
 
             res = userMapper.selectUserList(page, dto);
         } catch (Exception e) {
-            log.error("查询用户列表出错: {}", e.getMessage());
             throw new GlobalException("查询用户列表出错 || " + e.getMessage());
         }
         return res;
@@ -57,11 +54,10 @@ public class UserServiceImpl implements UserService {
     public void deleteUserByID(DeleteUserRequestDto dto) {
         try {
             for (Long userId : dto.getUserIds()) {
-                UserRoleMapper.deleteByUserId(userId);
+                userRoleMapper.deleteByUserId(userId);
                 userMapper.deleteById(userId);
             }
         } catch (Exception e) {
-            log.error("删除用户出错: {}", e.getMessage());
             throw new GlobalException("删除用户出错 || " + e.getMessage());
         }
     }
@@ -81,7 +77,6 @@ public class UserServiceImpl implements UserService {
             }
             userMapper.updateById(user);
         } catch (Exception e) {
-            log.error("切换用户状态出错: {}", e.getMessage());
             throw new GlobalException("切换用户状态出错 || " + e.getMessage());
         }
     }
@@ -99,6 +94,7 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
+            // 存储用户信息
             SysUser user = new SysUser();
             user.setUsername(dto.getUsername());
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -113,12 +109,71 @@ public class UserServiceImpl implements UserService {
             user.setPostId(dto.getPostId());
             user.setCreateTime(new Date());
             userMapper.insert(user);
-            Long userId = userMapper.selectByUsername(user.getUsername()).getUserId();  // 获取userId
+
+            // 存储用户角色信息
+            Long userId = userMapper.selectByUsername(dto.getUsername()).getUserId();  // 获取userId
             SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
             userRoleMapper.insert(userRole);  // 添加用户角色关系
         } catch (Exception e) {
-            log.error("用户注册失败: {}", e.getMessage());
             throw new GlobalException("注册失败 || " +  e.getMessage());
         }
+    }
+
+    @Override
+    public void updateUser(UpdateUserRequestDto dto) {
+        SysUser user = userMapper.selectById(dto.getUserId());  // 原本的用户信息
+        SysUser toUserByPhone = userMapper.selectByPhone(dto.getPhone());  // 用户改手机号码，查询是否已有该手机号码
+        if (toUserByPhone != null && !toUserByPhone.getPhone().equals(user.getPhone())) {
+            throw new BadRequestException("手机号码已存在");
+        }
+        SysUser toUserByEmail = userMapper.selectByEmail(dto.getEmail());  // 用户改邮箱，查询是否已有该邮箱
+        if (toUserByEmail != null && !toUserByEmail.getEmail().equals(user.getEmail())) {
+            throw new BadRequestException("邮箱已存在");
+        }
+
+        try {
+            Long userId = user.getUserId();  // 获取userId
+
+            // 修改用户信息
+            SysUser newUser = new SysUser();
+            newUser.setUserId(userId);
+            newUser.setPhone(dto.getPhone());
+            newUser.setEmail(dto.getEmail());
+            newUser.setRealName(dto.getRealName());
+            newUser.setStatus(dto.getStatus());
+            newUser.setDeptId(dto.getDeptId());
+            newUser.setPostId(dto.getPostId());
+            userMapper.updateById(newUser);
+
+            // 修改用户的角色信息
+            userRoleMapper.deleteByUserId(userId);  // 删除用户原本的角色
+            SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
+            userRoleMapper.insert(userRole);  // 添加新的用户角色关系
+        } catch (Exception e) {
+            throw new GlobalException("修改失败 || " +  e.getMessage());
+        }
+    }
+
+    @Override
+    public GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto) {
+
+        GetUserInfoResponseDto res = new GetUserInfoResponseDto();
+        try {
+            SysUser user = userMapper.selectById(dto.getUserId());
+            res.setUsername(user.getUsername());
+            res.setRealName(user.getRealName());
+            res.setHeadImg(user.getHeadImg());
+            res.setPhone(user.getPhone());
+            res.setEmail(user.getEmail());
+            res.setUserId(user.getUserId());
+            res.setDeptId(user.getDeptId());
+            res.setPostId(user.getPostId());
+            res.setStatus(user.getStatus());
+            SysUserRole userRole = userRoleMapper.selectByUserId(user.getUserId());
+            res.setRoleId(userRole.getRoleId());
+        } catch (Exception e) {
+            throw new GlobalException("获取用户信息出错" + e.getMessage());
+        }
+        return res;
     }
 }

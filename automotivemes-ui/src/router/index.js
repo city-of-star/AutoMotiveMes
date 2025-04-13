@@ -214,9 +214,18 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  // 已登录但用户信息未加载
+  // 验证token是否有效
+  try {
+    await store.dispatch('user/isValidToken')
+  } catch (error) {
+    await store.dispatch('user/logout')
+    next(`/login?redirect=${to.path}`)
+    return
+  }
+
+  // 已登录但路由未加载
   if (token) {
-    if (!store.state.user.roles?.length) {
+    if (!store.state.user.routes?.length) {
       try {
         // 重新获取用户权限
         await store.dispatch('user/getUserRoleAndPermission')

@@ -55,16 +55,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        if (token.isEmpty()) {
-            log.error("Token为空");
-            throw new AuthException("token为空");
-        }
 
         try {
             // 验证Token有效性
-            if (!jwtUtils.validateToken(token)) {
-                throw new AuthException("token无效或已过期");
-            }
+            jwtUtils.validateToken(token);
 
             // 从Token中解析用户名并加载用户信息
             String username = jwtUtils.getUsernameFromToken(token);

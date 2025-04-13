@@ -9,6 +9,7 @@ import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
 import com.autoMotiveMes.service.auth.AuthService;
 import com.autoMotiveMes.utils.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -77,20 +78,20 @@ public class AuthServiceImpl implements AuthService {
         if (user == null || !passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
         }
+        if (user.getStatus() == 0) {
+            throw new AuthException("抱歉，您的账号已停用");
+        }
+        if (user.getAccountLocked() == 0) {
+            throw new AuthException("抱歉，您的账号已锁定");
+        }
 
         try {
-            // 查询用户的角色和权限
-            List<String> roles = userMapper.selectUserRoles(user.getUsername());
-            List<String> permissions = userMapper.selectUserPermissions(user.getUsername());
-
             // 生成 token
             String token = jwtUtils.generateToken(loginRequestDto.getUsername());
 
             // 创建响应对象并设置角色和权限
             AuthResponseDto response = new AuthResponseDto();
             response.setToken(token);
-            response.setRoles(roles.toArray(new String[0]));
-            response.setPermissions(permissions.toArray(new String[0]));
 
             // 更新用户最后登录时间
             Date date = new Date();
@@ -140,5 +141,16 @@ public class AuthServiceImpl implements AuthService {
             log.warn("用户 {} 尝试获取个人角色和权限，但是用户未认证或认证失败", authentication.getName());
         }
         throw new AuthException("登录信息过期，请重新登录");
+    }
+
+    @Override
+    public void isValidToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            throw new AuthException("无效的认证头");
+        }
+
+        String token = header.substring(7);
+        jwtUtils.validateToken(token);
     }
 }

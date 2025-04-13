@@ -44,7 +44,11 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     @Select("SELECT * FROM sys_user WHERE phone = #{phone}")
     SysUser selectByPhone(@Param("phone") String phone);
 
-    @Select("SELECT real_name, email, phone FROM sys_user WHERE username = #{username}")
+    @Select("SELECT u.user_id, u.username, u.real_name, r.role_id, u.dept_id, u.post_id, u.head_img, u.email, u.phone, u.status " +
+            "FROM sys_user u " +
+            "JOIN sys_user_role ur ON u.user_id = ur.user_id " +
+            "JOIN sys_role r ON ur.role_id = r.role_id " +
+            "WHERE u.username = #{username}")
     UserInfoResponseDto getUserInfoByUsername(@Param("username") String username);
 
     Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListRequestDto dto);
