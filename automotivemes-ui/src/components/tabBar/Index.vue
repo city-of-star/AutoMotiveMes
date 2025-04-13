@@ -117,12 +117,7 @@ const showContextMenu = (e, index) => {
 const refreshCurrent = () => {
   const currentTab = tabs.value[contextMenuIndex.value]
   router.replace({ path: '/' }).then(() => {
-
     router.push(currentTab.path)
-
-    // router.push(currentTab.path).then(() => {
-    //   window.location.reload();  // 刷新页面
-    // });
   })
   contextMenuVisible.value = false
 }
@@ -133,14 +128,6 @@ const closeCurrent = () => {
   contextMenuVisible.value = false
 }
 
-// 关闭其他
-// const closeOthers = () => {
-//   store.commit('tabBar/SET_TABS', [
-//     tabs.value[contextMenuIndex.value]
-//   ])
-//   contextMenuVisible.value = false
-// }
-
 const closeOthers = () => {
   const currentTab = tabs.value[contextMenuIndex.value]
   store.commit('tabBar/SET_TABS', [
@@ -149,13 +136,6 @@ const closeOthers = () => {
   ])
   contextMenuVisible.value = false
 }
-
-// 关闭全部
-// const closeAll = () => {
-//   store.commit('tabBar/SET_TABS', [])
-//   router.push('/')
-//   contextMenuVisible.value = false
-// }
 
 const closeAll = () => {
   const fixedTabs = tabs.value.filter(tab => tab.fixed)

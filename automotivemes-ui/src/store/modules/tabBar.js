@@ -12,6 +12,9 @@ export default {
         },
         SET_TABS(state, tabs) {
             state.tabs = tabs
+        },
+        CLEAR_TABS(state) {
+            state.tabs = []
         }
     }
 }

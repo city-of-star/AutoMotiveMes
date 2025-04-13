@@ -83,14 +83,26 @@
         >修改</el-button>
         <el-button
             v-if="hasPermission('system:user:delete')"
-            @click="deleteUser()"
+            @click="deleteUser"
             :icon="Delete"
             :color=btn_delete_color
             :disabled="selectedRows.length === 0"
             plain
         >删除</el-button>
-        <el-button v-if="hasPermission('system:user:import')"  :icon="Download" :color=btn_import_color plain>导入</el-button>
-        <el-button v-if="hasPermission('system:user:export')"  :icon="Upload" :color=btn_export_color plain>导出</el-button>
+        <el-button
+            v-if="hasPermission('system:user:import')"
+            @click="importUsers"
+            :icon="Download"
+            :color=btn_import_color
+            plain
+        >导入</el-button>
+        <el-button
+            v-if="hasPermission('system:user:export')"
+            @click="exportUsers"
+            :icon="Upload"
+            :color=btn_export_color
+            plain
+        >导出</el-button>
       </div>
 
       <el-table v-loading="loading" class="table-container" :data="tableData">
@@ -742,6 +754,16 @@ const handleSizeChange = (val) => {
   pageSize.value = val
   currentPage.value = 1 // 每页条数改变时重置到第一页
   search()
+}
+
+// 导入按钮
+const importUsers = async () => {
+  ElMessage.error('尚未实现此功能')
+}
+
+// 导出按钮
+const exportUsers = async () => {
+  ElMessage.error('尚未实现此功能')
 }
 
 // 初始化加载数据

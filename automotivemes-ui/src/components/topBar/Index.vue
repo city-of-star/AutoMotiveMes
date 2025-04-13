@@ -33,9 +33,9 @@
 
 <script setup>
 import { Expand, Fold, FullScreen } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
+import router from "@/router";
 
 const store = useStore()
 const currentTime = ref('')  // 当前时间
@@ -89,7 +89,7 @@ const handleCommand = (command) => {
       store.dispatch('user/logout')
       break
     case 'profile':
-      ElMessage.info('打开个人中心')
+      router.push({ name: 'info' });
       break
   }
 }

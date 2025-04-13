@@ -99,6 +99,7 @@ export default {
         },
         logout({ commit }) {
             commit('CLEAR_AUTH')
+            commit('tabBar/CLEAR_TABS', null, { root: true });
             router.push('/login')
         }
     },

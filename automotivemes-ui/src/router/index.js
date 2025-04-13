@@ -12,13 +12,13 @@ const routes  = [
     path: '/login',
     name: 'login',
     meta: { title: '登录' },
-    component: () => import('@/views/auth/Index.vue'),
+    component: () => import('@/views/auth/Login.vue'),
   },
   {
     path: '/register',
     name: 'register',
     meta: { title: '注册' },
-    component: () => import('@/views/auth/Index.vue'),
+    component: () => import('@/views/auth/Login.vue'),
   },
   {
     path: '/404',
@@ -26,6 +26,12 @@ const routes  = [
     meta: { title: '404' },
     component: () => import('@/views/exception/404.vue')
   },
+  {
+    path: '/info',
+    name: 'info',
+    meta: { title: '个人信息' },
+    component: () => import('@/views/auth/UserInfo.vue')
+  }
 ]
 
 // 异步路由（需要权限控制）
