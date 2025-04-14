@@ -1,6 +1,6 @@
 <template>
   <div class="industrial-login-container">
-    <canvas id="dataParticles"></canvas>
+    <canvas ref="canvasRef" id="dataParticles"></canvas>
 
     <div class="login-card">
       <div class="system-brand">
@@ -55,14 +55,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, nextTick, onUnmounted} from 'vue'
 import { User, Lock, ArrowRight, Warning } from '@element-plus/icons-vue'
 import {ElMessage} from "element-plus";
 import {useStore} from "vuex";
 
+const canvasRef = ref(null)
+
 // 动态粒子背景
 const initParticles = () => {
-  const canvas = document.getElementById('dataParticles')
+  const canvas = canvasRef.value  // 通过引用获取canvas
+  if (!canvas) {  // 确保canvas存在
+    console.error('Canvas element not found')
+    return
+  }
   const ctx = canvas.getContext('2d')
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
@@ -108,9 +114,21 @@ const initParticles = () => {
   animate()
 }
 
+const handleResize = () => {
+  initParticles()  // 窗口调整时重新初始化
+}
+
+
 onMounted(() => {
-  initParticles()
-  window.addEventListener('resize', initParticles)
+  nextTick(() => {  // 确保DOM更新完成
+    initParticles()
+    window.addEventListener('resize', handleResize)
+  })
+})
+
+// 组件销毁时移除事件监听
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 const store = useStore()

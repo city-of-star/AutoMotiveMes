@@ -118,11 +118,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="userId" label="用户编号" width="80" align="center" header-align="center" />
-        <el-table-column prop="username" label="用户名称" width="120" align="center" header-align="center" />
-        <el-table-column prop="realName" label="真实姓名" width="120" align="center" header-align="center" />
-        <el-table-column prop="deptName" label="部门" width="200" align="center" header-align="center" show-overflow-tooltip />
-        <el-table-column prop="phone" label="手机号码" width="150" align="center" header-align="center" />
-        <el-table-column prop="status" label="状态" width="120" align="center" header-align="center">
+        <el-table-column prop="username" label="用户名称" width="140" align="center" header-align="center" />
+        <el-table-column prop="realName" label="真实姓名" width="140" align="center" header-align="center" />
+        <el-table-column prop="deptName" label="部门" width="140" align="center" header-align="center" show-overflow-tooltip />
+        <el-table-column prop="phone" label="手机号码" width="180" align="center" header-align="center" />
+        <el-table-column prop="status" label="状态" width="140" align="center" header-align="center">
           <template #default="scope">
             <el-switch
                 :model-value="scope.row.status"
