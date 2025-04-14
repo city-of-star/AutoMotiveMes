@@ -3,11 +3,15 @@
     <div class="tabs-container">
       <div v-for="(tab, index) in tabs"
            :key="tab.path"
-           :class="['tab-item', { 'active': currentTabIndex === index }]"
+           :class="['tab-item', {
+             'active': currentTabIndex === index,
+             'fixed-tab': tab.fixed  // 固定标签类名
+           }]"
            @click="switchTab(tab, index)"
            @contextmenu.prevent="showContextMenu($event, index)">
         <span class="tab-title">{{ tab.meta?.title || tab.name }}</span>
-        <el-icon class="close-icon" @click.stop="closeTab(index)">
+        <!-- 添加 v-if 判断 -->
+        <el-icon v-if="!tab.fixed" class="close-icon" @click.stop="closeTab(index)">
           <Close />
         </el-icon>
       </div>
@@ -76,8 +80,17 @@ onMounted(() => {
 
 // 添加标签页
 const addTab = (route) => {
+  // 路由有效性验证
+  const routeExists = router.getRoutes().some(r => r.path === route.path)
+  if (!routeExists) return
+
   if (!route.meta?.noTab && !tabs.value.some(tab => tab.path === route.path)) {
-    store.commit('tabBar/ADD_TAB', route)
+    store.commit('tabBar/ADD_TAB', {
+      path: route.path,
+      name: route.name,
+      meta: route.meta,
+      fixed: false
+    })
   }
 }
 
@@ -189,6 +202,22 @@ document.addEventListener('click', () => {
   cursor: pointer;
   transition: background 0.3s;
   background: #f5f7fa;
+}
+
+.tab-item.fixed-tab {
+  min-width: 40px;  /* 更小的最小宽度 */
+  padding: 0 12px;  /* 更紧凑的内边距 */
+}
+
+.tab-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* 为固定标签添加右边距 */
+  .fixed-tab & {
+    margin-right: 8px;
+  }
 }
 
 .tab-item:hover {

@@ -11,19 +11,19 @@ const routes  = [
   {
     path: '/login',
     name: 'login',
-    meta: { title: '登录' },
+    meta: { title: '登录', noTab: true },
     component: () => import('@/views/auth/Login.vue'),
   },
   {
     path: '/register',
     name: 'register',
-    meta: { title: '注册' },
+    meta: { title: '注册', noTab: true },
     component: () => import('@/views/auth/Login.vue'),
   },
   {
     path: '/404',
     name: '404',
-    meta: { title: '404' },
+    meta: { title: '404', noTab: true },
     component: () => import('@/views/exception/404.vue')
   },
   {
@@ -258,8 +258,12 @@ router.beforeEach(async (to, from, next) => {
         store.commit('user/SET_ROUTES', accessedRoutes)
 
         // 添加通配符路由
-        if (!router.hasRoute('404')) {
-          router.addRoute({ path: '/:pathMatch(.*)*', redirect: '/404' })
+        router.addRoute({ path: '/:pathMatch(.*)*', redirect: '/404', name: 'catchAll' })
+
+        // 重新导航后检查路由是否存在
+        if (!to.matched.length) {
+          next('/404')
+          return
         }
 
         // 重新导航到目标路由
@@ -270,6 +274,11 @@ router.beforeEach(async (to, from, next) => {
         next(`/login?redirect=${to.path}`)
       }
     } else {
+      // 路由存在性检查
+      if (!to.matched.length) {
+        next('/404')
+        return
+      }
       next()
     }
   }
