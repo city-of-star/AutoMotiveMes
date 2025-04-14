@@ -1,5 +1,14 @@
 import {createRouter, createWebHistory} from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import store from "@/store";
+
+// 配置 NProgress()进度条
+NProgress.configure({
+  showSpinner: false,  // 隐藏加载小圆圈
+  easing: 'ease',
+  speed: 500
+})
 
 const routes  = [
   {
@@ -207,6 +216,9 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  // 开始加载进度条
+  NProgress.start()
+
   // 白名单直接放行
   if (whiteList.includes(to.path)) {
     next()
@@ -260,15 +272,10 @@ router.beforeEach(async (to, from, next) => {
         // 添加通配符路由
         router.addRoute({ path: '/:pathMatch(.*)*', redirect: '/404', name: 'catchAll' })
 
-        // 重新导航后检查路由是否存在
-        if (!to.matched.length) {
-          next('/404')
-          return
-        }
-
         // 重新导航到目标路由
         next({ ...to, replace: true })
       } catch (error) {
+        NProgress.done()  // 出现错误时也结束进度条
         // 获取信息失败则退出登录
         await store.dispatch('user/logout')
         next(`/login?redirect=${to.path}`)
@@ -282,6 +289,15 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
   }
+})
+
+router.afterEach(() => {
+  NProgress.done()  // 结束加载进度条
+})
+
+router.onError((error) => {
+  NProgress.done()  // 出现错误时也结束进度条
+  console.error('路由错误:', error)
 })
 
 // 权限过滤函数

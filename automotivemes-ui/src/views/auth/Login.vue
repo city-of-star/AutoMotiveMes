@@ -1,4 +1,3 @@
-vue
 <template>
   <div class="industrial-login-container">
     <canvas id="dataParticles"></canvas>
@@ -42,7 +41,7 @@ vue
             type="primary"
             native-type="submit"
             class="login-btn">
-          生产系统登录
+          登录
           <el-icon class="icon-right"><ArrowRight /></el-icon>
         </el-button>
       </el-form>
