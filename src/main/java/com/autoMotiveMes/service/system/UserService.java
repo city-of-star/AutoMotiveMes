@@ -26,6 +26,6 @@ public interface UserService {
     // 修改用户
     void updateUser(UpdateUserRequestDto dto);
 
-    // 通过userId获取用户信息
+    // 通过userId获取用户信息(用于修改用户信息时获取用户原本信息)
     GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto);
 }

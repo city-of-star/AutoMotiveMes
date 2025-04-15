@@ -66,7 +66,6 @@ public class AuthServiceImpl implements AuthService {
 
             log.info("用户 {} 注册成功", registerRequestDto.getUsername());
         } catch (Exception e) {
-            log.warn("用户 {} 注册失败 || {}", registerRequestDto.getUsername(), e.getMessage());
             throw new GlobalException("注册失败 || " + e.getMessage());
         }
     }
@@ -102,7 +101,6 @@ public class AuthServiceImpl implements AuthService {
 
             return response;
         } catch (Exception e) {
-            log.warn("用户 {} 登录失败 || {}", loginRequestDto.getUsername(), e.getMessage());
             throw new GlobalException("用户登录失败 || " + e.getMessage());
         }
     }

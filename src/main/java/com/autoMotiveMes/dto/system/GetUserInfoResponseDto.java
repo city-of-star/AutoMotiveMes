@@ -10,12 +10,12 @@ import lombok.Data;
  */
 @Data
 public class GetUserInfoResponseDto {
+    private Long userId;
     private String username;
     private String realName;
     private String headImg;
     private String phone;
     private String email;
-    private Long userId;
     private Long deptId;
     private Long postId;
     private Integer status;

@@ -2,6 +2,8 @@ package com.autoMotiveMes.dto.auth;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 实现功能【返回用户信息出参】
  *
@@ -10,7 +12,14 @@ import lombok.Data;
  */
 @Data
 public class UserInfoResponseDto {
+    private Long userId;
+    private String username;
     private String realName;
+    private String headImg;
     private String email;
     private String phone;
+    private String roleName;
+    private String deptName;
+    private String postName;
+    private Date createTime;
 }

@@ -15,10 +15,10 @@ export default {
         headImg: '',
         email: '',
         phone: '',
-        roleId: null,
-        deptId: null,
-        postId: null,
-        status: null,
+        roleName: '',
+        deptName: '',
+        postName: '',
+        createTime: null,
         theme_color: '#1890FF',
     },
     getters: {
@@ -41,23 +41,19 @@ export default {
             state.userId = user.userId;
             state.username = user.username;
             state.realName = user.realName;
-            state.roleId = user.roleId;
-            state.deptId = user.deptId;
-            state.postId = user.postId;
+            state.roleName = user.roleName;
+            state.deptName = user.deptName;
+            state.postName = user.postName;
             state.headImg = user.headImg;
             state.email = user.email;
             state.phone = user.phone;
-            state.status = user.status;
+            state.createTime = user.createTime;
         },
         CLEAR_AUTH(state) {
             state.token = ''
             state.roles= []
             state.permissions= []
             state.routes= []
-            state.username= ''
-            state.realName= ''
-            state.email= ''
-            state.phone= ''
             localStorage.removeItem('token')
         }
     },
@@ -85,13 +81,13 @@ export default {
                 userId: response.userId,
                 username: response.username,
                 realName: response.realName,
-                roleId: response.roleId,
-                deptId: response.deptId,
-                postId: response.postId,
+                roleName: response.roleName,
+                deptName: response.deptName,
+                postName: response.postName,
                 headImg: response.headImg,
                 email: response.email,
                 phone: response.phone,
-                status: response.status
+                createTime: response.createTime,
             });
         },
         async isValidToken() {
@@ -100,7 +96,7 @@ export default {
         logout({ commit }) {
             commit('CLEAR_AUTH')
             commit('tabBar/CLEAR_TABS', null, { root: true });
-            router.push('/login')
+            router.push({name: 'login'})
         }
     },
     modules: {

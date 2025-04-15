@@ -16,8 +16,8 @@
         </el-tooltip>
         <el-dropdown trigger="click">
           <div class="user-info">
-            <el-avatar :size="30" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"/>
-            <span class="username">{{ username }}</span>
+            <el-avatar :size="30" :src="headImg"/>
+            <span class="username">{{ realName }}</span>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -45,7 +45,10 @@ let timer = null
 const isCollapse = computed(() => store.state.app.sidebar.opened)
 const sidebarWidth = computed(() => `${isCollapse.value ? store.state.app.sidebar.widthFold : store.state.app.sidebar.widthExpend}px`)
 const contentWidth = computed(() => `calc(100% - ${sidebarWidth.value})`)
-const username = computed(() => store.state.user.username || '管理员')
+const realName = computed(() => store.state.user.realName ?? '管理员')
+const headImg = computed(() => store.state.user.headImg || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
+console.log(store.state.user.headImg)
+console.log(headImg)
 
 // 时间更新
 const updateTime = () => {
