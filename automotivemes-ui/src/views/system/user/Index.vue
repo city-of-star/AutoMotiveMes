@@ -70,13 +70,13 @@
             v-if="hasPermission('system:user:add')"
             @click="openAddDialog"
             :icon="Plus"
-            :color="theme_color"
+            :color="themeColor"
             plain
         >新增</el-button>
         <el-button
             v-if="hasPermission('system:user:update')"
             @click="openEditDialog"
-            :color=btn_update_color
+            :color="btnUpdateColor"
             :icon="Edit"
             :disabled="selectedRows.length === 0"
             plain
@@ -85,7 +85,7 @@
             v-if="hasPermission('system:user:delete')"
             @click="deleteUser"
             :icon="Delete"
-            :color=btn_delete_color
+            :color="btnDeleteColor"
             :disabled="selectedRows.length === 0"
             plain
         >删除</el-button>
@@ -93,14 +93,14 @@
             v-if="hasPermission('system:user:import')"
             @click="importUsers"
             :icon="Download"
-            :color=btn_import_color
+            :color="btnImportColor"
             plain
         >导入</el-button>
         <el-button
             v-if="hasPermission('system:user:export')"
             @click="exportUsers"
             :icon="Upload"
-            :color=btn_export_color
+            :color="btnExportColor"
             plain
         >导出</el-button>
       </div>
@@ -374,11 +374,11 @@ import {ElMessage} from "element-plus";
 const store = useStore()
 
 // 主题和按钮颜色
-const theme_color = store.state.user.theme_color;
-const btn_update_color = store.state.app.btn_update_color;
-const btn_delete_color = store.state.app.btn_delete_color;
-const btn_import_color = store.state.app.btn_import_color;
-const btn_export_color = store.state.app.btn_export_color;
+const themeColor = store.state.user.themeColor;
+const btnUpdateColor = store.state.app.btnUpdateColor;
+const btnDeleteColor = store.state.app.btnDeleteColor;
+const btnImportColor = store.state.app.btnImportColor;
+const btnExportColor = store.state.app.btnExportColor;
 
 // 用户状态相关
 const centerDialogVisible = ref(false)  // 是否显示弹框

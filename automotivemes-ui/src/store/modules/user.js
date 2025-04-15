@@ -5,23 +5,27 @@ import router from "@/router";
 export default {
     namespaced: true,
     state: {
+        // 认证相关
         token: localStorage.getItem('token') || '',
         roles: [],
         permissions: [],
         routes: [],
+
+        // 主题色
+        themeColor: localStorage.getItem('themeColor') || '#409EFF',
+
+        // 用户信息
         userId: null,
         username: '',
         realName: localStorage.getItem('realName') || '',
         headImg: localStorage.getItem('headImg') || '',
+        sex: '',
         email: '',
         phone: '',
         roleName: '',
         deptName: '',
         postName: '',
         createTime: null,
-        theme_color: '#1890FF',
-    },
-    getters: {
     },
     mutations: {
         SET_TOKEN(state, token) {
@@ -41,6 +45,8 @@ export default {
             state.userId = user.userId;
             state.username = user.username;
             state.realName = user.realName;
+            state.sex = user.sex;
+            state.themeColor = user.themeColor;
             state.roleName = user.roleName;
             state.deptName = user.deptName;
             state.postName = user.postName;
@@ -50,6 +56,7 @@ export default {
             state.createTime = user.createTime;
             localStorage.setItem('realName', user.realName);
             localStorage.setItem('headImg', user.headImg);
+            localStorage.setItem('themeColor', user.themeColor);
         },
         CLEAR_AUTH(state) {
             state.token = ''
@@ -85,6 +92,8 @@ export default {
                 userId: response.userId,
                 username: response.username,
                 realName: response.realName,
+                sex: response.sex,
+                themeColor: response.themeColor,
                 roleName: response.roleName,
                 deptName: response.deptName,
                 postName: response.postName,
@@ -104,6 +113,4 @@ export default {
             router.push({name: 'login'})
         }
     },
-    modules: {
-    }
 }

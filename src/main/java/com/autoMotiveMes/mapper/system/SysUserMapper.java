@@ -49,7 +49,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     // 通过手机号码获取用户
     SysUser selectByPhone(@Param("phone") String phone);
 
-    @Select("SELECT u.user_id, u.username, u.real_name, r.role_name, d.dept_name, p.post_name, u.head_img, u.email, u.phone, u.create_time " +
+    @Select("SELECT u.user_id, u.username, u.real_name, r.role_name, u.sex, u.theme_color, d.dept_name, p.post_name, u.head_img, u.email, u.phone, u.create_time " +
             "FROM sys_user u " +
             "JOIN sys_user_role ur ON u.user_id = ur.user_id " +
             "JOIN sys_role r ON ur.role_id = r.role_id " +

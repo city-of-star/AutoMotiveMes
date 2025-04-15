@@ -35,6 +35,14 @@ public class SysUser {
      */
     private String realName;
     /**
+     * 用户的性别
+     */
+    private String sex;
+    /**
+     * 用户的系统主题色
+     */
+    private String themeColor;
+    /**
      * 用户所属的部门id
      */
     private Long deptId;

@@ -4,9 +4,11 @@ CREATE TABLE sys_user (
     username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
     password VARCHAR(100) NOT NULL COMMENT '加密密码',
     real_name VARCHAR(50) COMMENT '真实姓名',
+    sex TINYINT(1) COMMENT '性别(0:女 1:男)',
     dept_id BIGINT COMMENT '部门id',
     post_id BIGINT COMMENT '岗位id',
     head_img VARCHAR(200) COMMENT '头像URL',
+    theme_color VARCHAR(50) COMMENT '主题色',
     email VARCHAR(100) COMMENT '邮箱',
     phone VARCHAR(20) COMMENT '联系电话',
     status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
@@ -157,35 +159,35 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     ('report:quality:view', '质量分析', 'MENU', 39, 'quality', '@/views/report/quality/Index.vue', '/api/report/quality', 'GET'); -- 41
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
-INSERT INTO sys_user (username, password, real_name, dept_id, post_id, email, phone, status, account_locked, login_attempts, head_img) VALUES
+INSERT INTO sys_user (username, password, real_name, sex, theme_color, dept_id, post_id, email, phone, status, account_locked, login_attempts, head_img) VALUES
     -- 超级管理员(1-3)
-    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', 1, 1, '4736289150@qq.com', '13524689753',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('lhy', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李鸿羽', 1, 1, '2722562862@qq.com', '18255097030',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 1, 1, '2825646787@qq.com', '13855605201',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('admin', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '超级管理员', 1, '#409EFF', 1, 1, '4736289150@qq.com', '13524689753',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('lhy', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李鸿羽', 1, '#409EFF', 1, 1, '2722562862@qq.com', '18255097030',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('lqh', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘齐慧', 0, '#409EFF', 1, 1, '2825646787@qq.com', '13855605201',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
 
     -- 管理员(4-13)
-    ('ydf', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨东风', 1, 2, '8219537460@qq.com', '18765432109',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('yjq', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨佳倩', 1, 2, '3507462891@qq.com', '15987654321',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('yzz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨智喆', 1, 2, '9162835740@qq.com', '17890123456',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('wjx', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '汪俊祥', 1, 2, '2849173650@qq.com', '14736985210',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('ljb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李佳宝', 1, 2, '7053916284@qq.com', '19182736455',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('wwb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王雯博', 1, 2, '5391628470@qq.com', '16655443322',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('lkw', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘楷雯', 1, 2, '1647392580@qq.com', '13214567890',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('wyj', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王永杰', 1, 2, '6925814370@qq.com', '18809123456',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('dty', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '董婷英', 1, 2, '3746289150@qq.com', '17156789012',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('wcz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '吴成周', 1, 2, '8519372640@qq.com', '19923456789',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('ydf', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨东风', 1, '#409EFF', 1, 2, '8219537460@qq.com', '18765432109',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('yjq', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨佳倩', 0, '#409EFF', 1, 2, '3507462891@qq.com', '15987654321',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('yzz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '杨智喆', 1, '#409EFF', 1, 2, '9162835740@qq.com', '17890123456',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('wjx', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '汪俊祥', 1, '#409EFF', 1, 2, '2849173650@qq.com', '14736985210',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('ljb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李佳宝', 1, '#409EFF', 1, 2, '7053916284@qq.com', '19182736455',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('wwb', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王雯博', 0, '#409EFF', 1, 2, '5391628470@qq.com', '16655443322',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('lkw', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '刘楷雯', 0, '#409EFF', 1, 2, '1647392580@qq.com', '13214567890',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('wyj', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王永杰', 1, '#409EFF', 1, 2, '6925814370@qq.com', '18809123456',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('dty', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '董婷英', 0, '#409EFF', 1, 2, '3746289150@qq.com', '17156789012',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('wcz', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '吴成周', 1, '#409EFF', 1, 2, '8519372640@qq.com', '19923456789',  1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
 
     -- 生产部用户(14-15)
-    ('worker1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '张强', 5, 7, 'worker1@factory.com', '13800138001', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('worker2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李娜', 5, 7, 'worker2@factory.com', '13800138002', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('worker1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '张强', 1, '#409EFF', 5, 7, 'worker1@factory.com', '13800138001', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('worker2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '李娜', 0, '#409EFF', 5, 7, 'worker2@factory.com', '13800138002', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
 
     -- 设备部用户(16-17)
-    ('engineer1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '陈磊', 3, 9, 'engineer1@factory.com', '13800138003', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('engineer2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王芳', 3, 9, 'engineer2@factory.com', '13800138004', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('engineer1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '陈磊', 1, '#409EFF', 3, 9, 'engineer1@factory.com', '13800138003', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('engineer2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '王芳', 0, '#409EFF', 3, 9, 'engineer2@factory.com', '13800138004', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
 
     -- 质量部用户(18-19)
-    ('inspector1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '赵敏', 4, 11, 'inspector1@factory.com', '13800138005', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
-    ('inspector2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '周杰', 4, 11, 'inspector2@factory.com', '13800138006', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280');
+    ('inspector1', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '赵敏', 0, '#409EFF', 4, 11, 'inspector1@factory.com', '13800138005', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280'),
+    ('inspector2', '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa', '周杰', 1, '#409EFF', 4, 11, 'inspector2@factory.com', '13800138006', 1, 1, 0, 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280');
 
 -- 插入部门
 INSERT INTO sys_dept (dept_name, parent_id, order_num, status, leader_id) VALUES

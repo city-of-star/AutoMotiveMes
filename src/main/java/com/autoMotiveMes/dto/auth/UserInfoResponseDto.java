@@ -15,6 +15,8 @@ public class UserInfoResponseDto {
     private Long userId;
     private String username;
     private String realName;
+    private Integer sex;
+    private String themeColor;
     private String headImg;
     private String email;
     private String phone;

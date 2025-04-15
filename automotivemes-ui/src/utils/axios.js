@@ -4,8 +4,8 @@ import store from '@/store'
 import router from "@/router";
 
 const service = axios.create({
-    baseURL: 'http://localhost:3000/api',
-    timeout: 15000, // 超时调整为15秒
+    baseURL: window.CONFIG.api.baseURL,
+    timeout: window.CONFIG.api.timeout,
     headers: {
         'Content-Type': 'application/json'
     }
