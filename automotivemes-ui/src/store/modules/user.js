@@ -11,8 +11,8 @@ export default {
         routes: [],
         userId: null,
         username: '',
-        realName: '',
-        headImg: '',
+        realName: localStorage.getItem('realName') || '',
+        headImg: localStorage.getItem('headImg') || '',
         email: '',
         phone: '',
         roleName: '',
@@ -48,6 +48,8 @@ export default {
             state.email = user.email;
             state.phone = user.phone;
             state.createTime = user.createTime;
+            localStorage.setItem('realName', user.realName);
+            localStorage.setItem('headImg', user.headImg);
         },
         CLEAR_AUTH(state) {
             state.token = ''
@@ -55,6 +57,8 @@ export default {
             state.permissions= []
             state.routes= []
             localStorage.removeItem('token')
+            localStorage.removeItem('realName');
+            localStorage.removeItem('headImg');
         }
     },
     actions: {
@@ -89,6 +93,7 @@ export default {
                 phone: response.phone,
                 createTime: response.createTime,
             });
+            return response;
         },
         async isValidToken() {
             await service.post('/auth/isValidToken')

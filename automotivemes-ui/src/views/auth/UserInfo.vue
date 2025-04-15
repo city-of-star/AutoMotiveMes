@@ -88,23 +88,24 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
-import { ElMessage } from 'element-plus'
+import {useStore} from 'vuex'
+import {ElMessage} from 'element-plus'
+import {onMounted, ref} from "vue"
 
 const store = useStore()
+const user = ref({})
 
-// 获取用户信息
-const user = computed(() => ({
-  username: store.state.user.username,
-  realName: store.state.user.realName,
-  headImg: store.state.user.headImg,
-  email: store.state.user.email,
-  phone: store.state.user.phone,
-  roleName: store.state.user.roleName,
-  deptName: store.state.user.deptName,
-  postName: store.state.user.postName
-}))
+const getUserInfo = async () => {
+  try {
+    user.value = await store.dispatch('user/getUserInfo')
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  }
+}
+
+onMounted(() => {
+  getUserInfo()
+})
 
 // 邮箱修改相关
 const emailDialogVisible = ref(false)

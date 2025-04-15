@@ -47,8 +47,6 @@ const sidebarWidth = computed(() => `${isCollapse.value ? store.state.app.sideba
 const contentWidth = computed(() => `calc(100% - ${sidebarWidth.value})`)
 const realName = computed(() => store.state.user.realName ?? '管理员')
 const headImg = computed(() => store.state.user.headImg || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png')
-console.log(store.state.user.headImg)
-console.log(headImg)
 
 // 时间更新
 const updateTime = () => {
