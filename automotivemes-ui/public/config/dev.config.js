@@ -21,7 +21,8 @@ window.CONFIG = {
             btnExportColor: '#FFBA00'
         },
         sidebar: {
-            widthExpend: 250, widthFold: 64
+            widthExpend: 250,
+            widthFold: 64
         }
     }
 };

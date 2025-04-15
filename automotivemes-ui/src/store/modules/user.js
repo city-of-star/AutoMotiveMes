@@ -14,6 +14,7 @@ export default {
         // 主题色
         themeColor: localStorage.getItem('themeColor') || '#409EFF',
 
+
         // 用户信息
         userId: null,
         username: '',
@@ -66,6 +67,7 @@ export default {
             localStorage.removeItem('token')
             localStorage.removeItem('realName');
             localStorage.removeItem('headImg');
+            localStorage.removeItem('themeColor');
         }
     },
     actions: {
@@ -102,6 +104,7 @@ export default {
                 phone: response.phone,
                 createTime: response.createTime,
             });
+            console.log(response);
             return response;
         },
         async isValidToken() {

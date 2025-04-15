@@ -3,7 +3,7 @@ window.CONFIG = {
         name: 'prod'
     },
     api: {
-        baseURL: 'https://your-production-domain.com/api',
+        baseURL: 'https://111.229.150.28:3000/api',
         timeout: 10000
     },
     websocket: {
