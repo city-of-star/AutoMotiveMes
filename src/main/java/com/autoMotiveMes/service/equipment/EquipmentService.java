@@ -1,5 +1,7 @@
 package com.autoMotiveMes.service.equipment;
 
+import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+
 /**
  * 实现功能【设备接口】
  *
@@ -8,4 +10,5 @@ package com.autoMotiveMes.service.equipment;
  */
 public interface EquipmentService {
 
+    void acceptEquipmentRealTimeData(EquipmentParameters data);
 }

@@ -19,7 +19,6 @@ public class RbacService {
 
     public boolean hasPermission(Authentication authentication, String permissionCode) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            log.warn("鉴权时发现用户未登录或者登录状态失效");
             throw new AuthException("登录信息过期，请重新登录");
         }
 
@@ -30,7 +29,6 @@ public class RbacService {
         if (flag) {  // 鉴权通过
             return true;
         } else {  // 鉴权失败
-            log.warn("鉴权时发现用户无权访问 {}", permissionCode);
             throw new ForbiddenException("抱歉，您暂无权限访问");
         }
     }

@@ -1,7 +1,10 @@
 package com.autoMotiveMes;
 
+import com.autoMotiveMes.utils.EquipmentRealTimeDataSimulatorService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,10 +18,10 @@ public class AutoMotiveMesApplication {
         SpringApplication.run(AutoMotiveMesApplication.class, args);
     }
 
-//    @Bean
-//    public CommandLineRunner init(EquipmentRealTimeDataSimulatorService simulatorService) {
-//        return args -> {
-//            simulatorService.startAllSimulators();
-//        };
-//    }
+    @Bean
+    public CommandLineRunner init(EquipmentRealTimeDataSimulatorService simulatorService) {
+        return args -> {
+            simulatorService.startAllSimulators();
+        };
+    }
 }

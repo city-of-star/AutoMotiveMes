@@ -215,6 +215,7 @@ router.beforeEach(async (to, from, next) => {
   // 白名单直接放行
   if (whiteList.includes(to.path)) {
     next()
+    NProgress.done()
     return
   }
 

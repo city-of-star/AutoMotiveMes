@@ -50,7 +50,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 验证Authorization头格式
         if (!authHeader.startsWith("Bearer ")) {
-            log.warn("无效的Authorization头格式，期望Bearer token");
             throw new AuthException("无效的认证头");
         }
 
@@ -75,13 +74,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 继续执行后续过滤器
             filterChain.doFilter(request, response);
         } catch (AuthException e) {
-            log.warn("认证失败: {}", e.getMessage());
             throw new AuthException("认证失败: " + e.getMessage());
         } catch (UsernameNotFoundException e) {
-            log.warn("用户不存在: {}", e.getMessage());
             throw new AuthException("用户不存在: " + e.getMessage());
         } catch (Exception e) {
-            log.error("处理认证时发生未知错误", e);
             throw new GlobalException("处理认证时发生未知错误: " + e.getMessage());
         }
     }
