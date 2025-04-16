@@ -12,8 +12,8 @@ export default {
         routes: [],
 
         // 主题色
-        themeColor: localStorage.getItem('themeColor') || '#409EFF',
-
+        // themeColor: localStorage.getItem('themeColor') || '#409EFF',
+        themeColor: '#911187',
 
         // 用户信息
         userId: null,

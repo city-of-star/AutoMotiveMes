@@ -63,7 +63,7 @@
               clearable
           />
         </div>
-        <el-button @click="search()" :icon="Search" type="primary">搜索</el-button>
+        <el-button @click="search()" :icon="Search" type="primary" :color="themeColor">搜索</el-button>
         <el-button @click="refresh()" :icon="Refresh">重置</el-button>
       </div>
 
@@ -134,6 +134,7 @@
                 :inactive-value="0"
                 @click="handleSwitchClick(scope.row)"
                 style="margin: 0 auto"
+                :active-color="themeColor"
             />
           </template>
         </el-table-column>

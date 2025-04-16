@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :style="{ width: sidebarWidth }">
+  <div class="sidebar" :style="{ width: sidebarWidth, '--active-color': themeColor }">
     <div v-if="!isCollapse" class="logo-container">
       <img class="logo" src="../../../assets/logo.png" alt="logo" />
     </div>
@@ -64,6 +64,7 @@ import {
 
 const store = useStore()
 const routes = computed(() => store.state.user.routes)
+const themeColor = computed(() => store.state.user.themeColor) // 新增主题色计算属性
 
 // 创建图标映射表
 const icons = {
@@ -129,26 +130,44 @@ const sidebarWidth = computed(() =>
   transition: width 0.3s ease-in-out;
   z-index: 1000;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-}
 
-.logo-container {
-  width: 250px;
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .logo-container {
+    width: 250px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  .logo {
-    width: 100px;
-    height: 100px;
+    .logo {
+      width: 100px;
+      height: 100px;
+      animation: slideInLeft 0.5s ease-out forwards;
+    }
+  }
+
+  .title {
+    width: 250px;
+    text-align: center;
+    margin-top: 10px;
     animation: slideInLeft 0.5s ease-out forwards;
   }
-}
 
-.title {
-  width: 250px;
-  text-align: center;
-  margin-top: 10px;
-  animation: slideInLeft 0.5s ease-out forwards;
+  /* 激活路由样式（注意深度选择器语法） */
+  ::v-deep .el-menu {
+    .el-menu-item.is-active,
+    .el-sub-menu.is-active > .el-sub-menu__title {
+      color: var(--active-color);  /* 使用CSS变量 */
+      .el-icon {
+        color: var(--active-color);  /* 使用CSS变量 */
+      }
+    }
+
+    .el-sub-menu .el-menu-item.is-active {
+      color: var(--active-color);  /* 使用CSS变量 */
+      .el-icon {
+        color: var(--active-color);  /* 使用CSS变量 */
+      }
+    }
+  }
 }
 </style>

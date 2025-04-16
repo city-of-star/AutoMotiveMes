@@ -1,5 +1,5 @@
 <template>
-  <div class="tabBar" :style="{ left: left }">
+  <div class="tabBar" :style="{ left: left, '--active-color': themeColor }">
     <div class="tabs-container">
       <div v-for="(tab, index) in tabs"
            :key="tab.path"
@@ -41,9 +41,12 @@ const route = useRoute()
 
 // 计算属性
 const left = computed(() => store.state.app.sidebar.opened
-        ? store.state.app.sidebar.widthFold + 'px'
-        : store.state.app.sidebar.widthExpend + 'px'
+    ? store.state.app.sidebar.widthFold + 'px'
+    : store.state.app.sidebar.widthExpend + 'px'
 )
+
+// 从 Vuex 中获取主题色
+const themeColor = computed(() => store.state.user.themeColor)
 
 const tabs = computed(() => store.state.tabBar.tabs)
 const currentTabIndex = computed(() =>
@@ -84,7 +87,7 @@ const addTab = (route) => {
   const routeExists = router.getRoutes().some(r => r.path === route.path)
   if (!routeExists) return
 
-  if (!route.meta?.noTab && !tabs.value.some(tab => tab.path === route.path)) {
+  if (!route.meta?.noTab &&!tabs.value.some(tab => tab.path === route.path)) {
     store.commit('tabBar/ADD_TAB', {
       path: route.path,
       name: route.name,
@@ -167,7 +170,7 @@ document.addEventListener('click', () => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .tabBar {
   position: fixed;
   top: 60px;
@@ -226,7 +229,7 @@ document.addEventListener('click', () => {
 
 .tab-item.active {
   background: #fff;
-  color: #409eff;
+  color: var(--active-color);  // 使用 CSS 变量
   font-weight: 500;
 }
 
