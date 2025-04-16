@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.system.SysUserRoleMapper">
+
+    <!-- 根据用户ID删除关联 -->
+    <delete id="deleteByUserId">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 根据用户ID查询关联 -->
+    <select id="selectByUserId" resultType="com.autoMotiveMes.entity.system.SysUserRole">
+        SELECT *
+        FROM sys_user_role
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

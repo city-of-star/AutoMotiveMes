@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.system.SysDeptMapper">
+
+    <!-- 查询所有启用的部门 -->
+    <select id="selectAllEnabledDepts" resultType="com.autoMotiveMes.entity.system.SysDept">
+        SELECT dept_id, dept_name, parent_id, order_num
+        FROM sys_dept
+        WHERE status = 1
+        ORDER BY order_num ASC
+    </select>
+
+</mapper>
