@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar" :style="{ width: sidebarWidth }">
     <div v-if="!isCollapse" class="logo-container">
-      <img class="logo" src="@/assets/logo.png" alt="logo" />
+      <img class="logo" src="../../../assets/logo.png" alt="logo" />
     </div>
     <h3 v-if="!isCollapse" class="title">汽车 MES 生产监控中心</h3>
     <el-menu
@@ -108,7 +108,7 @@ const sidebarWidth = computed(() =>
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/layout.scss';
+@import '@/assets/styles/layout';
 
 @keyframes slideInLeft {
   from {

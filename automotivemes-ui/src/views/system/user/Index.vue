@@ -1,6 +1,7 @@
 <template>
   <div class="main-container">
 
+    <!-- 部门树 -->
     <div class="left-container">
       <el-input v-model="searchData.deptName" placeholder="请输入部门名称" class="input-dept" @clear="search" clearable>
         <template #prefix>
@@ -19,6 +20,7 @@
 
     <div class="right-container">
 
+      <!-- 输入框和搜索重置按钮 -->
       <div class="input-container">
         <div class="block">
           <span class="input-title">用户名称</span>
@@ -65,6 +67,7 @@
         <el-button @click="refresh()" :icon="Refresh">重置</el-button>
       </div>
 
+      <!-- 增、删、改、导入、导出按钮 -->
       <div class="btn-container">
         <el-button
             v-if="hasPermission('system:user:add')"
@@ -83,7 +86,7 @@
         >修改</el-button>
         <el-button
             v-if="hasPermission('system:user:delete')"
-            @click="deleteUser"
+            @click="deleteUserDialog = true"
             :icon="Delete"
             :color="btnDeleteColor"
             :disabled="selectedRows.length === 0"
@@ -105,6 +108,7 @@
         >导出</el-button>
       </div>
 
+      <!-- 表格数据 -->
       <el-table v-loading="loading" class="table-container" :data="tableData">
         <el-table-column width="80" align="center" header-align="center">
           <template #header>
@@ -153,20 +157,19 @@
   </div>
 
   <!--  切换用户状态系统提示对话框-->
-  <el-dialog
-      v-model="centerDialogVisible"
-      :title="currentNewStatus === 1 ? '启用用户' : '停用用户'"
-      width="500"
-      align-center
-  >
-    <span>确认要{{ currentNewStatus === 1 ? '启用' : '停用' }}此用户吗？</span>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="cancelSwitch">取消</el-button>
-        <el-button type="primary" @click="confirmSwitch">确定</el-button>
-      </div>
-    </template>
-  </el-dialog>
+  <ConfirmDialog
+      v-model:visible="centerDialogVisible"
+      :message="`确认要${currentNewStatus === 1 ? '启用' : '停用'}此用户吗？`"
+      @confirm="confirmSwitch"
+      @cancel="cancelSwitch"
+  />
+
+  <!--  删除用户系统提示对话框-->
+  <ConfirmDialog
+      v-model:visible="deleteUserDialog"
+      :message="`确认要删除此用户吗？`"
+      @confirm="deleteUser"
+  />
 
   <!-- 新增用户对话框 -->
   <el-dialog
@@ -185,10 +188,10 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="用户名" prop="username">
-            <el-input placeholder="请输入用户名" v-model="addForm.username" />
+            <el-input placeholder="请输入用户名" v-model="addForm.username" clearable />
           </el-form-item>
           <el-form-item label="真实姓名" prop="realName">
-            <el-input placeholder="请输入真实姓名" v-model="addForm.realName" />
+            <el-input placeholder="请输入真实姓名" v-model="addForm.realName" clearable />
           </el-form-item>
           <el-form-item label="所属部门" prop="deptId">
             <el-tree-select
@@ -197,6 +200,7 @@
                 :props="deptProps"
                 check-strictly
                 placeholder="请选择部门"
+                clearable
             />
           </el-form-item>
           <el-form-item label="岗位" prop="postId">
@@ -204,6 +208,7 @@
                 v-model="addForm.postId"
                 placeholder="请选择岗位"
                 style="width: 100%"
+                clearable
             >
               <el-option
                   v-for="post in postOptions"
@@ -220,6 +225,7 @@
                 v-model="addForm.roleId"
                 placeholder="请选择角色"
                 style="width: 100%"
+                clearable
                 >
             <el-option
                 v-for="role in roleOptions"
@@ -235,6 +241,7 @@
                 type="password"
                 show-password
                 placeholder="请输入密码"
+                clearable
             />
           </el-form-item>
           <el-form-item label="确认密码" prop="confirmPassword">
@@ -243,6 +250,7 @@
                 type="password"
                 show-password
                 placeholder="请输入密码"
+                clearable
             />
           </el-form-item>
           <el-form-item label="状态" prop="status">
@@ -256,12 +264,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="手机号码" prop="phone">
-            <el-input placeholder="请输入手机号码" v-model="addForm.phone" />
+            <el-input placeholder="请输入手机号码" v-model="addForm.phone" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="邮箱" prop="email">
-            <el-input placeholder="请输入邮箱" v-model="addForm.email" />
+            <el-input placeholder="请输入邮箱" v-model="addForm.email" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -292,7 +300,7 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="真实姓名" prop="realName">
-            <el-input v-model="editForm.realName" placeholder="请输入真实姓名" />
+            <el-input v-model="editForm.realName" placeholder="请输入真实姓名" clearable />
           </el-form-item>
           <el-form-item label="所属部门" prop="deptId">
             <el-tree-select
@@ -301,6 +309,7 @@
                 :props="deptProps"
                 check-strictly
                 placeholder="请选择部门"
+                clearable
             />
           </el-form-item>
           <el-form-item label="岗位" prop="postId">
@@ -308,6 +317,7 @@
                 v-model="editForm.postId"
                 placeholder="请选择岗位"
                 style="width: 100%"
+                clearable
             >
               <el-option
                   v-for="post in postOptions"
@@ -324,6 +334,7 @@
                 v-model="editForm.roleId"
                 placeholder="请选择角色"
                 style="width: 100%"
+                clearable
             >
               <el-option
                   v-for="role in roleOptions"
@@ -344,12 +355,12 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="手机号码" prop="phone">
-            <el-input v-model="editForm.phone" placeholder="请输入手机号码" />
+            <el-input v-model="editForm.phone" placeholder="请输入手机号码" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="邮箱" prop="email">
-            <el-input v-model="editForm.email" placeholder="请输入邮箱" />
+            <el-input v-model="editForm.email" placeholder="请输入邮箱" clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -365,29 +376,35 @@
 </template>
 
 <script setup>
-import {Delete, Download, Edit, Plus, Refresh, Search, Upload} from '@element-plus/icons-vue'
+/* 引入部分 */
+import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
+import ConfirmDialog from '@/components/system/confirmDialog/Index.vue'
 import axios from '@/utils/axios'
-import {computed, onMounted, ref} from 'vue'
-import {useStore} from 'vuex'
-import {ElMessage} from "element-plus";
+import { computed, onMounted, ref } from 'vue'
+import { useStore } from 'vuex'
+import { ElMessage } from "element-plus"
 
+/* 状态声明 */
 const store = useStore()
 
-// 主题和按钮颜色
-const themeColor = store.state.user.themeColor;
-const btnUpdateColor = store.state.app.btnUpdateColor;
-const btnDeleteColor = store.state.app.btnDeleteColor;
-const btnImportColor = store.state.app.btnImportColor;
-const btnExportColor = store.state.app.btnExportColor;
+// 主题颜色相关
+const themeColor = store.state.user.themeColor
+const btnUpdateColor = store.state.app.btnUpdateColor
+const btnDeleteColor = store.state.app.btnDeleteColor
+const btnImportColor = store.state.app.btnImportColor
+const btnExportColor = store.state.app.btnExportColor
 
-// 用户状态相关
-const centerDialogVisible = ref(false)  // 是否显示弹框
+// 用户状态切换相关
+const centerDialogVisible = ref(false)
 const currentUserId = ref(null)
 const currentNewStatus = ref(null)
-const currentRow = ref(null) // 用于保存当前操作的行数据
+const currentRow = ref(null)
 
-// 查询的条件值
-let searchData = ref({
+// 删除对话框状态
+const deleteUserDialog = ref(false)
+
+// 搜索条件
+const searchData = ref({
   deptName: '',
   username: '',
   phone: '',
@@ -395,26 +412,14 @@ let searchData = ref({
   time: [],
 })
 
-// 状态选择器的选择框
-const statusOptions = [
-  {
-    value: 1,
-    label: '正常',
-  },
-  {
-    value: 0,
-    label: '停用',
-  },
-]
-
-// 分页相关变量
+// 分页相关
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-const tableData = ref([])  // 用户列表
-let loading = ref(false)  // 加载状态
+const tableData = ref([])
+const loading = ref(false)
 
-// 部门树状组件数据
+// 部门树相关
 const deptData = ref([])
 const deptProps = {
   children: 'children',
@@ -422,28 +427,7 @@ const deptProps = {
   value: 'deptId'
 }
 
-// 全选计算属性
-const headerSelect = computed({
-  get() {
-    return tableData.value.length > 0 &&
-        tableData.value.every(row => row.select)
-  },
-  set(value) {
-    tableData.value.forEach(row => {
-      row.select = value
-    })
-  }
-})
-
-// 获取选中数据（返回一个只包含userId的数组）
-const selectedRows = computed(() =>
-    tableData.value.filter(row => row.select).map(row => row.userId)
-)
-
-// 获取权限数组
-const permissions = computed(() => store.state.user.permissions)
-
-// 新增相关状态
+// 新增对话框相关
 const addDialogVisible = ref(false)
 const addFormRef = ref(null)
 const addForm = ref({
@@ -459,7 +443,123 @@ const addForm = ref({
   status: 1
 })
 
-// 表单验证规则
+// 修改对话框相关
+const editDialogVisible = ref(false)
+const editFormRef = ref(null)
+const editForm = ref({
+  userId: null,
+  realName: '',
+  deptId: null,
+  postId: null,
+  roleId: null,
+  phone: '',
+  email: '',
+  status: 1
+})
+
+// 选项数据
+const statusOptions = [
+  { value: 1, label: '正常' },
+  { value: 0, label: '停用' }
+]
+const postOptions = ref([])
+const roleOptions = ref([])
+
+/* 计算属性 */
+// 全选/全不选逻辑
+const headerSelect = computed({
+  get() {
+    return tableData.value.length > 0 &&
+        tableData.value.every(row => row.select)
+  },
+  set(value) {
+    tableData.value.forEach(row => {
+      row.select = value
+    })
+  }
+})
+
+// 选中的用户ID数组
+const selectedRows = computed(() =>
+    tableData.value.filter(row => row.select).map(row => row.userId)
+)
+
+// 权限数组
+const permissions = computed(() => store.state.user.permissions)
+
+/* 方法 */
+// 权限验证方法
+const hasPermission = (permission) => {
+  return permissions.value.includes(permission)
+}
+
+/* 数据获取方法 */
+// 获取部门树数据
+const fetchDeptTree = async () => {
+  deptData.value = await axios.get('/system/dept/tree')
+}
+
+// 获取岗位和角色选项
+const fetchOptions = async () => {
+  try {
+    const [resRoles, resPosts] = await Promise.all([
+      axios.get('/system/role/list'),
+      axios.get('/system/post/list')
+    ])
+    roleOptions.value = resRoles.roles
+    postOptions.value = resPosts.posts
+  } catch (error) {
+    console.error('获取选项失败:', error)
+  }
+}
+
+/* 用户操作 */
+// 用户状态切换处理
+const handleSwitchClick = (row) => {
+  currentRow.value = row
+  currentUserId.value = row.userId
+  currentNewStatus.value = row.status === 1 ? 0 : 1
+  centerDialogVisible.value = true
+  // 立即更新本地状态保持响应式
+  currentRow.value.status = currentNewStatus.value
+}
+
+// 确认状态修改
+const confirmSwitch = async () => {
+  try {
+    await axios.post('/system/user/switchStatus', {
+      userId: currentUserId.value,
+      status: currentNewStatus.value
+    })
+    ElMessage.success('状态修改成功')
+    centerDialogVisible.value = false
+  } catch (error) {
+    console.error('状态修改失败:', error)
+  }
+}
+
+// 取消状态修改
+const cancelSwitch = () => {
+  currentRow.value = null
+  centerDialogVisible.value = false
+  search() // 重新加载确保数据一致性
+}
+
+// 删除用户
+const deleteUser = async () => {
+  try {
+    await axios.post('/system/user/delete', {
+      userIds: selectedRows.value
+    })
+    ElMessage.success('删除成功')
+    await search()
+  } catch (error) {
+    console.error('删除操作失败:', error)
+  }
+}
+
+/* 表单相关方法 */
+// 新增用户表单验证规则
 const validatePassword = (rule, value, callback) => {
   if (value !== addForm.value.password) {
     callback(new Error('两次输入的密码不一致'))
@@ -498,22 +598,29 @@ const addFormRules = {
   ]
 }
 
-// 岗位和角色选项
-const postOptions = ref([])
-const roleOptions = ref([])
-
-// 获取岗位和角色列表
-const fetchOptions = async () => {
-  try {
-    const responseRoles = await axios.get('/system/role/list')
-    const responsePosts = await axios.get('/system/post/list')
-    roleOptions.value = responseRoles.roles
-    postOptions.value = responsePosts.posts
-  } catch (error) {
-    console.error('获取选项失败:', error)
-  }
+// 修改用户表单验证规则
+const editFormRules = {
+  realName: [
+    { required: true, message: '请输入真实姓名', trigger: 'blur' }
+  ],
+  deptId: [
+    { required: true, message: '请选择部门', trigger: 'change' }
+  ],
+  postId: [
+    { required: true, message: '请选择岗位', trigger: 'change' }
+  ],
+  roleId: [
+    { required: true, message: '请选择角色', trigger: 'change' }
+  ],
+  phone: [
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+  ],
+  email: [
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+  ]
 }
 
+/* 对话框操作 */
 // 打开新增对话框
 const openAddDialog = () => {
   addForm.value = {
@@ -521,7 +628,7 @@ const openAddDialog = () => {
     realName: '',
     deptId: null,
     postId: null,
-    roleIds: null,
+    roleId: null,
     password: '',
     confirmPassword: '',
     phone: '',
@@ -545,56 +652,16 @@ const submitAddUser = async () => {
       return
     }
 
-    const payload = {
-      ...addForm.value,
-      // 移除确认密码字段
-      confirmPassword: undefined
-    }
+    const payload = { ...addForm.value }
+    delete payload.confirmPassword
 
     await axios.post('/system/user/add', payload)
-
     ElMessage.success('新增用户成功')
     addDialogVisible.value = false
-    await search() // 刷新列表
+    await search()
   } catch (error) {
     console.error('新增用户失败:', error)
   }
-}
-
-// 修改相关状态
-const editDialogVisible = ref(false)
-const editFormRef = ref(null)
-const editForm = ref({
-  userId: null,
-  realName: '',
-  deptId: null,
-  postId: null,
-  roleId: null,
-  phone: '',
-  email: '',
-  status: 1
-})
-
-// 表单验证规则（去掉了密码相关校验）
-const editFormRules = {
-  realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' }
-  ],
-  deptId: [
-    { required: true, message: '请选择部门', trigger: 'change' }
-  ],
-  postId: [
-    { required: true, message: '请选择岗位', trigger: 'change' }
-  ],
-  roleId: [
-    { required: true, message: '请选择角色', trigger: 'change' }
-  ],
-  phone: [
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
-  ],
-  email: [
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-  ]
 }
 
 // 打开修改对话框
@@ -604,20 +671,18 @@ const openEditDialog = async () => {
     return
   }
   try {
-    // 获取用户详细信息
-    const response = await axios.post('/system/user/getInfo', {
+    const res = await axios.post('/system/user/getInfo', {
       userId: selectedRows.value[0]
     })
-    // 填充表单数据
     editForm.value = {
-      userId: response.userId,
-      realName: response.realName,
-      deptId: response.deptId,
-      postId: response.postId,
-      roleId: response.roleId,
-      phone: response.phone,
-      email: response.email,
-      status: response.status
+      userId: res.userId,
+      realName: res.realName,
+      deptId: res.deptId,
+      postId: res.postId,
+      roleId: res.roleId,
+      phone: res.phone,
+      email: res.email,
+      status: res.status
     }
     await fetchOptions()
     editDialogVisible.value = true
@@ -626,147 +691,81 @@ const openEditDialog = async () => {
   }
 }
 
-// 提交修改
+// 提交修改用户
 const submitEditUser = async () => {
   try {
     await editFormRef.value.validate()
-
     await axios.post('/system/user/update', editForm.value)
-
     ElMessage.success('修改用户成功')
     editDialogVisible.value = false
-    await search() // 刷新列表
+    await search()
   } catch (error) {
     console.error('修改用户失败:', error)
   }
 }
 
-// 权限验证函数(是否显示对应的按钮)
-const hasPermission = (permission) => {
-  return permissions.value.includes(permission)
-}
-
-// 获取部门树
-const fetchDeptTree = async () => {
-  deptData.value = await axios.get('/system/dept/tree')
-}
-
-// 处理部门节点点击
-const handleDeptNodeClick = (data) => {
-  searchData.value.deptName = data.deptName
-  search()
-}
-
-// 查询用户数据
+/* 搜索相关 */
+// 主搜索方法
 const search = async () => {
   try {
     loading.value = true
     const res = await axios.post('/system/user/search', {
       page: currentPage.value,
       size: pageSize.value,
-      deptName: searchData.value.deptName,
-      username: searchData.value.username,
-      phone: searchData.value.phone,
-      status: searchData.value.status,
-      startTime: searchData.value.time ? searchData.value.time[0] : undefined,
-      endTime: searchData.value.time ? searchData.value.time[1] : undefined,
+      ...searchData.value,
+      startTime: searchData.value.time?.[0],
+      endTime: searchData.value.time?.[1],
     })
 
-    // 添加select属性
     tableData.value = res.records.map(item => ({
       ...item,
       select: false
     }))
-
     total.value = res.total
   } catch (error) {
     console.error('查询操作失败:', error)
   } finally {
-    loading.value = false;  // 确保始终重置
+    loading.value = false
   }
 }
 
-// 删除按钮
-const deleteUser = async () => {
-  try {
-    await axios.post('/system/user/delete', {
-      userIds: selectedRows.value
-    })
-    ElMessage.success('删除成功')
-    await search()
-  } catch (error) {
-    console.error('删除操作失败:', error)
-  }
-}
-
-// 切换用户状态点击事件处理
-const handleSwitchClick = (row) => {
-  currentRow.value = row
-  currentUserId.value = row.userId
-  currentNewStatus.value = row.status === 1 ? 0 : 1
-  centerDialogVisible.value = true
-
-  // 直接更新本地数据避免重新请求
-  currentRow.value.status = currentNewStatus.value
-}
-
-// 确认状态修改
-const confirmSwitch = async () => {
-  try {
-    await axios.post('/system/user/switchStatus', {
-      userId: currentUserId.value,
-      status: currentNewStatus.value
-    })
-    ElMessage.success('状态修改成功')
-    centerDialogVisible.value = false
-  } catch (error) {
-    console.error('状态修改失败:', error)
-  }
-}
-
-// 取消修改时恢复原始状态
-const cancelSwitch = () => {
-  currentRow.value = null
-  centerDialogVisible.value = false
-  search() // 重新加载数据确保状态一致
-}
-
-// 重置按钮
+// 重置搜索条件
 const refresh = () => {
-  searchData.value.deptId = null
-  searchData.value.username = ''
-  searchData.value.phone = ''
-  searchData.value.status = null
-  searchData.value.time = []
-  currentPage.value = 1  // 默认第 1 页
-  pageSize.value = 10  // 默认每页 10 条数据
+  searchData.value = {
+    deptName: '',
+    username: '',
+    phone: '',
+    status: null,
+    time: [],
+  }
+  currentPage.value = 1
+  pageSize.value = 10
   search()
 }
 
-// 用户翻页
+/* 分页事件处理 */
 const handleCurrentChange = (val) => {
   currentPage.value = val
   search()
 }
 
-// 用户调节分页大小
 const handleSizeChange = (val) => {
   pageSize.value = val
-  currentPage.value = 1 // 每页条数改变时重置到第一页
+  currentPage.value = 1
   search()
 }
 
-// 导入按钮
-const importUsers = async () => {
-  ElMessage.error('尚未实现此功能')
+/* 部门树事件 */
+const handleDeptNodeClick = (data) => {
+  searchData.value.deptName = data.deptName
+  search()
 }
 
-// 导出按钮
-const exportUsers = async () => {
-  ElMessage.error('尚未实现此功能')
-}
+/* 其他功能 */
+const importUsers = () => ElMessage.error('尚未实现此功能')
+const exportUsers = () => ElMessage.error('尚未实现此功能')
 
-// 初始化加载数据
+/* 生命周期钩子 */
 onMounted(() => {
   search()
   fetchDeptTree()
