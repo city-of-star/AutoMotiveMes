@@ -1,5 +1,5 @@
 <template>
-  <div class="tabBar" :style="{ left: left, '--active-color': themeColor }">
+  <div class="tabBar" :style="{ left: left }">
     <div class="tabs-container">
       <div v-for="(tab, index) in tabs"
            :key="tab.path"
@@ -44,9 +44,6 @@ const left = computed(() => store.state.app.sidebar.opened
     ? store.state.app.sidebar.widthFold + 'px'
     : store.state.app.sidebar.widthExpend + 'px'
 )
-
-// 从 Vuex 中获取主题色
-const themeColor = computed(() => store.state.user.themeColor)
 
 const tabs = computed(() => store.state.tabBar.tabs)
 const currentTabIndex = computed(() =>
@@ -229,7 +226,7 @@ document.addEventListener('click', () => {
 
 .tab-item.active {
   background: #fff;
-  color: var(--active-color);  // 使用 CSS 变量
+  color: #409EFF;
   font-weight: 500;
 }
 

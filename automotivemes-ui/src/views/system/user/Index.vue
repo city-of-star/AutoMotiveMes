@@ -63,7 +63,7 @@
               clearable
           />
         </div>
-        <el-button @click="search()" :icon="Search" type="primary" :color="themeColor">搜索</el-button>
+        <el-button @click="search()" :icon="Search" type="primary">搜索</el-button>
         <el-button @click="refresh()" :icon="Refresh">重置</el-button>
       </div>
 
@@ -72,14 +72,14 @@
         <el-button
             v-if="hasPermission('system:user:add')"
             @click="openAddDialog"
-            :color="themeColor"
+            type="primary"
             :icon="Plus"
             plain
         >新增</el-button>
         <el-button
             v-if="hasPermission('system:user:update')"
             @click="openEditDialog"
-            :color="btnUpdateColor"
+            type="success"
             :icon="Edit"
             :disabled="selectedRows.length === 0"
             plain
@@ -88,7 +88,7 @@
             v-if="hasPermission('system:user:delete')"
             @click="deleteUserDialog = true"
             :icon="Delete"
-            :color="btnDeleteColor"
+            type="danger"
             :disabled="selectedRows.length === 0"
             plain
         >删除</el-button>
@@ -96,14 +96,14 @@
             v-if="hasPermission('system:user:import')"
             @click="importUsers"
             :icon="Download"
-            :color="btnImportColor"
+            type="info"
             plain
         >导入</el-button>
         <el-button
             v-if="hasPermission('system:user:export')"
             @click="exportUsers"
             :icon="Upload"
-            :color="btnExportColor"
+            type="warning"
             plain
         >导出</el-button>
       </div>
@@ -133,8 +133,6 @@
                 :active-value="1"
                 :inactive-value="0"
                 @click="handleSwitchClick(scope.row)"
-                style="margin: 0 auto"
-                :active-color="themeColor"
             />
           </template>
         </el-table-column>
@@ -387,13 +385,6 @@ import { ElMessage } from "element-plus"
 
 /* 状态声明 */
 const store = useStore()
-
-// 主题颜色相关
-const themeColor = store.state.user.themeColor
-const btnUpdateColor = store.state.app.btnUpdateColor
-const btnDeleteColor = store.state.app.btnDeleteColor
-const btnImportColor = store.state.app.btnImportColor
-const btnExportColor = store.state.app.btnExportColor
 
 // 用户状态切换相关
 const centerDialogVisible = ref(false)
@@ -834,9 +825,5 @@ onMounted(() => {
 
 .table-container {
   margin-top: 10px;
-}
-
-:deep(.el-table__header th) {
-  background-color: #F8F8F9 !important;
 }
 </style>

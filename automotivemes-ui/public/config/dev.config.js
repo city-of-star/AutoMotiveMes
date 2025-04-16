@@ -14,12 +14,6 @@ window.CONFIG = {
         }
     },
     theme: {
-        btnColor: {
-            btnUpdateColor: '#71E2A3',
-            btnDeleteColor: '#FF929E',
-            btnImportColor: '#969A9E',
-            btnExportColor: '#FFBA00'
-        },
         sidebar: {
             widthExpend: 250,
             widthFold: 64

@@ -7,12 +7,6 @@ export default {
             widthExpend: window.CONFIG.theme.sidebar.widthExpend,
             widthFold: window.CONFIG.theme.sidebar.widthFold
         },
-
-        // 按钮配色
-        btnUpdateColor: window.CONFIG.theme.btnColor.btnUpdateColor,  // 修改
-        btnDeleteColor: window.CONFIG.theme.btnColor.btnDeleteColor,  // 删除
-        btnImportColor: window.CONFIG.theme.btnColor.btnImportColor,  // 导入
-        btnExportColor: window.CONFIG.theme.btnColor.btnExportColor,  // 导出
     },
     mutations: {
         // 切换侧边栏状态

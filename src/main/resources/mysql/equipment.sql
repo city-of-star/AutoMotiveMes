@@ -83,3 +83,21 @@ CREATE TABLE equipment_maintenance (
     FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
     INDEX idx_maintenance_date (plan_date)
 ) ENGINE=InnoDB COMMENT='设备维护记录表';
+
+
+-- 插入设备类型数据
+INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
+    ('冲压机', '金属板材成型设备', '{"额定压力":"200T", "工作行程":"500mm", "工作频率":"60次/分钟"}'),
+    ('焊接机器人', '六轴自动化焊接设备', '{"臂展":"1.8m", "重复精度":"±0.02mm", "焊接温度范围":"150-450℃"}'),
+    ('CNC加工中心', '数控精密加工设备', '{"主轴转速":"20000rpm", "定位精度":"0.005mm", "刀库容量":"24把"}'),
+    ('AGV小车', '自动导航运输车', '{"载重":"1000kg", "导航方式":"激光导航", "电池续航":"8小时"}'),
+    ('注塑机', '塑料成型设备', '{"锁模力":"850T", "注射量":"3200cm³", "模板尺寸":"1500×1500mm"}');
+
+-- 插入设备基础数据
+INSERT INTO equipment (equipment_code, equipment_name, equipment_model, equipment_type, location, status, manufacturer, production_date, installation_date, last_maintenance_date, maintenance_cycle) VALUES
+    ('WSH-001', '数控冲压机', 'HFP-200', 1, '冲压车间/A线/工位1', 1, '上海重机', '2020-03-15', '2020-05-20', '2023-12-25', 90),
+    ('ROB-010', '弧焊机器人', 'FANUC-R2000', 2, '焊接车间/新能源线/工位3', 1, '发那科', '2022-01-10', '2022-02-01', '2023-12-28', 60),
+    ('AGV-005', '激光导航AGV', 'NDC-800', 4, '总装车间/物流区', 2, '新松机器人', '2021-09-01', '2021-10-15', NULL, 180),
+    ('CNC-100', '五轴加工中心', 'MAZAK-500', 3, '机加车间/精密区', 3, '山崎马扎克', '2019-11-30', '2020-01-10', '2023-06-15', 60),
+    ('OLD-001', '液压冲床', 'YH32-300', 1, '报废设备区', 4, '北京第一机床', '2010-05-01', '2010-07-01', '2018-03-10', NULL);
+

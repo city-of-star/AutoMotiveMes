@@ -12,8 +12,7 @@ export default {
         routes: [],
 
         // 主题色
-        // themeColor: localStorage.getItem('themeColor') || '#409EFF',
-        themeColor: '#911187',
+        themeColor: localStorage.getItem('themeColor') || '#409EFF',
 
         // 用户信息
         userId: null,
@@ -104,7 +103,6 @@ export default {
                 phone: response.phone,
                 createTime: response.createTime,
             });
-            console.log(response);
             return response;
         },
         async isValidToken() {

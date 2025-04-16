@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :style="{ width: sidebarWidth, '--active-color': themeColor }">
+  <div class="sidebar" :style="{ width: sidebarWidth }">
     <div v-if="!isCollapse" class="logo-container">
       <img class="logo" src="../../../assets/logo.png" alt="logo" />
     </div>
@@ -64,7 +64,6 @@ import {
 
 const store = useStore()
 const routes = computed(() => store.state.user.routes)
-const themeColor = computed(() => store.state.user.themeColor) // 新增主题色计算属性
 
 // 创建图标映射表
 const icons = {
@@ -150,24 +149,6 @@ const sidebarWidth = computed(() =>
     text-align: center;
     margin-top: 10px;
     animation: slideInLeft 0.5s ease-out forwards;
-  }
-
-  /* 激活路由样式（注意深度选择器语法） */
-  ::v-deep .el-menu {
-    .el-menu-item.is-active,
-    .el-sub-menu.is-active > .el-sub-menu__title {
-      color: var(--active-color);  /* 使用CSS变量 */
-      .el-icon {
-        color: var(--active-color);  /* 使用CSS变量 */
-      }
-    }
-
-    .el-sub-menu .el-menu-item.is-active {
-      color: var(--active-color);  /* 使用CSS变量 */
-      .el-icon {
-        color: var(--active-color);  /* 使用CSS变量 */
-      }
-    }
   }
 }
 </style>
