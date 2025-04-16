@@ -3,6 +3,13 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from "@/store";
 
+// 配置 NProgress()进度条
+NProgress.configure({
+  showSpinner: false,  // 隐藏加载小圆圈
+  easing: 'ease',
+  speed: 500
+})
+
 const routes  = [
   {
     path: '/',
