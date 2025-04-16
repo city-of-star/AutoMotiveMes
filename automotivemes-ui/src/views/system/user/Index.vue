@@ -69,8 +69,8 @@
         <el-button
             v-if="hasPermission('system:user:add')"
             @click="openAddDialog"
-            :icon="Plus"
             :color="themeColor"
+            :icon="Plus"
             plain
         >新增</el-button>
         <el-button

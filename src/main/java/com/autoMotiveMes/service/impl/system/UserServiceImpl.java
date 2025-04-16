@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -107,7 +108,7 @@ public class UserServiceImpl implements UserService {
             user.setLoginAttempts(0);  // 默认连续登陆失败次数为0
             user.setDeptId(dto.getDeptId());
             user.setPostId(dto.getPostId());
-            user.setCreateTime(new Date());
+            user.setCreateTime(LocalDateTime.now());
             userMapper.insert(user);
 
             // 存储用户角色信息

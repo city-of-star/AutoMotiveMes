@@ -5,7 +5,7 @@ spring:
     name: AutoMotiveMes
   jackson:
     time-zone: Asia/Shanghai
-    date-format: yyyy-MM-dd HH:mm:ss
+    date-format: yyyy-MM-dd HH:mm:ss  # 对 Date 有效
 
 security:
   jwt:

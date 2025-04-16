@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
             user.setStatus(1); // 默认启用状态
             user.setAccountLocked(1);  // 默认没有锁定
             user.setLoginAttempts(0);  // 初始化连续登陆失败次数为 0
-            user.setCreateTime(new Date());
+            user.setCreateTime(LocalDateTime.now());
             userMapper.insert(user);
 
             log.info("用户 {} 注册成功", registerRequestDto.getUsername());
@@ -93,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
             response.setToken(token);
 
             // 更新用户最后登录时间
-            Date date = new Date();
+            LocalDateTime date = LocalDateTime.now();
             user.setLastLogin(date);
             userMapper.updateById(user);
 

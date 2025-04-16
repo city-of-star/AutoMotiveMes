@@ -3,12 +3,13 @@ package com.autoMotiveMes.entity.system;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * 实现功能【岗位表】
+ * 实现功能【岗位实体类】
  *
  * @author li.hongyu
  * @date 2025-04-02 09:52:32
@@ -44,9 +45,11 @@ public class SysPost {
     /**
      * 创建时间，默认值为记录插入时的当前时间
      */
-    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
     /**
      * 更新时间，当记录更新时会自动更新该字段的值
      */
-    private Date updateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;
 }

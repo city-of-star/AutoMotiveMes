@@ -40,7 +40,7 @@ CREATE TABLE equipment_status (
     INDEX idx_status_time (start_time, end_time)
 ) ENGINE=InnoDB COMMENT='设备状态历史记录表';
 
-/* 设备运行参数表（equipment_parameters） */
+/* 设备运行参数记录表（equipment_parameters） */
 CREATE TABLE equipment_parameters (
     param_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '参数记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
