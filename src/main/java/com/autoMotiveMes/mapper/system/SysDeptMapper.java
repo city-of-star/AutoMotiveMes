@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Mapper
 public interface SysDeptMapper extends BaseMapper<SysDept> {
-    @Select("SELECT dept_id, dept_name, parent_id, order_num FROM sys_dept WHERE status = 1 ORDER BY order_num ASC")
+
+    // 查询所有启用的部门
     List<SysDept> selectAllEnabledDepts();
 }

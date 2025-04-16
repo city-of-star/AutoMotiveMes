@@ -15,9 +15,10 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
-    @Delete("delete from sys_user_role where user_id = #{userId}")
+
+    // 根据用户ID删除关联
     void deleteByUserId(@Param("userId") Long userId);
 
-    @Select("select * from sys_user_role where user_id = #{userId}")
+    // 根据用户ID查询关联
     SysUserRole selectByUserId(@Param("userId") Long userId);
 }

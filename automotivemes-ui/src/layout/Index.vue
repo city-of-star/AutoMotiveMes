@@ -13,9 +13,9 @@
 </template>
 
 <script setup>
-import Sidebar from '@/components/sidebar/Index.vue'
-import TopBar from '@/components/topBar/Index.vue'
-import TabBar from '@/components/tabBar/Index.vue'
+import Sidebar from '@/components/layout/sidebar/Index.vue'
+import TopBar from '@/components/layout/topBar/Index.vue'
+import TabBar from '@/components/layout/tabBar/Index.vue'
 
 import { computed } from 'vue'
 import { useStore } from 'vuex'
