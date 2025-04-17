@@ -36,14 +36,14 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     /**
      * 接受设备实时运行参数数据
-     * 将其存入 redis 并设置 1 分钟的过期时间
+     * 将其存入 redis 并设置 5 分钟的过期时间
      * 推送 WebSocket 消息
      */
     @Override
     public void acceptEquipmentRealTimeData(EquipmentParameters data) {
         Long equipmentId = data.getEquipmentId();
         String redisKey = REDIS_KEY_PREFIX + equipmentId;
-        int keepSize = DATA_EXPIRE_MINUTES * 60; // 保留最新120条数据
+        int keepSize = DATA_EXPIRE_MINUTES * 5 * 60;
 
         // 1. 将数据插入到列表头部（左侧）
         redisTemplate.opsForList().leftPush(redisKey, data);

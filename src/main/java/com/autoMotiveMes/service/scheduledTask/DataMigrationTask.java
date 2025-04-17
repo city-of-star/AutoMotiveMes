@@ -9,10 +9,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 实现功能【设备实时参数数据迁移定时任务】
@@ -35,7 +35,7 @@ public class DataMigrationTask {
     private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
 
     /**
-     * 定时任务：每3分钟将过期数据迁移到 equipment_parameters 表
+     * 定时任务：每 3 分钟将过期数据迁移到 equipment_parameters 表
      */
     @Scheduled(fixedRate = 180_000)
     public void dataMigrationTask() {
@@ -44,31 +44,29 @@ public class DataMigrationTask {
 
         Set<String> keys = redisTemplate.keys(REDIS_KEY_PREFIX + "*");
 
-        if (keys == null || keys.isEmpty()) {
+        if (keys.isEmpty()) {
             log.info("未找到需要保存的设备实时参数数据");
             return;
         }
 
         keys.forEach(key -> {
             try {
-                long cutoffTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(DATA_EXPIRE_MINUTES);
-
                 List<EquipmentParameters> allData = redisTemplate.opsForList().range(key, 0, -1);
                 if (allData == null || allData.isEmpty()) {
                     log.info("{} 无数据，跳过处理", key);
                     return;
                 }
 
+                LocalDateTime currentTime = LocalDateTime.now();
+                AtomicInteger k = new AtomicInteger();
+
                 List<EquipmentParameters> expiredData = allData.stream()
                         .filter(entry -> entry.getCollectTime() != null)
-                        .filter(entry -> {
-                            long timestamp = entry.getCollectTime()
-                                    .atZone(ZoneId.systemDefault())
-                                    .toInstant()
-                                    .toEpochMilli();
-                            return timestamp <= cutoffTime;
-                        })
+                        .filter(entry ->
+                                currentTime.isAfter(entry.getCollectTime().plusMinutes(DATA_EXPIRE_MINUTES)))
                         .toList();
+
+
 
                 if (expiredData.isEmpty()) {
                     log.info("{} 暂无过期数据", key);
@@ -81,7 +79,7 @@ public class DataMigrationTask {
                     } else {
                         redisTemplate.delete(key);
                     }
-                    log.info("{} 成功: 迁移 {} 条数据，保留 {} 条新数据", key, expiredData.size(), remainingSize);
+                    log.info("{} 成功: {迁移 {} 条数据，保留 {} 条新数据}", key, expiredData.size(), remainingSize);
                 }
             } catch (Exception e) {
                 log.error("处理 {} 异常: ", key, e);

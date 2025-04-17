@@ -20,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,7 +89,6 @@ public class EquipmentRealTimeDataSimulatorService {
      * 2. 解析每个类型的参数配置JSON
      */
     private void initParamConfigs() {
-        DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<EquipmentType> equipmentTypes = equipmentTypeMapper.selectByEquipmentStatus();
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -100,7 +101,8 @@ public class EquipmentRealTimeDataSimulatorService {
                 configs = Collections.emptyList();
             } else {
                 try {
-                    configs = objectMapper.readValue(json, new TypeReference<List<ParameterConfig>>() {});
+                    configs = objectMapper.readValue(json, new TypeReference<>() {
+                    });
                 } catch (JsonProcessingException e) {
                     log.error("设备类型[{} - {}]参数配置解析失败 - 无效JSON: {}",
                             type.getTypeId(), type.getTypeName(), json, e);

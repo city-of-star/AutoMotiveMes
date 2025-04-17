@@ -35,7 +35,7 @@ public class EquipmentStatusTask {
     private final EquipmentMapper equipmentMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate; // 注入 RedisTemplate
 
-    @Scheduled(fixedRate = 60_000)
+    @Scheduled(fixedRate = 120_000)
     public void generateStatusRecords() {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime windowStart = now.minusMinutes(1);
@@ -48,7 +48,6 @@ public class EquipmentStatusTask {
 
         activeEquipments.parallelStream().forEach(equipment -> {
             Long equipmentId = equipment.getEquipmentId();
-            // 从 Redis 获取实时数据（替换原数据库查询）
             List<EquipmentParameters> params = getRecentParamsFromRedis(equipmentId, windowStart, now);
             processEquipmentStatus(equipmentId, params, windowStart, now);
         });
