@@ -77,7 +77,7 @@ public class EquipmentRealTimeDataSimulatorService {
      * 从数据库加载所有设备信息
      */
     private void loadAllEquipment() {
-        this.equipmentList = equipmentMapper.selectList(null);
+        this.equipmentList = equipmentMapper.selectByEquipmentStatus();
         log.info("成功加载设备数量：{}", equipmentList.size());
     }
 
@@ -88,7 +88,7 @@ public class EquipmentRealTimeDataSimulatorService {
      */
     private void initParamConfigs() {
         DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        List<EquipmentType> equipmentTypes = equipmentTypeMapper.selectList(null);
+        List<EquipmentType> equipmentTypes = equipmentTypeMapper.selectByEquipmentStatus();
         ObjectMapper objectMapper = new ObjectMapper();
 
         for (EquipmentType type : equipmentTypes) {

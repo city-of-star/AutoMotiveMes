@@ -66,11 +66,13 @@ public class DataMigrationTask {
                                     .atZone(ZoneId.systemDefault())
                                     .toInstant()
                                     .toEpochMilli();
-                            return timestamp > cutoffTime;
+                            return timestamp <= cutoffTime;
                         })
                         .toList();
 
-                if (!expiredData.isEmpty()) {
+                if (expiredData.isEmpty()) {
+                    log.info("{} 暂无过期数据", key);
+                } else {
                     equipmentParametersMapper.insertBatch(expiredData);  // 保存到数据库
 
                     int remainingSize = allData.size() - expiredData.size();

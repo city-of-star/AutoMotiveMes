@@ -32,7 +32,7 @@ public class EquipmentStatusTask {
     private final EquipmentStatusMapper statusMapper;
     private final EquipmentMapper equipmentMapper;
 
-    @Scheduled(cron = "0 * * * * ?") // 每分钟执行一次
+    @Scheduled(fixedRate = 60_000)  // 每分钟执行一次
     public void generateStatusRecords() {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime windowStart = now.minusMinutes(1);

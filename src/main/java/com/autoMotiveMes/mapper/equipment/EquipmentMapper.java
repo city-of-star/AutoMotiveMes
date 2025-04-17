@@ -3,6 +3,9 @@ package com.autoMotiveMes.mapper.equipment;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 实现功能【设备基础信息表 mapper】
@@ -12,4 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface EquipmentMapper extends BaseMapper<Equipment> {
+    // 获取所有状态正常的设备
+    @Select("select * from equipment where status = 1")
+    List<Equipment> selectByEquipmentStatus();
 }
