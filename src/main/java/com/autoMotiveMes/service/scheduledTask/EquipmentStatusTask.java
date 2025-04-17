@@ -4,18 +4,21 @@ import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.entity.equipment.EquipmentStatus;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
-import com.autoMotiveMes.mapper.equipment.EquipmentParametersMapper;
 import com.autoMotiveMes.mapper.equipment.EquipmentStatusMapper;
+import com.autoMotiveMes.utils.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,16 +31,15 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class EquipmentStatusTask {
-    private final EquipmentParametersMapper parametersMapper;
     private final EquipmentStatusMapper statusMapper;
     private final EquipmentMapper equipmentMapper;
+    private final RedisTemplate<String, EquipmentParameters> redisTemplate; // 注入 RedisTemplate
 
-    @Scheduled(fixedRate = 60_000)  // 每分钟执行一次
+    @Scheduled(fixedRate = 60_000)
     public void generateStatusRecords() {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime windowStart = now.minusMinutes(1);
 
-        // 获取需要监控的有效设备（正常和待机状态）
         List<Equipment> activeEquipments = equipmentMapper.selectList(
                 new QueryWrapper<Equipment>()
                         .select("equipment_id")
@@ -46,17 +48,36 @@ public class EquipmentStatusTask {
 
         activeEquipments.parallelStream().forEach(equipment -> {
             Long equipmentId = equipment.getEquipmentId();
-
-            // 查询时间窗口内的参数记录（使用现有索引）
-            List<EquipmentParameters> params = parametersMapper.selectList(
-                    new QueryWrapper<EquipmentParameters>()
-                            .eq("equipment_id", equipmentId)
-                            .between("collect_time", windowStart, now)
-                            .orderByAsc("collect_time")
-            );
-
+            // 从 Redis 获取实时数据（替换原数据库查询）
+            List<EquipmentParameters> params = getRecentParamsFromRedis(equipmentId, windowStart, now);
             processEquipmentStatus(equipmentId, params, windowStart, now);
         });
+    }
+
+    /**
+     * 从 Redis 获取时间窗口内的参数数据
+     */
+    private List<EquipmentParameters> getRecentParamsFromRedis(Long equipmentId,
+                                                               LocalDateTime windowStart,
+                                                               LocalDateTime windowEnd) {
+        String redisKey = CommonUtils.REDIS_KEY_PREFIX + equipmentId;
+        List<EquipmentParameters> allData = redisTemplate.opsForList().range(redisKey, 0, -1);
+        if (allData == null) return Collections.emptyList();
+
+        // 转换为毫秒时间戳进行过滤
+        long startMillis = windowStart.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endMillis = windowEnd.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        return allData.stream()
+                .filter(p -> p.getCollectTime() != null)
+                .filter(p -> {
+                    long timestamp = p.getCollectTime()
+                            .atZone(ZoneId.systemDefault())
+                            .toInstant()
+                            .toEpochMilli();
+                    return timestamp >= startMillis && timestamp <= endMillis;
+                })
+                .toList();
     }
 
     private void processEquipmentStatus(Long equipmentId,
