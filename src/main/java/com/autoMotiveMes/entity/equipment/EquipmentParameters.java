@@ -36,7 +36,7 @@ public class EquipmentParameters {
     /**
      * 参数数值（精度：12位数字，4位小数）
      */
-    private Long paramValue;
+    private Double paramValue;
 
     /**
      * 计量单位

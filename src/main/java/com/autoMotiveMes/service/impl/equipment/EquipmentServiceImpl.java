@@ -1,6 +1,10 @@
 package com.autoMotiveMes.service.impl.equipment;
 
+import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
+import com.autoMotiveMes.mapper.equipment.EquipmentParametersMapper;
+import com.autoMotiveMes.mapper.equipment.EquipmentStatusMapper;
 import com.autoMotiveMes.service.equipment.EquipmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +13,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -26,12 +30,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class EquipmentServiceImpl implements EquipmentService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final EquipmentStatusMapper equipmentStatusMapper;
+    private final EquipmentParametersMapper equipmentParametersMapper;
+    private final EquipmentMapper equipmentMapper;
+    private final RedisTemplate<String, EquipmentParameters> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // Redis键格式：equipment:{equipmentId}
     private static final String REDIS_KEY_PREFIX = "equipment:";
-    private static final long DATA_EXPIRE_MINUTES = 1;
+    private static final int DATA_EXPIRE_MINUTES = 2;
 
     private void printData(EquipmentParameters data){
         synchronized (this) {
@@ -45,53 +51,94 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
+    /**
+     * 接受设备实时运行参数数据
+     * 将其存入 redis 并设置 1 分钟的过期时间
+     * 推送 WebSocket 消息
+     */
     @Override
     public void acceptEquipmentRealTimeData(EquipmentParameters data) {
-//        printData(data);
+        // 添加调试日志
+        log.debug("接收数据: equipmentId={}, collectTime={} (UTC时间: {})",
+                data.getEquipmentId(),
+                data.getCollectTime(),
+                data.getCollectTime().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC));
+
         Long equipmentId = data.getEquipmentId();
         String redisKey = REDIS_KEY_PREFIX + equipmentId;
+        int keepSize = DATA_EXPIRE_MINUTES * 60; // 保留最新120条数据
 
-        // 存储到Redis（使用List结构存储最新数据）
-        redisTemplate.opsForList().rightPush(redisKey, data);
+        // 1. 将数据插入到列表头部（左侧）
+        redisTemplate.opsForList().leftPush(redisKey, data);
 
-        // 设置双重过期策略：整体key过期 + 保留最新1分钟数据
-        redisTemplate.expire(redisKey, DATA_EXPIRE_MINUTES + 1, TimeUnit.MINUTES);
+        // 2. 修剪列表，仅保留最新的 keepSize 条数据
+        redisTemplate.opsForList().trim(redisKey, 0, keepSize - 1);
 
-        // 计算保留数量（假设每秒1条，保留60条）
-        int keepSize = (int) (DATA_EXPIRE_MINUTES * 60);
-        redisTemplate.opsForList().trim(redisKey, 0, keepSize);
+        // 3. 设置键的过期时间（每次插入都续期）
+        redisTemplate.expire(redisKey, DATA_EXPIRE_MINUTES, TimeUnit.MINUTES);
 
-        // 推送WebSocket消息
+        // 4. 推送WebSocket消息
         messagingTemplate.convertAndSend("/topic/equipment/realtime", data);
     }
 
+    @Override
+    public List<Equipment> listEquipment() {
+        return equipmentMapper.selectList(null);
+    }
+
     /**
-     * 定时任务：每分钟将过期数据迁移到MySQL
+     * 定时任务：每分钟将过期数据迁移到 equipment_parameters 表
      */
     @Scheduled(fixedRate = 60_000)
     public void dataMigrationTask() {
-        // 获取所有设备键模式
+        long startTime = System.currentTimeMillis();
+        log.info("过期数据迁移任务--开始");
+
         Set<String> keys = redisTemplate.keys(REDIS_KEY_PREFIX + "*");
 
-        if (keys != null) {
-            keys.forEach(key -> {
-                // 获取超时数据范围（保留最后1分钟）
-                long keepAfter = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(DATA_EXPIRE_MINUTES);
-                List<Object> expiredData = redisTemplate.opsForList().range(key, 0, -1);
+        if (keys == null || keys.isEmpty()) {
+            log.info("未找到需要保存的设备实时参数数据");
+            return;
+        }
 
-                // 筛选需要迁移的数据
-                assert expiredData != null;
-                expiredData.removeIf(entry -> {
-                    EquipmentParameters data = (EquipmentParameters) entry;
-                    long timestamp = data.getCollectTime().toInstant(ZoneOffset.UTC).toEpochMilli();
-                    return timestamp > keepAfter;
-                });
+        keys.forEach(key -> {
+            try {
+                long cutoffTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(DATA_EXPIRE_MINUTES);
+
+                List<EquipmentParameters> allData = redisTemplate.opsForList().range(key, 0, -1);
+                if (allData == null || allData.isEmpty()) {
+                    log.info("{} 无数据，跳过处理", key);
+                    return;
+                }
+
+                List<EquipmentParameters> expiredData = allData.stream()
+                        .filter(entry -> entry.getCollectTime() != null)
+                        .filter(entry -> {
+                            long timestamp = entry.getCollectTime()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toInstant()
+                                    .toEpochMilli();
+                            return timestamp > cutoffTime;
+                        })
+                        .toList();
 
                 if (!expiredData.isEmpty()) {
-//                    saveToMySQL(expiredData);      // 保存到数据库
-                    redisTemplate.opsForList().trim(key, expiredData.size(), -1); // 删除已迁移数据
+                    equipmentParametersMapper.insertBatch(expiredData);  // 保存到数据库
+
+                    int remainingSize = allData.size() - expiredData.size();
+                    if (remainingSize > 0) {
+                        redisTemplate.opsForList().trim(key, -remainingSize, -1);
+                    } else {
+                        redisTemplate.delete(key);
+                    }
+                    log.info("{} 成功: {迁移 {} 条数据，保留 {} 条新数据}", key, expiredData.size(), remainingSize);
                 }
-            });
-        }
+            } catch (Exception e) {
+                log.error("处理 {} 异常: ", key, e);
+            }
+        });
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        log.info("过期数据迁移任务--成功，耗时: {} 毫秒", elapsedTime);
     }
 }

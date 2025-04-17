@@ -1,10 +1,17 @@
 package com.autoMotiveMes.config.redis;
 
+import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.text.SimpleDateFormat;
 
 /**
  * 实现功能【Redis 配置类】
@@ -16,12 +23,23 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, EquipmentParameters> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, EquipmentParameters> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        template.setDefaultSerializer(serializer);
+        // Key 序列化器
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // 配置 ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        // Value 序列化器：直接通过构造函数传递 ObjectMapper
+        Jackson2JsonRedisSerializer<EquipmentParameters> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, EquipmentParameters.class);
+
+        template.setValueSerializer(serializer);
 
         return template;
     }

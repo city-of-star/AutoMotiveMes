@@ -3,6 +3,9 @@ package com.autoMotiveMes.mapper.equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 实现功能【设备运行参数记录表 mapper】
@@ -12,4 +15,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface EquipmentParametersMapper extends BaseMapper<EquipmentParameters> {
+    // 批量插入设备实时参数数据
+    void insertBatch(@Param("list") List<EquipmentParameters> list);
 }

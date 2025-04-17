@@ -87,11 +87,205 @@ CREATE TABLE equipment_maintenance (
 
 -- 插入设备类型数据
 INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
-    ('冲压机', '金属板材成型设备', '{"额定压力":"200T", "工作行程":"500mm", "工作频率":"60次/分钟"}'),
-    ('焊接机器人', '六轴自动化焊接设备', '{"臂展":"1.8m", "重复精度":"±0.02mm", "焊接温度范围":"150-450℃"}'),
-    ('CNC加工中心', '数控精密加工设备', '{"主轴转速":"20000rpm", "定位精度":"0.005mm", "刀库容量":"24把"}'),
-    ('AGV小车', '自动导航运输车', '{"载重":"1000kg", "导航方式":"激光导航", "电池续航":"8小时"}'),
-    ('注塑机', '塑料成型设备', '{"锁模力":"850T", "注射量":"3200cm³", "模板尺寸":"1500×1500mm"}');
+   ('冲压机', '金属板材成型设备',
+    '[
+      {
+        "name": "主电机电流",
+        "unit": "A",
+        "normalMin": 80.0,
+        "normalMax": 120.0,
+        "abnormalMin": 120.0,
+        "abnormalMax": 150.0,
+        "abnormalProbability": 0.05
+      },
+      {
+        "name": "滑块压力",
+        "unit": "MPa",
+        "normalMin": 18.0,
+        "normalMax": 22.0,
+        "abnormalMin": 22.0,
+        "abnormalMax": 25.0,
+        "abnormalProbability": 0.03
+      },
+      {
+        "name": "工作温度",
+        "unit": "℃",
+        "normalMin": 50.0,
+        "normalMax": 80.0,
+        "abnormalMin": 80.0,
+        "abnormalMax": 100.0,
+        "abnormalProbability": 0.05
+      },
+      {
+        "name": "振动幅度",
+        "unit": "mm",
+        "normalMin": 0.1,
+        "normalMax": 0.5,
+        "abnormalMin": 0.5,
+        "abnormalMax": 1.0,
+        "abnormalProbability": 0.02
+      }
+    ]'),
+
+   ('焊接机器人', '六轴自动化焊接设备',
+    '[
+      {
+        "name": "焊接电流",
+        "unit": "A",
+        "normalMin": 200.0,
+        "normalMax": 250.0,
+        "abnormalMin": 250.0,
+        "abnormalMax": 300.0,
+        "abnormalProbability": 0.05
+      },
+      {
+        "name": "焊接电压",
+        "unit": "V",
+        "normalMin": 22.0,
+        "normalMax": 28.0,
+        "abnormalMin": 28.0,
+        "abnormalMax": 35.0,
+        "abnormalProbability": 0.03
+      },
+      {
+        "name": "气体流量",
+        "unit": "L/min",
+        "normalMin": 15.0,
+        "normalMax": 20.0,
+        "abnormalMin": 20.0,
+        "abnormalMax": 25.0,
+        "abnormalProbability": 0.04
+      },
+      {
+        "name": "臂架负载率",
+        "unit": "%",
+        "normalMin": 60.0,
+        "normalMax": 90.0,
+        "abnormalMin": 90.0,
+        "abnormalMax": 100.0,
+        "abnormalProbability": 0.05
+      }
+    ]'),
+
+   ('CNC加工中心', '数控精密加工设备',
+    '[
+      {
+        "name": "主轴转速",
+        "unit": "rpm",
+        "normalMin": 18000.0,
+        "normalMax": 22000.0,
+        "abnormalMin": 22000.0,
+        "abnormalMax": 25000.0,
+        "abnormalProbability": 0.03
+      },
+      {
+        "name": "进给速率",
+        "unit": "mm/min",
+        "normalMin": 2000.0,
+        "normalMax": 5000.0,
+        "abnormalMin": 5000.0,
+        "abnormalMax": 6000.0,
+        "abnormalProbability": 0.02
+      },
+      {
+        "name": "刀具温度",
+        "unit": "℃",
+        "normalMin": 30.0,
+        "normalMax": 50.0,
+        "abnormalMin": 50.0,
+        "abnormalMax": 70.0,
+        "abnormalProbability": 0.04
+      },
+      {
+        "name": "切削力",
+        "unit": "kN",
+        "normalMin": 5.0,
+        "normalMax": 15.0,
+        "abnormalMin": 15.0,
+        "abnormalMax": 25.0,
+        "abnormalProbability": 0.03
+      }
+    ]'),
+
+   ('AGV小车', '自动导航运输车',
+    '[
+      {
+        "name": "电池电压",
+        "unit": "V",
+        "normalMin": 48.0,
+        "normalMax": 52.0,
+        "abnormalMin": 52.0,
+        "abnormalMax": 60.0,
+        "abnormalProbability": 0.05
+      },
+      {
+        "name": "行驶速度",
+        "unit": "m/s",
+        "normalMin": 1.0,
+        "normalMax": 1.5,
+        "abnormalMin": 1.5,
+        "abnormalMax": 2.0,
+        "abnormalProbability": 0.05
+      },
+      {
+        "name": "载重负荷",
+        "unit": "kg",
+        "normalMin": 0.0,
+        "normalMax": 800.0,
+        "abnormalMin": 800.0,
+        "abnormalMax": 1000.0,
+        "abnormalProbability": 0.03
+      },
+      {
+        "name": "导航信号强度",
+        "unit": "%",
+        "normalMin": 80.0,
+        "normalMax": 100.0,
+        "abnormalMin": 0.0,
+        "abnormalMax": 80.0,
+        "abnormalProbability": 0.05
+      }
+    ]'),
+
+   ('注塑机', '塑料成型设备',
+    '[
+      {
+        "name": "注射压力",
+        "unit": "bar",
+        "normalMin": 800.0,
+        "normalMax": 1200.0,
+        "abnormalMin": 1200.0,
+        "abnormalMax": 1500.0,
+        "abnormalProbability": 0.04
+      },
+      {
+        "name": "料筒温度",
+        "unit": "℃",
+        "normalMin": 200.0,
+        "normalMax": 250.0,
+        "abnormalMin": 250.0,
+        "abnormalMax": 300.0,
+        "abnormalProbability": 0.03
+      },
+      {
+        "name": "锁模力",
+        "unit": "ton",
+        "normalMin": 800.0,
+        "normalMax": 850.0,
+        "abnormalMin": 850.0,
+        "abnormalMax": 900.0,
+        "abnormalProbability": 0.02
+      },
+      {
+        "name": "循环时间",
+        "unit": "s",
+        "normalMin": 30.0,
+        "normalMax": 40.0,
+        "abnormalMin": 40.0,
+        "abnormalMax": 60.0,
+        "abnormalProbability": 0.05
+      }
+    ]');
 
 -- 插入设备基础数据
 INSERT INTO equipment (equipment_code, equipment_name, equipment_model, equipment_type, location, status, manufacturer, production_date, installation_date, last_maintenance_date, maintenance_cycle) VALUES
