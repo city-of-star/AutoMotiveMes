@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 实现功能【设备实时数据模拟服务】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-16 16:39:45
  */
 @Slf4j

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 实现功能【岗位管理服务接口】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-11 10:11:30
  */
 public interface PostService {

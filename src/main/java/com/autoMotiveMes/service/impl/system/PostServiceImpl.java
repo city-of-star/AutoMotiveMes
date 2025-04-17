@@ -1,19 +1,16 @@
 package com.autoMotiveMes.service.impl.system;
 
 import com.autoMotiveMes.dto.system.GetPostListResponseDto;
-import com.autoMotiveMes.entity.system.SysPost;
 import com.autoMotiveMes.mapper.system.SysPostMapper;
 import com.autoMotiveMes.service.system.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * 实现功能【岗位管理服务实现类】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-11 10:14:10
  */
 @Slf4j

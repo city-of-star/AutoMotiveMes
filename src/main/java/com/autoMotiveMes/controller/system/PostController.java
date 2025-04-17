@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 实现功能【岗位管理服务controller】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-11 10:15:29
  */
 @RestController

@@ -1,0 +1,90 @@
+package com.autoMotiveMes.service.scheduledTask;
+
+import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+import com.autoMotiveMes.mapper.equipment.EquipmentParametersMapper;
+import com.autoMotiveMes.utils.CommonUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 实现功能【】
+ *
+ * @author li.hongyu
+ * @date 2025-04-17 16:43:26
+ */
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class DataMigrationTask {
+
+    private final EquipmentParametersMapper equipmentParametersMapper;
+    private final RedisTemplate<String, EquipmentParameters> redisTemplate;
+
+    private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
+    private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
+
+    /**
+     * 定时任务：每分钟将过期数据迁移到 equipment_parameters 表
+     */
+    @Scheduled(fixedRate = 60_000)
+    public void dataMigrationTask() {
+        long startTime = System.currentTimeMillis();
+        log.info("过期数据迁移任务--开始");
+
+        Set<String> keys = redisTemplate.keys(REDIS_KEY_PREFIX + "*");
+
+        if (keys == null || keys.isEmpty()) {
+            log.info("未找到需要保存的设备实时参数数据");
+            return;
+        }
+
+        keys.forEach(key -> {
+            try {
+                long cutoffTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(DATA_EXPIRE_MINUTES);
+
+                List<EquipmentParameters> allData = redisTemplate.opsForList().range(key, 0, -1);
+                if (allData == null || allData.isEmpty()) {
+                    log.info("{} 无数据，跳过处理", key);
+                    return;
+                }
+
+                List<EquipmentParameters> expiredData = allData.stream()
+                        .filter(entry -> entry.getCollectTime() != null)
+                        .filter(entry -> {
+                            long timestamp = entry.getCollectTime()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toInstant()
+                                    .toEpochMilli();
+                            return timestamp > cutoffTime;
+                        })
+                        .toList();
+
+                if (!expiredData.isEmpty()) {
+                    equipmentParametersMapper.insertBatch(expiredData);  // 保存到数据库
+
+                    int remainingSize = allData.size() - expiredData.size();
+                    if (remainingSize > 0) {
+                        redisTemplate.opsForList().trim(key, -remainingSize, -1);
+                    } else {
+                        redisTemplate.delete(key);
+                    }
+                    log.info("{} 成功: 迁移 {} 条数据，保留 {} 条新数据", key, expiredData.size(), remainingSize);
+                }
+            } catch (Exception e) {
+                log.error("处理 {} 异常: ", key, e);
+            }
+        });
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        log.info("过期数据迁移任务--成功，耗时: {} 毫秒", elapsedTime);
+    }
+}

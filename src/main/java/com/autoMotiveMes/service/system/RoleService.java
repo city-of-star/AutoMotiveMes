@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 实现功能【角色管理服务接口】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-11 09:46:38
  */
 public interface RoleService {

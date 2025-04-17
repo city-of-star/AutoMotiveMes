@@ -12,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class CommonUtils {
 
+    public static final String REDIS_KEY_PREFIX = "equipment:";
+    public static final int DATA_EXPIRE_MINUTES = 2;
+
     // 返回当前用户的用户名
     public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

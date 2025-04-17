@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 实现功能【线程池配置】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-17 16:16:43
  */
 @Configuration

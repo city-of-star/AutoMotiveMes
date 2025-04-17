@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 实现功能【设备服务 controller】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-16 16:40:20
  */
 @RestController

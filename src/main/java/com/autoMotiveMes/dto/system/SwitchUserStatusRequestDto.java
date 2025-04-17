@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * 实现功能【切换用户状态入参】
  *
- * @author hu.hongdou
+ * @author li.hongyu
  * @date 2025-04-09 16:51:52
  */
 @Data
