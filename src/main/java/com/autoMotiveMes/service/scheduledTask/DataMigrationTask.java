@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 实现功能【】
+ * 实现功能【设备实时参数数据迁移定时任务】
  *
  * @author li.hongyu
  * @date 2025-04-17 16:43:26
@@ -29,13 +29,15 @@ public class DataMigrationTask {
     private final EquipmentParametersMapper equipmentParametersMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
 
+    // redis 存入的设备实时参数数据的公共key
     private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
+    // redis 存入的设备实时参数数据的过期时间
     private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
 
     /**
-     * 定时任务：每分钟将过期数据迁移到 equipment_parameters 表
+     * 定时任务：每3分钟将过期数据迁移到 equipment_parameters 表
      */
-    @Scheduled(fixedRate = 60_000)
+    @Scheduled(fixedRate = 180_000)
     public void dataMigrationTask() {
         long startTime = System.currentTimeMillis();
         log.info("过期数据迁移任务--开始");

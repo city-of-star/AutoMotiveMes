@@ -29,7 +29,9 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
 
+    // redis 存入的设备实时参数数据的公共key
     private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
+    // redis 存入的设备实时参数数据的过期时间
     private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
 
     /**
