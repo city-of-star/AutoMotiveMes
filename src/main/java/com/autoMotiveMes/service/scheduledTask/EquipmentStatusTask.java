@@ -35,7 +35,7 @@ public class EquipmentStatusTask {
     private final EquipmentMapper equipmentMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate; // 注入 RedisTemplate
 
-    @Scheduled(fixedRate = 120_000)
+    @Scheduled(cron = "0 * * * * ?")
     public void generateStatusRecords() {
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime windowStart = now.minusMinutes(1);
