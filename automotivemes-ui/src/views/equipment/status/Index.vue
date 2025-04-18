@@ -302,30 +302,30 @@ const initChart = () => {
 
 // 更新图表数据
 const updateChartData = (param) => {
-  const timestamp = param.collectTime.toLocaleTimeString()
+  const timestamp = new Date(param.collectTime).toLocaleTimeString();
 
-  // 更新时间轴
+  // 正确维护时间轴（保留最新900个点，新数据在末尾）
   chartData.value.timestamps = [
     timestamp,
-    ...chartData.value.timestamps.slice(0, 29)
-  ]
+    ...chartData.value.timestamps.slice(-899),
+  ];
 
-  // 更新系列数据
+  // 更新对应参数的数据序列
   if (!chartData.value.series.has(param.paramName)) {
     chartData.value.series.set(param.paramName, {
       name: param.paramName,
       unit: param.unit,
       data: []
-    })
+    });
   }
 
-  const series = chartData.value.series.get(param.paramName)
+  const series = chartData.value.series.get(param.paramName);
   series.data = [
     { value: param.paramValue, unit: param.unit },
-    ...series.data.slice(0, 29)
-  ]
+    ...series.data.slice(-899),
+  ];
 
-  // 更新图表
+  // 更新图表配置
   const option = {
     xAxis: {
       data: chartData.value.timestamps
@@ -336,34 +336,72 @@ const updateChartData = (param) => {
       data: s.data.map(d => d.value),
       showSymbol: false,
       smooth: true
-    })),
-    legend: {
-      data: Array.from(chartData.value.series.keys())
-    }
-  }
+    }))
+  };
 
-  chartInstance.setOption(option)
-}
+  chartInstance.setOption(option);
+};
 
 // 设备选择处理
-const handleEquipmentSelect = (equipment) => {
+const handleEquipmentSelect = async (equipment) => {
   currentEquipment.value = equipment
   currentParameters.value = {}
-  chartData.value.series.clear()
-  chartData.value.timestamps = []
 
-  nextTick(() => {
-    if (chartInstance) {
-      chartInstance.dispose()
-      chartInstance = null
-    }
-    initChart()
-  })
+  // 清空并重新初始化图表
+  if (chartInstance) {
+    chartInstance.dispose()
+  }
+  await nextTick()
+  initChart()
+
+  // 加载历史数据
+  await fetchHistoryData(equipment.equipmentId)
 }
 
 // 时间格式化
 const formatTime = (time) => {
   return new Date(time).toLocaleTimeString()
+}
+
+const fetchHistoryData = async (equipmentId) => {
+  try {
+    let data = await axios.get(`/equipment/historyData/${equipmentId}`);
+    data = data.slice(-900); // 只取最后900条
+
+    // 初始化图表数据
+    chartData.value.timestamps = []
+    chartData.value.series.clear()
+
+    data.forEach(item => {
+      const time = new Date(item.collectTime)
+      const timeStr = time.toLocaleTimeString()
+
+      // 更新时间轴
+      if (!chartData.value.timestamps.includes(timeStr)) {
+        chartData.value.timestamps.push(timeStr)
+      }
+
+      // 更新系列数据
+      if (!chartData.value.series.has(item.paramName)) {
+        chartData.value.series.set(item.paramName, {
+          name: item.paramName,
+          unit: item.unit,
+          data: []
+        })
+      }
+
+      const series = chartData.value.series.get(item.paramName)
+      series.data.push({
+        value: item.paramValue,
+        unit: item.unit
+      })
+    })
+
+    // 更新图表
+    updateChartData()
+  } catch (error) {
+    ElMessage.error('历史数据加载失败')
+  }
 }
 </script>
 

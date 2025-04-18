@@ -1,6 +1,7 @@
 package com.autoMotiveMes.service.equipment;
 
 import com.autoMotiveMes.entity.equipment.Equipment;
+import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 
 import java.util.List;
@@ -18,4 +19,8 @@ public interface EquipmentService {
 
     // 查询设备列表
     List<Equipment> listEquipment();
+
+    void handleAlarmMaintenance(Long alarmId, String operator);
+
+    List<EquipmentAlarm> listEquipmentAlarm();
 }

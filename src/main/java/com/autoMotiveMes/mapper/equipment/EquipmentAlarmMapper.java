@@ -3,6 +3,9 @@ package com.autoMotiveMes.mapper.equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 实现功能【设备报警记录表 mapper】
@@ -12,4 +15,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface EquipmentAlarmMapper extends BaseMapper<EquipmentAlarm> {
+    @Select("SELECT * FROM equipment_alarm WHERE equipment_id = #{equipmentId} AND status = 0")
+    List<EquipmentAlarm> selectActiveAlarms(Long equipmentId);
 }

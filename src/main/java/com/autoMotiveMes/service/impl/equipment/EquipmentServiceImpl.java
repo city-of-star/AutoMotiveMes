@@ -1,17 +1,32 @@
 package com.autoMotiveMes.service.impl.equipment;
 
 import com.autoMotiveMes.entity.equipment.Equipment;
+import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
+import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+import com.autoMotiveMes.mapper.equipment.EquipmentAlarmMapper;
+import com.autoMotiveMes.mapper.equipment.EquipmentMaintenanceMapper;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
 import com.autoMotiveMes.service.equipment.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,6 +39,13 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class EquipmentServiceImpl implements EquipmentService {
+
+    private final EquipmentMaintenanceMapper maintenanceMapper;
+
+    private final EquipmentAlarmMapper alarmMapper;
+
+    // 报警规则缓存（设备类型ID -> 规则配置）
+    private final Map<Integer, AlarmRuleConfig> alarmRules = new ConcurrentHashMap<>();
 
     private final EquipmentMapper equipmentMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
@@ -61,5 +83,117 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public List<Equipment> listEquipment() {
         return equipmentMapper.selectList(null);
+    }
+
+    @Scheduled(fixedDelay = 30_000) // 每30秒检测一次
+    public void checkAlarmConditions() {
+        Set<String> keys = redisTemplate.keys(CommonUtils.REDIS_KEY_PREFIX + "*");
+        if (keys != null) {
+            keys.forEach(key -> {
+                Long equipmentId = Long.parseLong(key.substring(10));
+                List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49); // 取最近50条
+
+                if (params != null) {
+                    checkContinuousAbnormal(equipmentId, params);
+                }
+                if (params != null) {
+                    checkMultiParamAbnormal(equipmentId, params);
+                }
+            });
+        }
+    }
+
+    private void checkContinuousAbnormal(Long equipmentId, List<EquipmentParameters> params) {
+        int consecutiveCount = 0;
+        for (EquipmentParameters param : params) {
+            if (param.getIsNormal() == 0) {
+                consecutiveCount++;
+                if (consecutiveCount >= 3) {
+                    handleAlarm(equipmentId, "连续3次异常参数", 2);
+                    break;
+                }
+            } else {
+                consecutiveCount = 0;
+            }
+        }
+    }
+
+    private void checkMultiParamAbnormal(Long equipmentId, List<EquipmentParameters> params) {
+        Map<String, Integer> abnormalCounts = new HashMap<>();
+        params.stream()
+                .filter(p -> p.getIsNormal() == 0)
+                .forEach(p -> abnormalCounts.merge(p.getParamName(), 1, Integer::sum));
+
+        if (abnormalCounts.size() >= 2) {
+            handleAlarm(equipmentId, "多参数异常:" + abnormalCounts.keySet(), 3);
+        }
+    }
+
+    private void handleAlarm(Long equipmentId, String detail, int level) {
+        EquipmentAlarm alarm = new EquipmentAlarm();
+        alarm.setEquipmentId(equipmentId);
+        alarm.setAlarmCode(generateAlarmCode(level));
+        alarm.setAlarmLevel(level);
+        alarm.setStartTime(LocalDateTime.now());
+        alarm.setStatus(0); // 未处理
+
+        alarmMapper.insert(alarm);
+
+        // WebSocket通知
+        messagingTemplate.convertAndSend("/topic/equipment/alarm", alarm);
+    }
+
+    // 报警编码生成规则（示例：AL3-202311021030）
+    private String generateAlarmCode(int level) {
+        return String.format("AL%d-%s", level,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
+    }
+
+    @Data
+    private static class AlarmRuleConfig {
+        private int continuousThreshold = 3;
+        private int multiParamThreshold = 2;
+    }
+
+    @Scheduled(cron = "0 0 8 * * ?") // 每天8点生成计划
+    public void generatePreventiveMaintenance() {
+        List<Equipment> equipments = equipmentMapper.selectList(
+                new QueryWrapper<Equipment>().isNotNull("maintenance_cycle"));
+
+        equipments.forEach(equip -> {
+            EquipmentMaintenance maintenance = new EquipmentMaintenance();
+            maintenance.setEquipmentId(equip.getEquipmentId());
+            maintenance.setPlanDate(LocalDate.now().plusDays(equip.getMaintenanceCycle()));
+            maintenance.setMaintenanceType(1); // 预防性
+            maintenance.setMaintenanceContent("定期保养");
+
+            maintenanceMapper.insert(maintenance);
+        });
+    }
+
+    @Transactional
+    public void handleAlarmMaintenance(Long alarmId, String operator) {
+        EquipmentAlarm alarm = alarmMapper.selectById(alarmId);
+
+        EquipmentMaintenance maintenance = new EquipmentMaintenance();
+        maintenance.setEquipmentId(alarm.getEquipmentId());
+        maintenance.setPlanDate(LocalDate.now());
+        maintenance.setActualDate(LocalDate.now());
+        maintenance.setMaintenanceType(3);  // 应急维修
+        maintenance.setOperator(operator);
+        maintenance.setMaintenanceContent("处理报警：" + alarm.getAlarmCode());
+
+        maintenanceMapper.insert(maintenance);
+
+        // 更新报警状态
+        alarm.setStatus(2); // 已处理
+        alarm.setHandler(operator);
+        alarm.setEndTime(LocalDateTime.now());
+        alarmMapper.updateById(alarm);
+    }
+
+    @Override
+    public List<EquipmentAlarm> listEquipmentAlarm() {
+        return alarmMapper.selectList(null);
     }
 }
