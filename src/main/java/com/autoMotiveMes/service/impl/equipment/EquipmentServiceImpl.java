@@ -1,5 +1,9 @@
 package com.autoMotiveMes.service.impl.equipment;
 
+import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
+import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
+import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
+import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
@@ -10,6 +14,7 @@ import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
 import com.autoMotiveMes.service.equipment.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +29,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -133,11 +135,16 @@ public class EquipmentServiceImpl implements EquipmentService {
         EquipmentAlarm alarm = new EquipmentAlarm();
         alarm.setEquipmentId(equipmentId);
         alarm.setAlarmCode(generateAlarmCode(level));
+        alarm.setAlarmReason(detail);
         alarm.setAlarmLevel(level);
         alarm.setStartTime(LocalDateTime.now());
         alarm.setStatus(0);  // 未处理
 
         alarmMapper.insert(alarm);
+
+        Equipment equipment = equipmentMapper.selectById(equipmentId);
+        equipment.setStatus(2);  // 待机
+        equipmentMapper.updateById(equipment);
 
         // WebSocket通知
         messagingTemplate.convertAndSend("/topic/equipment/alarm", alarm);
@@ -164,7 +171,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             EquipmentMaintenance maintenance = new EquipmentMaintenance();
             maintenance.setEquipmentId(equip.getEquipmentId());
             maintenance.setPlanDate(LocalDate.now().plusDays(equip.getMaintenanceCycle()));
-            maintenance.setMaintenanceType(1); // 预防性
+            maintenance.setMaintenanceType(1);  // 预防性
             maintenance.setMaintenanceContent("定期保养");
 
             maintenanceMapper.insert(maintenance);
@@ -172,9 +179,9 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Transactional
-    public void handleAlarmMaintenance(Long alarmId) {
+    public void handleAlarmMaintenance(HandleAlarmRequestDto dto) {
         String username = CommonUtils.getCurrentUsername();
-        EquipmentAlarm alarm = alarmMapper.selectById(alarmId);
+        EquipmentAlarm alarm = alarmMapper.selectById(dto.getAlarmId());
 
         EquipmentMaintenance maintenance = new EquipmentMaintenance();
         maintenance.setEquipmentId(alarm.getEquipmentId());
@@ -182,29 +189,36 @@ public class EquipmentServiceImpl implements EquipmentService {
         maintenance.setActualDate(LocalDate.now());
         maintenance.setMaintenanceType(3);  // 应急维修
         maintenance.setOperator(username);
-        maintenance.setResult("维护成功");
-        maintenance.setCost(BigDecimal.valueOf(1.88));
-        maintenance.setMaintenanceContent("处理报警：" + alarm.getAlarmCode());
+        maintenance.setResult(dto.getResult());
+        maintenance.setCost(dto.getCost());
+        maintenance.setMaintenanceContent("(处理报警：" + alarm.getAlarmCode() + ") " + dto.getMaintenanceContent());
 
         maintenanceMapper.insert(maintenance);
 
         // 更新报警状态
-        alarm.setStatus(2); // 已处理
+        alarm.setStatus(2);  // 已处理
         alarm.setHandler(username);
         alarm.setEndTime(LocalDateTime.now());
         Duration duration = Duration.between(alarm.getStartTime(), alarm.getEndTime());
-        alarm.setDuration((int) duration.getSeconds() % 60);
-        alarm.setSolution("暂无解决方案");
+        alarm.setDuration((int) duration.getSeconds());
+        alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + " || 处理结果: " + dto.getResult());
         alarmMapper.updateById(alarm);
+
+        // 更新涉笔状态
+        Equipment equipment = equipmentMapper.selectById(alarm.getEquipmentId());
+        equipment.setStatus(1);  // 运行中
+        equipmentMapper.updateById(equipment);
     }
 
     @Override
-    public List<EquipmentAlarm> listRealTimeEquipmentAlarm() {
+    public List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm() {
         return alarmMapper.listRealTimeEquipmentAlarm();
     }
 
     @Override
-    public List<EquipmentAlarm> listEquipmentAlarmHistory() {
-        return alarmMapper.listEquipmentAlarmHistory();
+    public Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto dto) {
+        Page<AlarmHistoryResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+                dto.getSize() == null ? 10 : dto.getSize());
+        return alarmMapper.listEquipmentAlarmHistory(page, dto);
     }
 }

@@ -1,8 +1,13 @@
 package com.autoMotiveMes.service.equipment;
 
+import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
+import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
+import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
+import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 
@@ -21,11 +26,11 @@ public interface EquipmentService {
     List<Equipment> listEquipment();
 
     // 处理警报并产生维护记录
-    void handleAlarmMaintenance(Long alarmId);
+    void handleAlarmMaintenance(HandleAlarmRequestDto dto);
 
     // 获取实时警报
-    List<EquipmentAlarm> listRealTimeEquipmentAlarm();
+    List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm();
 
     // 获取警报历史
-    List<EquipmentAlarm> listEquipmentAlarmHistory();
+    Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto query);
 }

@@ -5,9 +5,13 @@ import store from './store'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { websocket } from './utils/websocket';
 
 // 环境判断（使用Vue CLI默认环境变量）
 const isDevelopment = process.env.NODE_ENV === 'development'
+
+// 初始化WebSocket连接
+websocket.init();
 
 // 动态加载配置文件
 const loadConfig = async () => {

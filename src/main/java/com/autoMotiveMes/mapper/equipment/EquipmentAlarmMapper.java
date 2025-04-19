@@ -1,8 +1,13 @@
 package com.autoMotiveMes.mapper.equipment;
 
+import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
+import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
+import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -16,9 +21,9 @@ import java.util.List;
 @Mapper
 public interface EquipmentAlarmMapper extends BaseMapper<EquipmentAlarm> {
 
-    @Select("SELECT * FROM equipment_alarm WHERE status = 0 ORDER BY start_time DESC")
-    List<EquipmentAlarm> listRealTimeEquipmentAlarm();
+    // 获取实时报警记录
+    List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm();
 
-    @Select("SELECT * FROM equipment_alarm WHERE status = 2 ORDER BY start_time DESC")
-    List<EquipmentAlarm> listEquipmentAlarmHistory();
+    // 获取历史报警记录
+    Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(Page<AlarmHistoryResponseDto> page, @Param("dto") AlarmHistoryRequestDto dto);
 }

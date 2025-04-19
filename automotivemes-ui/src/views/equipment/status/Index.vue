@@ -105,13 +105,12 @@
 </template>
 
 <script setup>
-import {Monitor, Connection, Setting, Warning} from '@element-plus/icons-vue'
-import {computed, nextTick, onBeforeUnmount, onMounted, ref} from 'vue'
-import {ElMessage} from 'element-plus'
+import { Monitor, Connection, Setting, Warning } from '@element-plus/icons-vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
 import axios from '@/utils/axios'
-import SockJS from 'sockjs-client'
-import {Client} from '@stomp/stompjs'
+import { websocket } from "@/utils/websocket";
 
 // 状态映射
 const statusMap = {
@@ -141,9 +140,6 @@ const chartData = ref({
   timestamps: [],
   series: new Map()
 })
-
-// WebSocket
-const stompClient = ref(null)
 
 // 状态统计
 const statusStats = computed(() => {
@@ -182,11 +178,9 @@ const computedCurrentParameters = computed(() => {
 // 初始化
 onMounted(async () => {
   await fetchEquipmentList()
-  initWebSocket()
 })
 
 onBeforeUnmount(() => {
-  disconnectWebSocket()
   if (chartInstance) {
     chartInstance.dispose()
   }
@@ -209,35 +203,10 @@ const fetchEquipmentList = async () => {
   }
 }
 
-// WebSocket连接
-const initWebSocket = () => {
-  const socket = new SockJS('http://localhost:3000/mes-websocket')
-  stompClient.value = new Client({
-    webSocketFactory: () => socket,
-    reconnectDelay: 5000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
-    onStompError: (frame) => {
-      console.error('WebSocket错误:', frame.headers.message)
-    }
-  })
-
-  stompClient.value.onConnect = () => {
-    stompClient.value.subscribe(
-        '/topic/equipment/realtime',
-        message => handleRealtimeData(JSON.parse(message.body))
-    )
-  }
-
-  stompClient.value.activate()
-}
-
-// 断开WebSocket
-const disconnectWebSocket = () => {
-  if (stompClient.value && stompClient.value.connected) {
-    stompClient.value.deactivate()
-  }
-}
+// 获取实时设备参数数据
+websocket.subscribe('/topic/equipment/realtime', (message) => {
+  handleRealtimeData(JSON.parse(message.body));
+});
 
 // 处理实时数据
 const handleRealtimeData = (data) => {

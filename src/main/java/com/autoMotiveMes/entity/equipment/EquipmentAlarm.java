@@ -33,6 +33,11 @@ public class EquipmentAlarm {
     private String alarmCode;
 
     /**
+     * 报警原因
+     */
+    private String alarmReason;
+
+    /**
      * 报警等级：1-警告 2-一般故障 3-严重故障
      */
     private Integer alarmLevel;

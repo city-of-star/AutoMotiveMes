@@ -58,6 +58,7 @@ CREATE TABLE equipment_alarm (
     alarm_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '报警记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     alarm_code VARCHAR(32) NOT NULL COMMENT '报警编码（按标准编码规则）',
+    alarm_reason VARCHAR(200) COMMENT '报警原因',
     alarm_level TINYINT NOT NULL COMMENT '报警等级：1-警告 2-一般故障 3-严重故障',
     start_time DATETIME NOT NULL COMMENT '报警开始时间',
     end_time DATETIME COMMENT '报警解除时间',

@@ -7,11 +7,10 @@ window.CONFIG = {
         timeout: 15000
     },
     websocket: {
-        endpoint: '/ws-endpoint',
-        reconnectInterval: 5000,
-        heartbeat: {
-            enable: true, interval: 30000
-        }
+        baseURL: 'http://localhost:3000/mes-websocket',
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
     },
     theme: {
         sidebar: {

@@ -1,11 +1,16 @@
 package com.autoMotiveMes.controller.equipment;
 
 import com.autoMotiveMes.common.response.R;
+import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
+import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
+import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
+import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.service.equipment.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -38,18 +43,18 @@ public class EquipmentController {
     }
 
     @GetMapping("/listRealTimeAlarms")
-    public R<List<EquipmentAlarm>> listRealTimeEquipmentAlarm() {
+    public R<List<RealTimeAlarmResponseDto>> listRealTimeEquipmentAlarm() {
         return R.success(equipmentService.listRealTimeEquipmentAlarm());
     }
 
     @GetMapping("/listEquipmentAlarmHistory")
-    public R<List<EquipmentAlarm>> listEquipmentAlarmHistory() {
-        return R.success(equipmentService.listEquipmentAlarmHistory());
+    public R<Page<AlarmHistoryResponseDto>> listEquipmentAlarmHistory(AlarmHistoryRequestDto dto) {
+        return R.success(equipmentService.listEquipmentAlarmHistory(dto));
     }
 
     @PostMapping("/handleAlarm")
-    public R<?> handleAlarm(@RequestParam Long alarmId) {
-        equipmentService.handleAlarmMaintenance(alarmId);
+    public R<?> handleAlarm(@RequestBody HandleAlarmRequestDto dto) {
+        equipmentService.handleAlarmMaintenance(dto);
         return R.successWithoutData();
     }
 
