@@ -1,5 +1,6 @@
 package com.autoMotiveMes.entity.equipment;
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -63,5 +64,5 @@ public class EquipmentMaintenance {
     /**
      * 维护成本（精度：10位数字，2位小数）
      */
-    private Long cost;
+    private BigDecimal cost;
 }

@@ -37,14 +37,19 @@ public class EquipmentController {
         return R.success(equipmentService.listEquipment());
     }
 
-    @GetMapping("/active-alarms")
-    public R<List<EquipmentAlarm>> getActiveAlarms() {
-        return R.success(equipmentService.listEquipmentAlarm());
+    @GetMapping("/listRealTimeAlarms")
+    public R<List<EquipmentAlarm>> listRealTimeEquipmentAlarm() {
+        return R.success(equipmentService.listRealTimeEquipmentAlarm());
     }
 
-    @PostMapping("/handle-alarm")
-    public R<?> handleAlarm(@RequestParam Long alarmId, @RequestParam String operator) {
-        equipmentService.handleAlarmMaintenance(alarmId, operator);
+    @GetMapping("/listEquipmentAlarmHistory")
+    public R<List<EquipmentAlarm>> listEquipmentAlarmHistory() {
+        return R.success(equipmentService.listEquipmentAlarmHistory());
+    }
+
+    @PostMapping("/handleAlarm")
+    public R<?> handleAlarm(@RequestParam Long alarmId) {
+        equipmentService.handleAlarmMaintenance(alarmId);
         return R.successWithoutData();
     }
 

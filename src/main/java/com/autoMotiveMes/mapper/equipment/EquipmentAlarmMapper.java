@@ -15,6 +15,10 @@ import java.util.List;
  */
 @Mapper
 public interface EquipmentAlarmMapper extends BaseMapper<EquipmentAlarm> {
-    @Select("SELECT * FROM equipment_alarm WHERE equipment_id = #{equipmentId} AND status = 0")
-    List<EquipmentAlarm> selectActiveAlarms(Long equipmentId);
+
+    @Select("SELECT * FROM equipment_alarm WHERE status = 0 ORDER BY start_time DESC")
+    List<EquipmentAlarm> listRealTimeEquipmentAlarm();
+
+    @Select("SELECT * FROM equipment_alarm WHERE status = 2 ORDER BY start_time DESC")
+    List<EquipmentAlarm> listEquipmentAlarmHistory();
 }

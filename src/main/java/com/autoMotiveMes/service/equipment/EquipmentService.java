@@ -20,7 +20,12 @@ public interface EquipmentService {
     // 查询设备列表
     List<Equipment> listEquipment();
 
-    void handleAlarmMaintenance(Long alarmId, String operator);
+    // 处理警报并产生维护记录
+    void handleAlarmMaintenance(Long alarmId);
 
-    List<EquipmentAlarm> listEquipmentAlarm();
+    // 获取实时警报
+    List<EquipmentAlarm> listRealTimeEquipmentAlarm();
+
+    // 获取警报历史
+    List<EquipmentAlarm> listEquipmentAlarmHistory();
 }

@@ -19,6 +19,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -88,19 +90,17 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Scheduled(fixedDelay = 30_000) // 每30秒检测一次
     public void checkAlarmConditions() {
         Set<String> keys = redisTemplate.keys(CommonUtils.REDIS_KEY_PREFIX + "*");
-        if (keys != null) {
-            keys.forEach(key -> {
-                Long equipmentId = Long.parseLong(key.substring(10));
-                List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49); // 取最近50条
+        keys.forEach(key -> {
+            Long equipmentId = Long.parseLong(key.substring(10));
+            List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49);  // 取最近50条
 
-                if (params != null) {
-                    checkContinuousAbnormal(equipmentId, params);
-                }
-                if (params != null) {
-                    checkMultiParamAbnormal(equipmentId, params);
-                }
-            });
-        }
+            if (params != null) {
+                checkContinuousAbnormal(equipmentId, params);
+            }
+            if (params != null) {
+                checkMultiParamAbnormal(equipmentId, params);
+            }
+        });
     }
 
     private void checkContinuousAbnormal(Long equipmentId, List<EquipmentParameters> params) {
@@ -135,7 +135,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         alarm.setAlarmCode(generateAlarmCode(level));
         alarm.setAlarmLevel(level);
         alarm.setStartTime(LocalDateTime.now());
-        alarm.setStatus(0); // 未处理
+        alarm.setStatus(0);  // 未处理
 
         alarmMapper.insert(alarm);
 
@@ -172,7 +172,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Transactional
-    public void handleAlarmMaintenance(Long alarmId, String operator) {
+    public void handleAlarmMaintenance(Long alarmId) {
+        String username = CommonUtils.getCurrentUsername();
         EquipmentAlarm alarm = alarmMapper.selectById(alarmId);
 
         EquipmentMaintenance maintenance = new EquipmentMaintenance();
@@ -180,20 +181,30 @@ public class EquipmentServiceImpl implements EquipmentService {
         maintenance.setPlanDate(LocalDate.now());
         maintenance.setActualDate(LocalDate.now());
         maintenance.setMaintenanceType(3);  // 应急维修
-        maintenance.setOperator(operator);
+        maintenance.setOperator(username);
+        maintenance.setResult("维护成功");
+        maintenance.setCost(BigDecimal.valueOf(1.88));
         maintenance.setMaintenanceContent("处理报警：" + alarm.getAlarmCode());
 
         maintenanceMapper.insert(maintenance);
 
         // 更新报警状态
         alarm.setStatus(2); // 已处理
-        alarm.setHandler(operator);
+        alarm.setHandler(username);
         alarm.setEndTime(LocalDateTime.now());
+        Duration duration = Duration.between(alarm.getStartTime(), alarm.getEndTime());
+        alarm.setDuration((int) duration.getSeconds() % 60);
+        alarm.setSolution("暂无解决方案");
         alarmMapper.updateById(alarm);
     }
 
     @Override
-    public List<EquipmentAlarm> listEquipmentAlarm() {
-        return alarmMapper.selectList(null);
+    public List<EquipmentAlarm> listRealTimeEquipmentAlarm() {
+        return alarmMapper.listRealTimeEquipmentAlarm();
+    }
+
+    @Override
+    public List<EquipmentAlarm> listEquipmentAlarmHistory() {
+        return alarmMapper.listEquipmentAlarmHistory();
     }
 }

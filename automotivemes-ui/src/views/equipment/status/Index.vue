@@ -400,7 +400,7 @@ const fetchHistoryData = async (equipmentId) => {
     // 更新图表
     updateChartData()
   } catch (error) {
-    ElMessage.error('历史数据加载失败')
+    console.log(error)
   }
 }
 </script>

@@ -44,9 +44,7 @@ import {onMounted, onUnmounted, ref} from 'vue'
 import axios from '@/utils/axios'
 import {Client} from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
-import {useStore} from 'vuex'
 
-const store = useStore()
 const alarmList = ref([])
 const stompClient = ref(null)
 
@@ -80,9 +78,8 @@ const alarmStatusClass = (alarm) => {
 // 处理报警
 const handleAlarm = async (alarmId) => {
   try {
-    const operator = store.state.user.username // 假设用户信息中存在name字段
-    await axios.post('/equipment/handle-alarm', null, {
-      params: { alarmId, operator }
+    await axios.post('/equipment/handleAlarm', null, {
+      params: { alarmId }
     })
 
     // 更新本地状态
@@ -127,7 +124,7 @@ const initWebSocket = () => {
 // 获取初始报警数据
 const fetchActiveAlarms = async () => {
   try {
-    alarmList.value = await axios.get('/equipment/active-alarms')
+    alarmList.value = await axios.get('/equipment/listRealTimeAlarms')
   } catch (error) {
     console.error('获取报警数据失败:', error)
   }
