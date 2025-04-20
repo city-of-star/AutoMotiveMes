@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.equipment.EquipmentAlarmMapper">
+
+    <select id="listRealTimeEquipmentAlarm" resultType="com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto">
+        SELECT
+            a.alarm_id AS alarmId,
+            a.alarm_code AS alarmCode,
+            a.alarm_reason AS alarmReason,
+            a.alarm_level AS alarmLevel,
+            a.start_time AS startTime,
+            a.status AS alarmStatus,
+            e.equipment_id AS equipmentId,
+            e.equipment_code AS equipmentCode,
+            e.equipment_name AS equipmentName,
+            e.equipment_model AS equipmentModel,
+            e.location AS location,
+            e.status AS equipmentStatus,
+            e.manufacturer AS manufacturer,
+            e.production_date AS productionDate,
+            e.installation_date AS installationDate,
+            e.last_maintenance_date AS lastMaintenanceDate,
+            e.maintenance_cycle AS maintenanceCycle,
+            e.create_time AS createTime,
+            e.update_time AS updateTime,
+            t.type_name AS typeName,
+            t.description AS description,
+            t.parameters_config AS parametersConfig
+        FROM equipment_alarm a
+                 INNER JOIN equipment e ON e.equipment_id = a.equipment_id
+                 INNER JOIN equipment_type t ON e.equipment_type = t.type_id
+        WHERE a.status = 0
+        ORDER BY a.start_time DESC
+    </select>
+
+    <select id="listEquipmentAlarmHistory" resultType="com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto">
+        SELECT a.*, e.equipment_code, e.equipment_name, e.location, t.type_name
+        FROM equipment_alarm a
+        JOIN equipment e ON a.equipment_id = e.equipment_id
+        JOIN equipment_type t ON e.equipment_type = t.type_id
+        <where>
+            <if test="dto.equipmentCode != null and dto.equipmentCode != ''">
+                AND e.equipment_code LIKE CONCAT('%', #{dto.equipmentCode}, '%')
+            </if>
+            <if test="dto.alarmLevel != null">
+                AND a.alarm_level = #{dto.alarmLevel}
+            </if>
+            <if test="dto.status != null">
+                AND a.status = #{dto.status}
+            </if>
+            <if test="dto.startDate != null">
+                AND DATE(a.start_time) >= #{dto.startDate}
+            </if>
+            <if test="dto.endDate != null">
+                AND DATE(a.start_time) &lt;= #{dto.endDate}
+            </if>
+            <if test="dto.handler != null">
+                AND a.handler LIKE CONCAT('%', #{dto.handler}, '%')
+            </if>
+        </where>
+        ORDER BY a.start_time DESC
+    </select>
+
+</mapper>
