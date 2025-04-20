@@ -24,4 +24,12 @@ public interface EquipmentMapper extends BaseMapper<Equipment> {
     // 根据设备id获取涉笔信息
     @Select("select * from equipment where equipment_id = #{EquipmentId}")
     Equipment selectByEquipmentId(@Param("EquipmentId") Integer EquipmentId);
+
+    // 获取正常状态的设备数量
+    @Select("select count(1) from equipment where status = 1")
+    Integer getNormalEquipmentCount();
+
+    // 获取在线的设备数量
+    @Select("select count(1) from equipment where status != 4")
+    Integer getOnlineEquipmentCount();
 }

@@ -347,6 +347,17 @@ const submitMaintenance = async () => {
   }
 }
 
+// 获取正常和在线的设备数量
+const getEquipmentCount = async () => {
+  try {
+    const res = await axios.get('/equipment/getEquipmentCount')
+    onlineCount.value = res.onlineEquipmentCount
+    normalCount.value = res.normalEquipmentCount
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // 获取初始数据
 const fetchInitialData = async () => {
   try {
@@ -361,9 +372,7 @@ const fetchInitialData = async () => {
 // WebSocket处理
 websocket.subscribe('/topic/equipment/alarm', (message) => {
   try {
-    const rawData = message.body;
-    console.log('收到WebSocket消息:', rawData); // 调试用
-    const newAlarm = JSON.parse(rawData);
+    const newAlarm = JSON.parse(message.body);
 
     // 深拷贝对象并更新数组
     alarmList.value = [{ ...newAlarm }, ...alarmList.value];
@@ -390,6 +399,7 @@ function updateCounters(newAlarm) {
 
 onMounted(() => {
   fetchInitialData()
+  getEquipmentCount()
 })
 
 onBeforeUnmount(() => {

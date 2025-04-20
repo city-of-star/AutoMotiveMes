@@ -64,4 +64,9 @@ public class EquipmentController {
         List<EquipmentParameters> data = redisTemplate.opsForList().range(redisKey, 0, -1);
         return R.success(data != null ? data : Collections.emptyList());
     }
+
+    @GetMapping("/getEquipmentCount")
+    public R<?> getEquipmentCount() {
+        return R.success(equipmentService.getEquipmentCount());
+    }
 }

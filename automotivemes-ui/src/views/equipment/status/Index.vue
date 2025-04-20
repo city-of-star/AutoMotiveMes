@@ -4,7 +4,7 @@
     <div class="status-overview">
       <el-row :gutter="20">
         <el-col :span="6" v-for="(item, index) in statusStats" :key="index">
-          <el-card class="status-card" shadow="hover">
+          <el-card class="status-card" shadow="hover" :loading="overviewLoading">
             <div class="card-content">
               <div class="icon" :style="{backgroundColor: item.color}">
                 <el-icon :size="24"><component :is="item.icon"/></el-icon>
@@ -94,7 +94,7 @@
           </div>
 
           <!-- 参数趋势图 -->
-          <div class="chart-container mt-20">
+          <div class="chart-container mt-20" v-loading="historyLoading">
             <div ref="chartRef" style="height: 300px;"></div>
           </div>
 
@@ -132,6 +132,10 @@ const equipmentList = ref([])
 const currentEquipment = ref(null)
 const currentParameters = ref({})
 const loading = ref(true)
+
+// 加载状态变量
+const overviewLoading = ref(true)
+const historyLoading = ref(false)
 
 // 图表相关
 const chartRef = ref(null)
@@ -190,16 +194,17 @@ onBeforeUnmount(() => {
 const fetchEquipmentList = async () => {
   try {
     loading.value = true
-    // 确保返回数据结构正确
+    overviewLoading.value = true
     equipmentList.value = await axios.get('/equipment/list')
     if (equipmentList.value.length > 0) {
       handleEquipmentSelect(equipmentList.value[0])
     }
   } catch (error) {
     ElMessage.error('设备列表加载失败')
-    equipmentList.value = [] // 确保失败时设置为空数组
+    equipmentList.value = []
   } finally {
     loading.value = false
+    overviewLoading.value = false
   }
 }
 
@@ -333,6 +338,7 @@ const formatTime = (time) => {
 }
 
 const fetchHistoryData = async (equipmentId) => {
+  historyLoading.value = true
   try {
     let data = await axios.get(`/equipment/historyData/${equipmentId}`);
     data = data.slice(-900); // 只取最后900条
@@ -370,6 +376,8 @@ const fetchHistoryData = async (equipmentId) => {
     updateChartData()
   } catch (error) {
     console.log(error)
+  } finally {
+    historyLoading.value = false
   }
 }
 </script>

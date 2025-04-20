@@ -1,9 +1,6 @@
 package com.autoMotiveMes.service.impl.equipment;
 
-import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
-import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
-import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
-import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
+import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
@@ -220,5 +217,13 @@ public class EquipmentServiceImpl implements EquipmentService {
         Page<AlarmHistoryResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
                 dto.getSize() == null ? 10 : dto.getSize());
         return alarmMapper.listEquipmentAlarmHistory(page, dto);
+    }
+
+    @Override
+    public GetEquipmentCountResponseDto getEquipmentCount() {
+        GetEquipmentCountResponseDto dto = new GetEquipmentCountResponseDto();
+        dto.setNormalEquipmentCount(equipmentMapper.getNormalEquipmentCount());
+        dto.setOnlineEquipmentCount(equipmentMapper.getOnlineEquipmentCount());
+        return dto;
     }
 }

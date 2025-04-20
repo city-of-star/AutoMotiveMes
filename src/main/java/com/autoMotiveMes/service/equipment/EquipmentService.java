@@ -1,9 +1,6 @@
 package com.autoMotiveMes.service.equipment;
 
-import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
-import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
-import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
-import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
+import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
@@ -33,4 +30,7 @@ public interface EquipmentService {
 
     // 获取警报历史
     Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto query);
+
+    // 获取正常设备和在线设备的数量
+    GetEquipmentCountResponseDto getEquipmentCount();
 }
