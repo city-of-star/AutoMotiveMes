@@ -22,9 +22,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 实现功能【设备实时数据模拟服务】
@@ -46,6 +44,9 @@ public class EquipmentRealTimeDataSimulatorService {
 
     // 线程池（5个线程处理定时任务）
     private final ScheduledExecutorService threadPool;
+
+    // 存储设备ID对应的定时任务
+    private final Map<Long, ScheduledFuture<?>> equipmentTasks = new ConcurrentHashMap<>();
 
     // 时间格式化和数值格式化工具
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -121,15 +122,59 @@ public class EquipmentRealTimeDataSimulatorService {
      */
     @Async
     public void startAllSimulators() {
-        equipmentList.forEach(equipment ->
-                threadPool.scheduleAtFixedRate(
-                        () -> simulateDeviceData(equipment),
-                        0,
-                        1,
-                        TimeUnit.SECONDS
-                )
-        );
+        equipmentList.forEach(equipment -> {
+            // 将定时任务Future存入Map
+            ScheduledFuture<?> future = threadPool.scheduleAtFixedRate(
+                    () -> simulateDeviceData(equipment),
+                    0,
+                    1,
+                    TimeUnit.SECONDS
+            );
+            equipmentTasks.put(equipment.getEquipmentId(), future);
+        });
         log.info("设备实时参数数据模拟服务--启动成功，已启动 {} 个设备的模拟任务，数据生成间隔 1 秒", equipmentList.size());
+    }
+
+    /**
+     * 停止指定设备的模拟任务
+     */
+    public void stopSimulatorForEquipment(Long equipmentId) {
+        ScheduledFuture<?> future = equipmentTasks.get(equipmentId);
+        if (future != null) {
+            future.cancel(true);  // 中断正在执行的任务
+            equipmentTasks.remove(equipmentId);
+            log.info("设备[{}]的模拟任务已停止", equipmentId);
+        }
+    }
+
+    /**
+     * 开始指定设备的模拟任务
+     */
+    public void startSimulatorForEquipment(Long equipmentId) {
+        // 检查设备是否存在且状态正常
+        Equipment equipment = equipmentMapper.selectById(equipmentId);
+
+        if (equipment == null || equipment.getStatus() != 1) {
+            log.warn("设备[{}]状态不可用或不存在，无法启动模拟", equipmentId);
+            return;
+        }
+
+        // 如果已有任务，无需启动
+        ScheduledFuture<?> existingTask = equipmentTasks.get(equipmentId);
+        if (existingTask != null) {
+            return;
+        }
+
+        // 创建新定时任务
+        ScheduledFuture<?> newTask = threadPool.scheduleAtFixedRate(
+                () -> simulateDeviceData(equipment),
+                0,
+                1,
+                TimeUnit.SECONDS
+        );
+
+        equipmentTasks.put(equipmentId, newTask);
+        log.info("设备[{}]模拟任务已启动", equipmentId);
     }
 
     /**
@@ -171,8 +216,7 @@ public class EquipmentRealTimeDataSimulatorService {
     private List<Map<String, Object>> generateParameters(Equipment equipment) {
         List<ParameterConfig> configs = equipmentTypeParamConfigs.get(equipment.getEquipmentType());
         if (configs == null || configs.isEmpty()) {
-            log.warn("设备[{}]类型[{}]无有效参数配置",
-                    equipment.getEquipmentId(), equipment.getEquipmentType());
+            log.warn("设备[{}]类型[{}]无有效参数配置", equipment.getEquipmentId(), equipment.getEquipmentType());
             return Collections.emptyList();
         }
 

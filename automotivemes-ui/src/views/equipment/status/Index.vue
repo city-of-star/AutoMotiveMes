@@ -307,7 +307,7 @@ const updateChartData = (param) => {
     series: Array.from(chartData.value.series.values()).map(s => ({
       name: s.name,
       type: 'line',
-      data: s.data.map(d => d.value),
+      data: s.data,
       showSymbol: false,
       smooth: true
     }))

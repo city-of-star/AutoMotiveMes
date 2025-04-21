@@ -1,218 +1,215 @@
 <template>
   <!-- 报警表格 -->
-  <div class="alarm-container">
-    <el-card class="alarm-card">
-      <template #header>
-        <div class="card-header">
-          <h3 class="mes-title">生产设备实时报警监控</h3>
-          <div class="header-tag">
-            <el-tag type="info">在线设备: {{ onlineCount }}</el-tag>
-            <el-tag type="success">正常设备: {{ normalCount }}</el-tag>
+  <el-card class="alarm-card">
+    <template #header>
+      <div class="card-header">
+        <h3 class="mes-title">生产设备实时报警监控</h3>
+        <div class="header-tag">
+          <el-tag type="info">在线设备: {{ onlineCount }}</el-tag>
+          <el-tag type="success">正常设备: {{ normalCount }}</el-tag>
+        </div>
+      </div>
+    </template>
+
+    <el-table
+        :data="alarmList"
+        style="width: 100%"
+        :empty-text="'当前没有未处理的报警'"
+        v-loading="loading"
+        stripe
+    >
+      <el-table-column
+          prop="alarmCode"
+          label="报警代码"
+          width="200"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">
+          <el-tag effect="dark" :type="getCodeTagType(row)">
+            {{ row.alarmCode }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          prop="alarmLevel"
+          label="等级"
+          width="140"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">
+          <el-tag :type="getLevelTagType(row)" effect="light">
+            {{ formatLevel(row.alarmLevel) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          label="设备详情"
+          width="150"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">
+          <el-button
+              type="text"
+              @click="showEquipmentDetail(row)"
+          >{{ row.equipmentName }}</el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          prop="alarmReason"
+          label="报警原因"
+          width="400"
+          align="center"
+          header-align="center">
+      </el-table-column>
+
+      <el-table-column
+          prop="startTime"
+          label="开始时间"
+          width="200"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">{{ formatDateTime(row.startTime) }}</template>
+      </el-table-column>
+
+      <el-table-column
+          prop="status"
+          label="状态"
+          width="140"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">
+          <el-tag :type="getStatusTagType(row.alarmStatus)" size="small">
+            {{ formatStatus(row.alarmStatus) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          label="操作"
+          width="180"
+          align="center"
+          header-align="center">
+        <template #default="{ row }">
+          <el-button
+              v-if="row.alarmStatus === 0"
+              type="primary"
+              size="small"
+              @click="showHandleDialog(row)"
+          >立即处理</el-button
+          >
+          <el-tag v-else type="success" effect="plain" size="small">已处理</el-tag>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-card>
+
+  <!-- 设备详情弹窗 -->
+  <el-dialog
+      v-model="equipmentDialogVisible"
+      title="设备详细信息"
+      width="1400px"
+      :close-on-click-modal="false"
+  >
+    <el-descriptions :column="2" border>
+      <!-- 基础信息 -->
+      <el-descriptions-item label="设备ID" :span="1" min-width="120">{{ currentEquipment.equipmentId }}</el-descriptions-item>
+      <el-descriptions-item label="设备代码" :span="1">{{ currentEquipment.equipmentCode }}</el-descriptions-item>
+      <el-descriptions-item label="设备名称" :span="1">{{ currentEquipment.equipmentName }}</el-descriptions-item>
+      <el-descriptions-item label="设备型号" :span="1">{{ currentEquipment.equipmentModel }}</el-descriptions-item>
+
+      <!-- 状态信息 -->
+      <el-descriptions-item label="所在位置" :span="2">{{ currentEquipment.location }}</el-descriptions-item>
+      <el-descriptions-item label="设备状态" :span="1">
+        <el-tag :type="getEquipmentStatusTag(currentEquipment.equipmentStatus)" size="small">
+          {{ formatEquipmentStatus(currentEquipment.equipmentStatus) }}
+        </el-tag>
+      </el-descriptions-item>
+
+      <!-- 日期信息 -->
+      <el-descriptions-item label="生产日期" :span="1">{{ formatDate(currentEquipment.productionDate) }}</el-descriptions-item>
+      <el-descriptions-item label="安装日期" :span="1">{{ formatDate(currentEquipment.installationDate) }}</el-descriptions-item>
+      <el-descriptions-item label="最后维护" :span="1">{{ formatDate(currentEquipment.lastMaintenanceDate) }}</el-descriptions-item>
+      <el-descriptions-item label="维护周期" :span="1">{{ currentEquipment.maintenanceCycle }}天</el-descriptions-item>
+
+      <!-- 厂商信息 -->
+      <el-descriptions-item label="制造商" :span="2">{{ currentEquipment.manufacturer }}</el-descriptions-item>
+
+      <!-- 参数配置（处理JSON数组） -->
+      <el-descriptions-item :span="2" label="参数配置">
+        <div v-if="currentEquipment.parametersConfig" class="param-config">
+          <div v-for="(param, index) in JSON.parse(currentEquipment.parametersConfig)" :key="index" class="param-item">
+            <span class="param-name">{{ param.name }}</span>
+            <span class="param-unit">（{{ param.unit }}）</span>
+            <el-tag size="small" type="info" class="param-range">
+              正常范围：{{ param.normalMin }} ~ {{ param.normalMax }}
+            </el-tag>
           </div>
         </div>
-      </template>
+        <span v-else>-</span>
+      </el-descriptions-item>
 
-      <el-table
-          :data="alarmList"
-          style="width: 100%"
-          :empty-text="'当前没有未处理的报警'"
-          v-loading="loading"
-          stripe
-      >
-        <el-table-column
-            prop="alarmCode"
-            label="报警代码"
-            width="200"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">
-            <el-tag effect="dark" :type="getCodeTagType(row)">
-              {{ row.alarmCode }}
-            </el-tag>
-          </template>
-        </el-table-column>
+      <!-- 设备描述 -->
+      <el-descriptions-item :span="2" label="设备描述">
+        <pre class="equipment-description">{{ currentEquipment.description || '暂无描述' }}</pre>
+      </el-descriptions-item>
+    </el-descriptions>
+  </el-dialog>
 
-        <el-table-column
-            prop="alarmLevel"
-            label="等级"
-            width="140"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">
-            <el-tag :type="getLevelTagType(row)" effect="light">
-              {{ formatLevel(row.alarmLevel) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-            label="设备详情"
-            width="120"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">
-            <el-button
-                type="primary"
-                size="small"
-                @click="showEquipmentDetail(row)"
-            >查看</el-button>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-            prop="alarmReason"
-            label="报警原因"
-            width="400"
-            align="center"
-            header-align="center">
-        </el-table-column>
-
-        <el-table-column
-            prop="startTime"
-            label="开始时间"
-            width="200"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">{{ formatDateTime(row.startTime) }}</template>
-        </el-table-column>
-
-        <el-table-column
-            prop="status"
-            label="状态"
-            width="140"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">
-            <el-tag :type="getStatusTagType(row.alarmStatus)" size="small">
-              {{ formatStatus(row.alarmStatus) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-            label="操作"
-            width="180"
-            align="center"
-            header-align="center">
-          <template #default="{ row }">
-            <el-button
-                v-if="row.alarmStatus === 0"
-                type="primary"
-                size="small"
-                @click="showHandleDialog(row)"
-            >立即处理</el-button
-            >
-            <el-tag v-else type="success" effect="plain" size="small">已处理</el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <!-- 设备详情弹窗 -->
-    <el-dialog
-        v-model="equipmentDialogVisible"
-        title="设备详细信息"
-        width="1400px"
-        :close-on-click-modal="false"
+  <!-- 维护记录弹窗 -->
+  <el-dialog
+      v-model="dialogVisible"
+      title="报警处理维护"
+      width="600px"
+      :close-on-click-modal="false"
+  >
+    <el-form
+        :model="maintenanceForm"
+        :rules="formRules"
+        ref="formRef"
+        label-width="100px"
     >
-      <el-descriptions :column="2" border>
-        <!-- 基础信息 -->
-        <el-descriptions-item label="设备ID" :span="1" min-width="120">{{ currentEquipment.equipmentId }}</el-descriptions-item>
-        <el-descriptions-item label="设备代码" :span="1">{{ currentEquipment.equipmentCode }}</el-descriptions-item>
-        <el-descriptions-item label="设备名称" :span="1">{{ currentEquipment.equipmentName }}</el-descriptions-item>
-        <el-descriptions-item label="设备型号" :span="1">{{ currentEquipment.equipmentModel }}</el-descriptions-item>
+      <el-form-item label="维护内容：" prop="maintenanceContent">
+        <el-input
+            v-model="maintenanceForm.maintenanceContent"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入具体维护措施和更换部件信息"
+        />
+      </el-form-item>
 
-        <!-- 状态信息 -->
-        <el-descriptions-item label="所在位置" :span="2">{{ currentEquipment.location }}</el-descriptions-item>
-        <el-descriptions-item label="设备状态" :span="1">
-          <el-tag :type="getEquipmentStatusTag(currentEquipment.equipmentStatus)" size="small">
-            {{ formatEquipmentStatus(currentEquipment.equipmentStatus) }}
-          </el-tag>
-        </el-descriptions-item>
+      <el-form-item label="处理结果：" prop="result">
+        <el-input
+            v-model="maintenanceForm.result"
+            type="textarea"
+            :rows="2"
+            placeholder="请输入故障处理结果"
+        />
+      </el-form-item>
 
-        <!-- 日期信息 -->
-        <el-descriptions-item label="生产日期" :span="1">{{ formatDate(currentEquipment.productionDate) }}</el-descriptions-item>
-        <el-descriptions-item label="安装日期" :span="1">{{ formatDate(currentEquipment.installationDate) }}</el-descriptions-item>
-        <el-descriptions-item label="最后维护" :span="1">{{ formatDate(currentEquipment.lastMaintenanceDate) }}</el-descriptions-item>
-        <el-descriptions-item label="维护周期" :span="1">{{ currentEquipment.maintenanceCycle }}天</el-descriptions-item>
+      <el-form-item label="维护成本：" prop="cost">
+        <el-input-number
+            v-model="maintenanceForm.cost"
+            :min="0"
+            :precision="2"
+            :step="100"
+            controls-position="right"
+            style="width: 200px"
+        >
+          <template #prefix>¥</template>
+        </el-input-number>
+      </el-form-item>
+    </el-form>
 
-        <!-- 厂商信息 -->
-        <el-descriptions-item label="制造商" :span="2">{{ currentEquipment.manufacturer }}</el-descriptions-item>
-
-        <!-- 参数配置（处理JSON数组） -->
-        <el-descriptions-item :span="2" label="参数配置">
-          <div v-if="currentEquipment.parametersConfig" class="param-config">
-            <div v-for="(param, index) in JSON.parse(currentEquipment.parametersConfig)" :key="index" class="param-item">
-              <span class="param-name">{{ param.name }}</span>
-              <span class="param-unit">（{{ param.unit }}）</span>
-              <el-tag size="small" type="info" class="param-range">
-                正常范围：{{ param.normalMin }} ~ {{ param.normalMax }}
-              </el-tag>
-            </div>
-          </div>
-          <span v-else>-</span>
-        </el-descriptions-item>
-
-        <!-- 设备描述 -->
-        <el-descriptions-item :span="2" label="设备描述">
-          <pre class="equipment-description">{{ currentEquipment.description || '暂无描述' }}</pre>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-dialog>
-
-    <!-- 维护记录弹窗 -->
-    <el-dialog
-        v-model="dialogVisible"
-        title="报警处理维护"
-        width="600px"
-        :close-on-click-modal="false"
-    >
-      <el-form
-          :model="maintenanceForm"
-          :rules="formRules"
-          ref="formRef"
-          label-width="100px"
-      >
-        <el-form-item label="维护内容：" prop="maintenanceContent">
-          <el-input
-              v-model="maintenanceForm.maintenanceContent"
-              type="textarea"
-              :rows="3"
-              placeholder="请输入具体维护措施和更换部件信息"
-          />
-        </el-form-item>
-
-        <el-form-item label="处理结果：" prop="result">
-          <el-input
-              v-model="maintenanceForm.result"
-              type="textarea"
-              :rows="2"
-              placeholder="请输入故障处理结果"
-          />
-        </el-form-item>
-
-        <el-form-item label="维护成本：" prop="cost">
-          <el-input-number
-              v-model="maintenanceForm.cost"
-              :min="0"
-              :precision="2"
-              :step="100"
-              controls-position="right"
-              style="width: 200px"
-          >
-            <template #prefix>¥</template>
-          </el-input-number>
-        </el-form-item>
-      </el-form>
-
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitMaintenance">确认提交</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitMaintenance">确认提交</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -370,15 +367,18 @@ const fetchInitialData = async () => {
 }
 
 // WebSocket处理
-websocket.subscribe('/topic/equipment/alarm', (message) => {
+websocket.subscribe('/topic/equipment/alarm', () => {
   try {
-    const newAlarm = JSON.parse(message.body);
-
-    // 深拷贝对象并更新数组
-    alarmList.value = [{ ...newAlarm }, ...alarmList.value];
-
-    // 更新设备计数（根据实际业务逻辑调整）
-    updateCounters(newAlarm);
+    fetchInitialData()
+    // const newAlarm = JSON.parse(message.body);
+    //
+    // console.log(newAlarm)
+    //
+    // // 深拷贝对象并更新数组
+    // alarmList.value = [{ ...newAlarm }, ...alarmList.value];
+    //
+    // // 更新设备计数（根据实际业务逻辑调整）
+    // updateCounters(newAlarm);
   } catch (e) {
     console.error('消息处理失败:', e);
     ElMessage.error('实时报警数据异常');
@@ -386,16 +386,16 @@ websocket.subscribe('/topic/equipment/alarm', (message) => {
 });
 
 // 独立的计数更新函数
-function updateCounters(newAlarm) {
-  // 假设消息中包含设备状态字段 equipmentStatus
-  if (newAlarm.equipmentStatus === 2) {  // 2代表故障
-    onlineCount.value = Math.max(0, onlineCount.value - 1);
-  }
-  // 如果报警状态为已处理，可能增加正常设备数
-  if (newAlarm.alarmStatus === 2) {
-    normalCount.value += 1;
-  }
-}
+// function updateCounters(newAlarm) {
+//   // 假设消息中包含设备状态字段 equipmentStatus
+//   if (newAlarm.equipmentStatus === 2) {  // 2代表故障
+//     onlineCount.value = Math.max(0, onlineCount.value - 1);
+//   }
+//   // 如果报警状态为已处理，可能增加正常设备数
+//   if (newAlarm.alarmStatus === 2) {
+//     normalCount.value += 1;
+//   }
+// }
 
 onMounted(() => {
   fetchInitialData()
@@ -408,11 +408,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.alarm-container {
-  padding: 20px;
-  background: #f5f7fa;
-}
-
 .mes-title {
   margin: 0;
   color: #303133;
