@@ -137,6 +137,7 @@ public class EquipmentRealTimeDataSimulatorService {
      * @param equipment 目标设备实体
      */
     private void simulateDeviceData(Equipment equipment) {
+
         List<Map<String, Object>> parameters = generateParameters(equipment);
         sendParametersToAPI(equipment, parameters);
     }

@@ -1,5 +1,7 @@
 package com.autoMotiveMes.common.exception;
 
+import org.springframework.security.core.AuthenticationException;
+
 import java.io.Serial;
 
 /**
@@ -8,7 +10,7 @@ import java.io.Serial;
  * @author li.hongyu
  * @date 2025-03-30 15:23:34
  */
-public class AuthException extends RuntimeException {
+public class AuthException extends AuthenticationException {
     @Serial
     private static final long serialVersionUID = 2828370446023896259L;
 

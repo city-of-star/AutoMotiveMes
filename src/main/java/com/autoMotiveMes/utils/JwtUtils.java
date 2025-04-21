@@ -1,6 +1,7 @@
 package com.autoMotiveMes.utils;
 
 import com.autoMotiveMes.common.exception.AuthException;
+import com.autoMotiveMes.common.exception.ForbiddenException;
 import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
@@ -71,10 +72,10 @@ public class JwtUtils {
                 throw new AuthException("用户不存在");
             }
             if (user.getStatus() == 0) {
-                throw new AuthException("抱歉，您的账号已停用");
+                throw new ForbiddenException("抱歉，您的账号已停用");
             }
             if (user.getAccountLocked() == 0) {
-                throw new AuthException("抱歉，您的账号已锁定");
+                throw new ForbiddenException("抱歉，您的账号已锁定");
             }
 
         } catch (ExpiredJwtException ex) {

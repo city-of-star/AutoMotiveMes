@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
         // 验证用户的密码
         SysUser user = userMapper.selectByUsername(loginRequestDto.getUsername());
         if (user == null || !passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new BadRequestException("用户名或密码错误");
+            throw new AuthException("用户名或密码错误");
         }
         if (user.getStatus() == 0) {
             throw new AuthException("抱歉，您的账号已停用");
