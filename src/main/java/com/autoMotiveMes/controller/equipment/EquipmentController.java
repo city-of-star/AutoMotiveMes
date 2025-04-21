@@ -1,10 +1,7 @@
 package com.autoMotiveMes.controller.equipment;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.equipment.AlarmHistoryRequestDto;
-import com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto;
-import com.autoMotiveMes.dto.equipment.HandleAlarmRequestDto;
-import com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto;
+import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
@@ -66,7 +63,12 @@ public class EquipmentController {
     }
 
     @GetMapping("/getEquipmentCount")
-    public R<?> getEquipmentCount() {
+    public R<GetEquipmentCountResponseDto> getEquipmentCount() {
         return R.success(equipmentService.getEquipmentCount());
+    }
+
+    @GetMapping("/listMaintenanceRecord")
+    public R<Page<MaintenanceRecordListResponseDto>> listMaintenanceRecord(@RequestBody MaintenanceRecordListRequestDto dto) {
+        return R.success(equipmentService.listMaintenanceRecord(dto));
     }
 }

@@ -2,7 +2,6 @@ package com.autoMotiveMes.service.equipment;
 
 import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
-import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -33,4 +32,7 @@ public interface EquipmentService {
 
     // 获取正常设备和在线设备的数量
     GetEquipmentCountResponseDto getEquipmentCount();
+
+    // 获取设备维护记录列表
+    Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto);
 }

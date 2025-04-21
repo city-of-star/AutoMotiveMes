@@ -176,6 +176,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import * as echarts from 'echarts'
+import axios from '@/utils/axios'
 import { useEventListener } from '@vueuse/core'
 import {
   Calendar,
@@ -300,7 +301,14 @@ const initCharts = () => {
 }
 
 // 加载表格数据
-const loadData = () => {
+const loadData = async () => {
+
+  const res = await axios.get("/equipment/listMaintenanceRecord", {
+    page: 1,
+    size: 10,
+  })
+  console.log(res)
+
   loading.value = true
   setTimeout(() => {
     const start = (pagination.value.current - 1) * pagination.value.size

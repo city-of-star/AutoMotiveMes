@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -225,5 +224,11 @@ public class EquipmentServiceImpl implements EquipmentService {
         dto.setNormalEquipmentCount(equipmentMapper.getNormalEquipmentCount());
         dto.setOnlineEquipmentCount(equipmentMapper.getOnlineEquipmentCount());
         return dto;
+    }
+
+    @Override
+    public Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto) {
+        Page<MaintenanceRecordListResponseDto> page = new Page<>(dto.getPage(), dto.getSize());
+        return maintenanceMapper.listMaintenanceRecord(page, dto);
     }
 }
