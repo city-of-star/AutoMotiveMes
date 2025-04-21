@@ -53,12 +53,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new AuthException("无效的认证头");
         }
 
+        // 获取token
         String token = authHeader.substring(7);
 
-        try {
-            // 验证Token有效性
-            jwtUtils.validateToken(token);
+        // 验证Token有效性
+        jwtUtils.validateToken(token);
 
+        try {
             // 从Token中解析用户名并加载用户信息
             String username = jwtUtils.getUsernameFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -73,10 +74,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // 继续执行后续过滤器
             filterChain.doFilter(request, response);
-        } catch (AuthException e) {
-            throw new AuthException("认证失败: " + e.getMessage());
-        } catch (UsernameNotFoundException e) {
-            throw new AuthException("用户不存在: " + e.getMessage());
         } catch (Exception e) {
             throw new GlobalException("处理认证时发生未知错误: " + e.getMessage());
         }
