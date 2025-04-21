@@ -24,28 +24,15 @@ service.interceptors.request.use(
 // 响应拦截器（优化后）
 service.interceptors.response.use(
     response => {
-        const res = response.data
-
-        // HTTP 状态码为 200 的情况下处理业务状态码
-        if (response.status === 200) {
-            // 业务成功（code 200）
-            if (res.code === 200) {
-                return res.data // 直接返回接口数据
-            }
-
-            // 直接在前端显示业务错误信息
-            const errorMessage = res.msg || '操作失败'
-            ElMessage.error(errorMessage)
-            return Promise.reject(new Error(errorMessage))
-        }
-
-        return Promise.reject(new Error("非预期响应"))
+        // HTTP 200 表示请求成功，直接返回数据
+        return response.data.data;
     },
     error => {
         // 统一错误处理
         if (error.response) {
             const httpStatus = error.response.status
-            const res = error.response.data || {}
+            const res = error.response.data
+            console.log(res)
 
             // 根据 HTTP 状态码处理
             switch (httpStatus) {

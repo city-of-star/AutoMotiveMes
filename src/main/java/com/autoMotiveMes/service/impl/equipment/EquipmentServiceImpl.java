@@ -10,6 +10,7 @@ import com.autoMotiveMes.mapper.equipment.EquipmentMaintenanceMapper;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
 import com.autoMotiveMes.service.equipment.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
+import com.autoMotiveMes.utils.EquipmentRealTimeDataSimulatorService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
@@ -41,15 +42,17 @@ import java.util.concurrent.TimeUnit;
 public class EquipmentServiceImpl implements EquipmentService {
 
     private final EquipmentMaintenanceMapper maintenanceMapper;
-
     private final EquipmentAlarmMapper alarmMapper;
+    private final EquipmentMapper equipmentMapper;
 
     // 报警规则缓存（设备类型ID -> 规则配置）
     private final Map<Integer, AlarmRuleConfig> alarmRules = new ConcurrentHashMap<>();
 
-    private final EquipmentMapper equipmentMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+
+    // 模拟服务
+    private final EquipmentRealTimeDataSimulatorService simulatorService;
 
     // redis 存入的设备实时参数数据的公共key
     private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
@@ -142,6 +145,9 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipment.setStatus(2);  // 待机
         equipmentMapper.updateById(equipment);
 
+        // 停止该设备的模拟任务
+        simulatorService.stopSimulatorForEquipment(equipmentId);
+
         // WebSocket通知
         messagingTemplate.convertAndSend("/topic/equipment/alarm", alarm);
     }
@@ -197,13 +203,16 @@ public class EquipmentServiceImpl implements EquipmentService {
         alarm.setEndTime(LocalDateTime.now());
         Duration duration = Duration.between(alarm.getStartTime(), alarm.getEndTime());
         alarm.setDuration((int) duration.getSeconds());
-        alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + " || 处理结果: " + dto.getResult());
+        alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + "\n处理结果: " + dto.getResult());
         alarmMapper.updateById(alarm);
 
         // 更新涉笔状态
         Equipment equipment = equipmentMapper.selectById(alarm.getEquipmentId());
         equipment.setStatus(1);  // 运行中
         equipmentMapper.updateById(equipment);
+
+        // 启动该设备的模拟
+        simulatorService.startSimulatorForEquipment(equipment.getEquipmentId());
     }
 
     @Override
