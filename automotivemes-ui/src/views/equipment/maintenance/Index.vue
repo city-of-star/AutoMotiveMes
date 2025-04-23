@@ -31,7 +31,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :xs="24" :sm="24" :md="16" :lg="14" :xl="16">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
           <el-form-item label="计划时间：" class="compact-form-item">
             <el-date-picker
                 v-model="planTimeRange"
@@ -45,7 +45,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :xs="24" :sm="24" :md="16" :lg="14" :xl="16">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
           <el-form-item label="实际时间：" class="compact-form-item">
             <el-date-picker
                 v-model="actualTimeRange"
@@ -283,5 +283,35 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-/* 保持其他样式与报警历史页面一致 */
+.query-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+}
+
+.data-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.el-table ::v-deep(.el-tag) {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.el-descriptions ::v-deep(.el-descriptions__body) {
+  background: #f8f9fa;
+}
 </style>

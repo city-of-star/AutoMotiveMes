@@ -95,7 +95,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="duration" label="持续时间" width="120" align="center">
+      <el-table-column prop="duration" label="持续时间" align="center">
         <template #default="{ row }">
           {{ formatDuration(row.duration) }}
         </template>

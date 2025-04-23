@@ -5,7 +5,7 @@
     <div class="login-card">
       <div class="system-brand">
         <img src="@/assets/logo.png" class="logo">
-        <h1>智能生产监控系统</h1>
+        <h1>汽车 MES 生产监控中心</h1>
         <p class="version">AutoMotiveMES - V1.0.0</p>
       </div>
 
