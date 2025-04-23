@@ -1,5 +1,6 @@
 package com.autoMotiveMes.mapper.equipment;
 
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;
 import com.autoMotiveMes.dto.equipment.MaintenanceRecordListRequestDto;
 import com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto;
 import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
@@ -17,20 +18,17 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface EquipmentMaintenanceMapper extends BaseMapper<EquipmentMaintenance> {
-    @Select("SELECT * FROM equipment_maintenance WHERE equipment_id = #{equipmentId} " +
-            "ORDER BY plan_date DESC LIMIT 1")
-    EquipmentMaintenance selectLatestPlan(Long equipmentId);
-
-    @Select("select m.maintenance_id, " +
-            "e.equipment_code, " +
-            "e.equipment_name, " +
-            "m.maintenance_type, " +
-            "m.plan_date, " +
-            "m.actual_date, " +
-            "m.operator, " +
-            "m.result, " +
-            "m.cost" +
-            " from equipment_maintenance m " +
-            "join equipment e on m.equipment_id = e.equipment_id ")
     Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(Page<MaintenanceRecordListResponseDto> page, @Param("dto") MaintenanceRecordListRequestDto dto);
+
+    @Select("SELECT m.maintenance_id, m.maintenance_type, " +
+            "DATE_FORMAT(m.plan_date, '%Y-%m-%d') AS plan_date, " +
+            "DATE_FORMAT(m.actual_date, '%Y-%m-%d') AS actual_date, " +
+            "m.maintenance_content, m.operator, m.result, m.cost, " +
+            "e.equipment_code, e.equipment_name, e.equipment_model, " +
+            "e.location, e.manufacturer, e.maintenance_cycle, " +
+            "DATE_FORMAT(e.last_maintenance_date, '%Y-%m-%d') AS last_maintenance_date " +
+            "FROM equipment_maintenance m " +
+            "JOIN equipment e ON m.equipment_id = e.equipment_id " +
+            "WHERE m.maintenance_id = #{maintenanceId}")
+    MaintenanceRecordDetailResponseDto selectMaintenanceDetailById(Long maintenanceId);
 }

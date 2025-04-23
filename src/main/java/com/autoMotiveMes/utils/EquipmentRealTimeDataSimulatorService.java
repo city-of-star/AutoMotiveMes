@@ -88,7 +88,7 @@ public class EquipmentRealTimeDataSimulatorService {
      * 2. 解析每个类型的参数配置JSON
      */
     private void initParamConfigs() {
-        List<EquipmentType> equipmentTypes = equipmentTypeMapper.selectByEquipmentStatus();
+        List<EquipmentType> equipmentTypes = equipmentTypeMapper.listEquipmentType();
         ObjectMapper objectMapper = new ObjectMapper();
 
         for (EquipmentType type : equipmentTypes) {

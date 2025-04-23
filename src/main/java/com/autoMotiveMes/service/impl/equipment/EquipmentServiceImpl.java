@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -192,7 +193,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         maintenance.setMaintenanceType(3);  // 应急维修
         maintenance.setOperator(username);
         maintenance.setResult(dto.getResult());
-        maintenance.setCost(dto.getCost());
+        maintenance.setCost(dto.getCost() == null ? BigDecimal.valueOf(0) : dto.getCost());
         maintenance.setMaintenanceContent("(处理报警：" + alarm.getAlarmCode() + ") " + dto.getMaintenanceContent());
 
         maintenanceMapper.insert(maintenance);
@@ -237,7 +238,13 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto) {
-        Page<MaintenanceRecordListResponseDto> page = new Page<>(dto.getPage(), dto.getSize());
+        Page<MaintenanceRecordListResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+                dto.getSize() == null ? 10 : dto.getSize());
         return maintenanceMapper.listMaintenanceRecord(page, dto);
+    }
+
+    @Override
+    public MaintenanceRecordDetailResponseDto getMaintenanceDetail(Long maintenanceId) {
+        return maintenanceMapper.selectMaintenanceDetailById(maintenanceId);
     }
 }

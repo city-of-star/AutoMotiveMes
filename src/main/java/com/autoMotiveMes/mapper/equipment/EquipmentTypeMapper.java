@@ -17,8 +17,6 @@ import java.util.List;
 public interface EquipmentTypeMapper extends BaseMapper<EquipmentType> {
 
     // 获取状态正常的设备的类型
-    @Select("select * from equipment_type et " +
-            "left join equipment e on e.equipment_type = et.type_id " +
-            "where e.status = 1 ")
-    List<EquipmentType> selectByEquipmentStatus();
+    @Select("select * from equipment_type")
+    List<EquipmentType> listEquipmentType();
 }

@@ -35,4 +35,7 @@ public interface EquipmentService {
 
     // 获取设备维护记录列表
     Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto);
+
+    // 获取设备维护记录详细信息，通过维护id
+    MaintenanceRecordDetailResponseDto getMaintenanceDetail(Long maintenanceId);
 }

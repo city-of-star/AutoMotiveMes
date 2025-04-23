@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.equipment.EquipmentMaintenanceMapper">
+    <select id="listMaintenanceRecord" resultType="com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto">
+        SELECT
+        m.maintenance_id,
+        e.equipment_code,
+        e.equipment_name,
+        CASE m.maintenance_type
+        WHEN 1 THEN '日常保养'
+        WHEN 2 THEN '定期维护'
+        WHEN 3 THEN '紧急维修'
+        END AS maintenance_type,
+        DATE_FORMAT(m.plan_date, '%Y-%m-%d') AS plan_date,
+        DATE_FORMAT(m.actual_date, '%Y-%m-%d') AS actual_date,
+        m.operator,
+        m.result,
+        m.cost
+        FROM equipment_maintenance m
+        JOIN equipment e ON m.equipment_id = e.equipment_id
+        <where>
+            <if test="dto.equipmentCode != null and dto.equipmentCode != ''">
+                AND e.equipment_code LIKE CONCAT('%', #{dto.equipmentCode}, '%')
+            </if>
+            <if test="dto.equipmentName != null and dto.equipmentName != ''">
+                AND e.equipment_name LIKE CONCAT('%', #{dto.equipmentName}, '%')
+            </if>
+            <if test="dto.maintenanceType != null">
+                AND m.maintenance_type = #{dto.maintenanceType}
+            </if>
+            <if test="dto.planStartDate != null and dto.planEndDate != null">
+                AND m.plan_date BETWEEN #{dto.planStartDate} AND #{dto.planEndDate}
+            </if>
+            <if test="dto.actualStartDate != null and dto.actualEndDate != null">
+                AND m.actual_date BETWEEN #{dto.actualStartDate} AND #{dto.actualEndDate}
+            </if>
+            <if test="dto.resultKeyword != null and dto.resultKeyword != ''">
+                AND m.result LIKE CONCAT('%', #{dto.resultKeyword}, '%')
+            </if>
+        </where>
+        ORDER BY m.plan_date DESC
+    </select>
+</mapper>

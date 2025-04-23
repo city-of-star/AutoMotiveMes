@@ -67,8 +67,14 @@ public class EquipmentController {
         return R.success(equipmentService.getEquipmentCount());
     }
 
-    @GetMapping("/listMaintenanceRecord")
+    @PostMapping("/listMaintenanceRecord")
     public R<Page<MaintenanceRecordListResponseDto>> listMaintenanceRecord(@RequestBody MaintenanceRecordListRequestDto dto) {
-        return R.success(equipmentService.listMaintenanceRecord(dto));
+        Page<MaintenanceRecordListResponseDto> page = equipmentService.listMaintenanceRecord(dto);
+        return R.success(page);
+    }
+
+    @GetMapping("/maintenanceDetail/{maintenanceId}")
+    public R<MaintenanceRecordDetailResponseDto> getMaintenanceDetail(@PathVariable Long maintenanceId) {
+        return R.success(equipmentService.getMaintenanceDetail(maintenanceId));
     }
 }
