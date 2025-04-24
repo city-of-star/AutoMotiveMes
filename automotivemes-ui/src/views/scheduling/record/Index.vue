@@ -142,6 +142,7 @@
           width="120"
           fixed="left"
           show-overflow-tooltip
+          align="center"
       />
 
       <el-table-column
@@ -150,6 +151,7 @@
           width="160"
           fixed="left"
           show-overflow-tooltip
+          align="center"
       />
 
       <!-- 自适应列 -->
@@ -158,6 +160,7 @@
           label="产品名称"
           min-width="180"
           show-overflow-tooltip
+          align="center"
       />
 
       <el-table-column
@@ -165,6 +168,7 @@
           label="型号"
           width="120"
           show-overflow-tooltip
+          align="center"
       />
 
       <el-table-column
@@ -172,6 +176,7 @@
           label="工序"
           width="120"
           show-overflow-tooltip
+          align="center"
       />
 
       <!-- 响应式隐藏列 -->
@@ -180,6 +185,7 @@
           label="顺序"
           width="90"
           class-name="hidden-sm"
+          align="center"
       />
 
       <el-table-column
@@ -211,6 +217,7 @@
           label="生产时间"
           min-width="220"
           class-name="hidden-sm"
+          align="center"
       >
         <template #default="{ row }">
           <div v-if="row.startTime || row.endTime" class="time-cell">
@@ -226,6 +233,7 @@
           label="耗时"
           width="120"
           class-name="hidden-xs"
+          align="center"
       >
         <template #default="{ row }">
           {{ formatDuration(row.duration) }}
@@ -237,6 +245,7 @@
           label="操作员"
           width="120"
           class-name="hidden-sm"
+          align="center"
       />
 
       <!-- 状态标签优化 -->

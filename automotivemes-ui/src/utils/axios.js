@@ -55,8 +55,6 @@ service.interceptors.response.use(
                 default:
                     ElMessage.error(`请求错误 (${httpStatus})`)
             }
-        } else if (error.isBusinessError) { // 捕获业务错误
-            handleBusinessError(error)
         } else {
             ElMessage.error('网络连接异常，请检查网络')
         }
@@ -74,27 +72,6 @@ function handleUnauthorized() {
             query: { redirect: router.currentRoute.value.fullPath }
         })
     })
-}
-
-function handleBusinessError(error) {
-    const businessErrorMap = {
-        400: '请求参数错误',
-        401: '会话已过期',
-        403: '没有操作权限',
-        404: '资源不存在',
-        500: '业务处理失败'
-    }
-
-    ElMessage.error(
-        error.message ||
-        businessErrorMap[error.code] ||
-        `业务错误 (${error.code})`
-    )
-
-    // 特殊业务状态码处理
-    if (error.code === 401) {
-        handleUnauthorized()
-    }
 }
 
 export default service

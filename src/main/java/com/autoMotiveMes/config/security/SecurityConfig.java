@@ -3,6 +3,7 @@ package com.autoMotiveMes.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -65,7 +66,17 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 在 UsernamePasswordAuthenticationFilter 之前添加自定义的 JWT 认证过滤器
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> {
+                    exception.authenticationEntryPoint((request, response, authException) -> {
+                        // 处理认证失败（如Token无效/过期）
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage());
+                    });
+                    exception.accessDeniedHandler((request, response, accessDeniedException) -> {
+                        // 处理权限不足
+                        response.sendError(HttpStatus.FORBIDDEN.value(), "Access Denied");
+                    });
+                });
 
         // 构建并返回配置好的安全过滤链
         return http.build();
