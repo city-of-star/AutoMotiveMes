@@ -147,6 +147,7 @@ public class OrderServiceImpl implements OrderService {
             schedule.setPlannedStartTime(timeWindow[0]);
             schedule.setPlannedEndTime(timeWindow[1]);
             schedule.setScheduleStatus(1);
+            schedule.setOperator(CommonUtils.getCurrentUserId());
             scheduleMapper.insert(schedule);
 
             currentTime = timeWindow[1].plusMinutes(30);  // 留出换线时间
