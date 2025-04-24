@@ -1,5 +1,6 @@
 package com.autoMotiveMes.utils;
 
+import com.autoMotiveMes.config.security.UserDetailsImpl;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,21 @@ public class CommonUtils {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             return authentication.getName();
+        }
+        return null;
+    }
+
+    public static Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 检查是否存在有效认证且非匿名用户
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetailsImpl userDetailsImpl) {
+                return userDetailsImpl.getUserId();
+            }
         }
         return null;
     }

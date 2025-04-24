@@ -207,7 +207,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + "\n处理结果: " + dto.getResult());
         alarmMapper.updateById(alarm);
 
-        // 更新涉笔状态
+        // 更新设备状态
         Equipment equipment = equipmentMapper.selectById(alarm.getEquipmentId());
         equipment.setStatus(1);  // 运行中
         equipmentMapper.updateById(equipment);

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.order.ProductionRecordMapper">
+
+    <resultMap id="productionRecordMap" type="com.autoMotiveMes.dto.order.ProductionRecordResponseDto">
+        <!-- 基础信息 -->
+        <id property="recordId" column="record_id"/>
+        <result property="equipmentCode" column="equipment_code"/>
+
+        <!-- 工单信息 -->
+        <result property="orderNo" column="order_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="productCode" column="product_code"/>
+        <result property="orderQuantity" column="order_quantity"/>
+        <result property="orderCompleted" column="order_completed"/>
+
+        <!-- 工序信息 -->
+        <result property="processCode" column="process_code"/>
+        <result property="processName" column="process_name"/>
+        <result property="processSequence" column="process_sequence"/>
+
+        <!-- 生产数据 -->
+        <result property="outputQuantity" column="output_quantity"/>
+        <result property="defectiveQuantity" column="defective_quantity"/>
+        <result property="defectRate" column="defect_rate"/>
+
+        <!-- 时间信息 -->
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="duration" column="duration"/>
+
+        <!-- 人员信息 -->
+        <result property="operatorName" column="operator_name"/>
+
+        <!-- 质量信息 -->
+        <result property="inspectionResult" column="inspection_result"/>
+        <result property="qualityStatus" column="quality_status"/>
+
+        <!-- 异常信息 -->
+        <result property="remark" column="remark"/>
+        <result property="hasAbnormal" column="has_abnormal"/>
+    </resultMap>
+
+    <select id="listProductionRecord" resultMap="productionRecordMap">
+        SELECT
+        pr.record_id,
+        e.equipment_code,
+        po.order_no,
+        p.product_name,
+        p.product_code,
+        po.order_quantity,
+        po.completed_quantity AS order_completed,
+        pd.process_code,
+        pd.process_name,
+        pd.sequence AS process_sequence,
+        pr.output_quantity,
+        pr.defective_quantity,
+        CASE WHEN pr.output_quantity > 0
+        THEN ROUND(pr.defective_quantity * 100.0 / pr.output_quantity, 2)
+        ELSE 0 END AS defect_rate,
+        pr.start_time,
+        pr.end_time,
+        TIMESTAMPDIFF(SECOND, pr.start_time, pr.end_time) AS duration,
+        u.real_name AS operator_name,
+        qir.inspection_result,
+        CASE qir.inspection_result
+        WHEN 1 THEN '合格'
+        WHEN 2 THEN '不合格'
+        WHEN 3 THEN '待复检'
+        ELSE '未检测' END AS quality_status,
+        pr.remark,
+        CASE WHEN pr.remark IS NOT NULL AND pr.remark != ''
+        THEN 1 ELSE 0 END AS has_abnormal
+        FROM production_record pr
+        JOIN production_order po ON pr.order_id = po.order_id
+        JOIN product p ON po.product_id = p.product_id
+        JOIN process_definition pd ON pr.process_id = pd.process_id
+        JOIN equipment e ON pr.equipment_id = e.equipment_id
+        JOIN sys_user u ON pr.operator = u.user_id
+        LEFT JOIN (
+        SELECT
+        order_id,
+        inspection_result,
+        ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY inspection_time DESC) rn
+        FROM quality_inspection_record
+        ) qir ON po.order_id = qir.order_id AND qir.rn = 1
+        <where>
+            <!-- 基本筛选条件 -->
+            <if test="dto.orderNo != null and dto.orderNo != ''">
+                AND po.order_no LIKE CONCAT('%', #{dto.orderNo}, '%')
+            </if>
+            <if test="dto.productName != null and dto.productName != ''">
+                AND p.product_name LIKE CONCAT('%', #{dto.productName}, '%')
+            </if>
+            <if test="dto.productCode != null and dto.productCode != ''">
+                AND p.product_code LIKE CONCAT('%', #{dto.productCode}, '%')
+            </if>
+            <if test="dto.processName != null and dto.processName != ''">
+                AND pd.process_name LIKE CONCAT('%', #{dto.processName}, '%')
+            </if>
+            <if test="dto.equipmentId != null">
+                AND e.equipment_id = #{dto.equipmentId}
+            </if>
+            <if test="dto.operatorId != null">
+                AND pr.operator = #{dto.operatorId}
+            </if>
+
+            <!-- 时间范围筛选 -->
+            <if test="dto.startTimeBegin != null">
+                AND pr.start_time >= #{dto.startTimeBegin}
+            </if>
+            <if test="dto.startTimeEnd != null">
+                AND pr.start_time &lt;= #{dto.startTimeEnd}
+            </if>
+
+            <!-- 数量范围筛选 -->
+            <if test="dto.minOutput != null">
+                AND pr.output_quantity >= #{dto.minOutput}
+            </if>
+            <if test="dto.maxOutput != null">
+                AND pr.output_quantity &lt;= #{dto.maxOutput}
+            </if>
+
+            <!-- 异常筛选 -->
+            <if test="dto.hasDefect != null">
+                AND pr.defective_quantity ${dto.hasDefect ? '>' : '='} 0
+            </if>
+            <if test="dto.hasRemark != null">
+                AND pr.remark IS ${dto.hasRemark ? 'NOT' : ''} NULL
+            </if>
+        </where>
+        ORDER BY pr.start_time DESC
+    </select>
+
+</mapper>

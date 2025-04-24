@@ -84,7 +84,7 @@ const addTab = (route) => {
   const routeExists = router.getRoutes().some(r => r.path === route.path)
   if (!routeExists) return
 
-  if (!route.meta?.noTab &&!tabs.value.some(tab => tab.path === route.path)) {
+  if (!route.meta?.noTab &&!tabs.value.some(tab => tab.name === route.name)) {
     store.commit('tabBar/ADD_TAB', {
       path: route.path,
       name: route.name,

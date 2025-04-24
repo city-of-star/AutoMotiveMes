@@ -40,6 +40,12 @@ const routes  = [
     name: 'info',
     meta: { title: '个人信息' },
     component: () => import('@/views/auth/UserInfo.vue')
+  },
+  {
+    path: '/scheduling/plan/:orderId',
+    name: 'scheduling-plan',
+    component: () => import('@/views/scheduling/plan/Index.vue'),
+    meta: { title: '排程计划', },
   }
 ]
 
@@ -117,15 +123,15 @@ const asyncRoutes = [
         },
       },
       {
-        path: '/scheduling/plan',
-        name: 'scheduling-plan',
-        component: () => import('@/views/scheduling/plan/Index.vue'),
+        path: '/scheduling/production/record/',
+        name: 'production-record',
+        component: () => import('@/views/scheduling/record/Index.vue'),
         meta: {
           permissions: 'scheduling:plan:manage',
-          title: '排程计划',
+          title: '生产记录',
           icon: 'TableCellsIcon'
         },
-      }
+      },
     ]
   },
   {

@@ -1,13 +1,14 @@
 package com.autoMotiveMes.controller.order;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.order.ListWorkOrderRequestDto;
-import com.autoMotiveMes.dto.order.ListWorkOrderResponseDto;
-import com.autoMotiveMes.dto.order.WorkOrderDetailResponseDto;
+import com.autoMotiveMes.dto.order.*;
+import com.autoMotiveMes.entity.order.Product;
 import com.autoMotiveMes.service.order.OrderService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 实现功能【工单 controller】
@@ -22,13 +23,49 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/listWorkOrders")
-    public R<Page<ListWorkOrderResponseDto>> listWorkOrders(@RequestBody ListWorkOrderRequestDto listWorkOrderRequestDto) {
-        return R.success(orderService.listWorkOrders(listWorkOrderRequestDto));
+    @PostMapping("/list")
+    public R<Page<ProductionOrderListDto>> listOrders(@RequestBody ProductionOrderQueryDto dto) {
+        return R.success(orderService.listOrders(dto));
     }
 
-    @GetMapping("/getWorkOrderDetail/{orderId}")
-    public R<WorkOrderDetailResponseDto> getWorkOrderDetail(@PathVariable Long orderId) {
-        return R.success(orderService.getWorkOrderDetail(orderId));
+    @GetMapping("/detail/{orderId}")
+    public R<ProductionOrderDetailDto> getDetail(@PathVariable Long orderId) {
+        return R.success(orderService.getOrderDetail(orderId));
+    }
+
+    @PostMapping("/create")
+    public R<?> createOrder(@RequestBody CreateProductionOrderDto dto) {
+        orderService.createOrder(dto);
+        return R.successWithoutData();
+    }
+
+    @PostMapping("/update-status/{orderId}/{status}")
+    public R<?> updateStatus(@PathVariable Long orderId, @PathVariable Integer status) {
+        orderService.updateOrderStatus(orderId, status);
+        return R.successWithoutData();
+    }
+
+    @GetMapping("/schedules/{orderId}")
+    public R<Page<SchedulePlanDto>> getSchedules(
+            @PathVariable Long orderId,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
+        return R.success(orderService.listSchedules(orderId, page, size));
+    }
+
+    @PostMapping("/generate-schedule/{orderId}")
+    public R<?> generateSchedule(@PathVariable Long orderId) {
+        orderService.generateSchedule(orderId);
+        return R.successWithoutData();
+    }
+
+    @GetMapping("/product/list")
+    public R<List<Product>> listProduct() {
+        return R.success(orderService.listProduct());
+    }
+
+    @PostMapping("/listProductionRecord")
+    public R<Page<ProductionRecordResponseDto>> listProductionRecord(@RequestBody ProductionRecordQueryDTO dto) {
+        return R.success(orderService.listProductionRecord(dto));
     }
 }

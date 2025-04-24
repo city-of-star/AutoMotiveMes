@@ -1,491 +1,447 @@
 <template>
-  <div class="work-order-container">
-    <!-- 查询表单 -->
-    <el-form :model="queryParams" inline class="search-form">
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="工单编号" prop="orderNo">
-            <el-input v-model="queryParams.orderNo" clearable placeholder="请输入工单编号"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="设备编码" prop="equipmentCode">
-            <el-input v-model="queryParams.equipmentCode" clearable placeholder="请输入设备编码"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="工单状态" prop="status">
-            <el-select v-model="queryParams.status" clearable placeholder="请选择状态">
-              <el-option
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+  <div class="order-manage-container">
+    <!-- 查询条件 -->
+    <el-card class="query-card">
+      <el-form :model="queryForm" label-width="90px">
+        <el-row :gutter="20">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label="工单号">
+              <el-input v-model="queryForm.orderNo" clearable placeholder="请输入工单号"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label="产品型号">
+              <el-input v-model="queryForm.productCode" clearable placeholder="请输入产品型号"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label="状态">
+              <el-select v-model="queryForm.status" clearable placeholder="全部状态">
+                <el-option
+                    v-for="item in statusOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="12" :md="8" :lg="6">
+            <el-form-item label="计划日期">
+              <el-date-picker
+                  v-model="dateRange"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="YYYY-MM-DD"
               />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="工单类型" prop="orderType">
-            <el-select v-model="queryParams.orderType" clearable placeholder="请选择类型">
-              <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
+            </el-form-item>
+          </el-col>
 
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="创建时间">
-            <el-date-picker
-                v-model="queryParams.createTimeRange"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="YYYY-MM-DD HH:mm:ss"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" class="text-right">
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </el-col>
-      </el-row>
-    </el-form>
+          <el-col :span="24" class="text-right">
+            <el-button type="primary" @click="handleSearch">查询</el-button>
+            <el-button @click="handleReset">重置</el-button>
+            <el-button type="success" @click="showCreateDialog">新建工单</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
 
-    <!-- 数据表格 -->
-    <el-table
-        :data="tableData"
-        v-loading="loading"
-        @row-click="handleRowClick"
-    >
-      <el-table-column  prop="orderNo" label="工单编号" align="center"/>
-      <el-table-column prop="equipmentCode" label="设备编码" align="center"/>
-      <el-table-column prop="equipmentName" label="设备名称" align="center"/>
-      <el-table-column prop="orderType" label="工单类型" align="center">
-        <template #default="{row}">
-          <el-tag :type="typeTagMap[row.orderType]">
-            {{ row.orderType }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="状态" align="center">
-        <template #default="{row}">
-          <el-tag :type="statusTagMap[row.status]">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="creatorName" label="创建人" align="center"/>
-      <el-table-column prop="assigneeName" label="处理人" align="center"/>
-      <el-table-column prop="createTime" label="创建时间" align="center"/>
-      <el-table-column prop="planCount" label="排程数" align="center"/>
-    </el-table>
+    <!-- 工单表格 -->
+    <el-card class="data-card">
+      <el-table
+          :data="tableData"
+          v-loading="loading"
+          border
+          stripe
+          height="463"
+      >
+        <el-table-column prop="orderNo" label="工单号" align="center"/>
+        <el-table-column prop="productCode" label="产品型号" align="center"/>
+        <el-table-column prop="productName" label="产品名称" align="center"/>
+        <el-table-column prop="orderQuantity" label="数量" align="center"/>
+        <el-table-column label="状态" align="center">
+          <template #default="{row}">
+            <el-tag :type="statusTagMap[row.status]">
+              {{ statusMap[row.status] }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="priority" label="优先级" align="center">
+          <template #default="{row}">
+            <el-tag :type="priorityTagMap[row.priority]">
+              {{ priorityMap[row.priority] }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="plannedStartDate" label="计划开始" align="center"/>
+        <el-table-column prop="plannedEndDate" label="计划完成" align="center"/>
+        <el-table-column label="操作" fixed="right" align="center" width="250">
+          <template #default="{row}">
+            <el-button size="small" @click="showDetail(row)">详情</el-button>
+            <el-button
+                size="small"
+                type="warning"
+                @click="updateStatus(row.orderId)"
+                :disabled="row.status !== 1"
+            >
+              排程
+            </el-button>
+            <el-button
+                size="small"
+                type="info"
+                @click="viewSchedule(row.orderId)"
+                :disabled="row.status < 2"
+            >
+              查看排程
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- 分页 -->
-    <div class="pagination">
-      <el-pagination
-          v-model:current-page="queryParams.page"
-          v-model:page-size="queryParams.size"
-          :total="total"
-          :page-sizes="[10, 20, 50]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      />
-    </div>
-
-    <!-- 工单详情对话框 -->
-    <el-dialog
-        v-model="detailVisible"
-        title="工单详情"
-        width="800px"
-        class="detail-dialog"
-        :close-on-click-modal="false"
-        align-center
-    >
-      <div class="dialog-content">
-        <!-- 基本信息分组 -->
-        <div class="info-group">
-          <h3 class="group-title"><i class="el-icon-document"></i> 工单信息</h3>
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="工单编号" label-class-name="detail-label">
-              <span class="highlight-text">{{ currentDetail.orderNo }}</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="工单类型">
-              <el-tag :type="typeTagMap[currentDetail.orderType]" effect="light">
-                {{ currentDetail.orderType }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="当前状态">
-              <el-tag :type="statusTagMap[currentDetail.status]" effect="light">
-                {{ currentDetail.status }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="排程数">
-              <span class="number-text">{{ currentDetail.planCount }}</span>
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
-
-        <!-- 设备信息分组 -->
-        <div class="info-group">
-          <h3 class="group-title"><i class="el-icon-cpu"></i> 设备信息</h3>
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="设备编码">{{ currentDetail.equipmentCode }}</el-descriptions-item>
-            <el-descriptions-item label="设备名称" label-class-name="detail-label">
-              <el-tag type="info">{{ currentDetail.equipmentName }}</el-tag>
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
-
-        <!-- 人员时间信息 -->
-        <div class="info-group">
-          <h3 class="group-title"><i class="el-icon-clock"></i> 时间信息</h3>
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="创建人">{{ currentDetail.creatorName }}</el-descriptions-item>
-            <el-descriptions-item label="处理人">{{ currentDetail.assigneeName || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="创建时间">{{ currentDetail.createTime }}</el-descriptions-item>
-            <el-descriptions-item label="完成时间">
-          <span :class="{ 'time-text': currentDetail.finishTime }">
-            {{ currentDetail.finishTime || '进行中' }}
-          </span>
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
-
-        <!-- 计划信息卡片式布局 -->
-        <div class="info-group">
-          <h3 class="group-title"><i class="el-icon-data-analysis"></i> 计划详情</h3>
-          <el-tabs type="border-card" stretch>
-            <el-tab-pane label="排程计划">
-          <pre class="json-preview" v-if="currentDetail.schedules">
-            {{ formatJSON(currentDetail.schedules) }}
-          </pre>
-              <el-empty v-else description="暂无排程数据" :image-size="60"/>
-            </el-tab-pane>
-            <el-tab-pane label="维护计划">
-          <pre class="json-preview" v-if="currentDetail.maintenanceInfo">
-            {{ formatJSON(currentDetail.maintenanceInfo) }}
-          </pre>
-              <el-empty v-else description="暂无维护数据" :image-size="60"/>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
+      <div class="pagination-wrapper">
+        <el-pagination
+            v-model:current-page="pagination.current"
+            v-model:page-size="pagination.size"
+            :total="pagination.total"
+            :page-sizes="[10, 20, 50, 100]"
+            @current-change="fetchOrders"
+            @size-change="fetchOrders"
+            layout="total, sizes, prev, pager, next, jumper"
+        />
       </div>
+    </el-card>
+
+    <!-- 创建工单对话框 -->
+    <el-dialog v-model="createVisible" title="新建生产工单" width="600px">
+      <el-form :model="createForm" label-width="100px" :rules="rules" ref="createFormRef">
+        <el-form-item label="产品" prop="productId">
+          <el-select
+              v-model="createForm.productId"
+              filterable
+              placeholder="请选择产品"
+              style="width: 100%"
+          >
+            <el-option
+                v-for="product in productOptions"
+                :key="product.productId"
+                :label="`${product.productCode} - ${product.productName}`"
+                :value="product.productId"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="生产数量" prop="orderQuantity">
+          <el-input-number
+              v-model="createForm.orderQuantity"
+              :min="1"
+              :max="9999"
+              style="width: 100%"
+          />
+        </el-form-item>
+
+        <el-form-item label="优先级" prop="priority">
+          <el-select v-model="createForm.priority" style="width: 100%">
+            <el-option
+                v-for="item in priorityOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="计划日期" prop="plannedDate">
+          <el-date-picker
+              v-model="createForm.plannedDate"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="YYYY-MM-DD"
+              style="width: 100%"
+          />
+        </el-form-item>
+
+        <el-form-item label="生产线" prop="productionLine">
+          <el-input v-model="createForm.productionLine"/>
+        </el-form-item>
+      </el-form>
 
       <template #footer>
-        <el-button @click="detailVisible = false">关闭</el-button>
+        <el-button @click="createVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitCreate">确定</el-button>
       </template>
     </el-dialog>
 
-    <!-- 统计图表 -->
-    <div ref="chartRef" style="width: 100%; height: 400px; margin-top: 20px"></div>
+    <!-- 工单详情抽屉 -->
+    <el-drawer v-model="detailVisible" title="工单详情" size="40%">
+      <el-descriptions :column="1" border v-if="currentOrder">
+        <el-descriptions-item label="工单号">{{ currentOrder.orderNo }}</el-descriptions-item>
+        <el-descriptions-item label="产品型号">{{ currentOrder.productCode }}</el-descriptions-item>
+        <el-descriptions-item label="产品名称">{{ currentOrder.productName }}</el-descriptions-item>
+        <el-descriptions-item label="计划数量">{{ currentOrder.orderQuantity }}</el-descriptions-item>
+        <el-descriptions-item label="已完成">{{ currentOrder.completedQuantity }}</el-descriptions-item>
+        <el-descriptions-item label="不良品">{{ currentOrder.defectiveQuantity }}</el-descriptions-item>
+        <el-descriptions-item label="优先级">
+          <el-tag :type="priorityTagMap[currentOrder.priority]">
+            {{ priorityMap[currentOrder.priority] }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="状态">
+          <el-tag :type="statusTagMap[currentOrder.status]">
+            {{ statusMap[currentOrder.status] }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="计划时间">
+          {{ currentOrder.plannedStartDate }} 至 {{ currentOrder.plannedEndDate }}
+        </el-descriptions-item>
+        <el-descriptions-item label="实际时间">
+          {{ currentOrder.actualStartDate || '-' }} 至 {{ currentOrder.actualEndDate || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="生产线">{{ currentOrder.productionLine }}</el-descriptions-item>
+        <el-descriptions-item label="创建人">{{ currentOrder.creatorName }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ currentOrder.createTime }}</el-descriptions-item>
+      </el-descriptions>
+    </el-drawer>
   </div>
 </template>
 
 <script setup>
-import {nextTick, onMounted, ref, watchEffect} from 'vue'
-import {ElMessage} from 'element-plus'
-import * as echarts from 'echarts'
-import axios from '@/utils/axios.js'
+import {onMounted, ref} from 'vue'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import axios from '@/utils/axios'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-// 图表配置
-const chartOptions = {
-  title: {
-    text: '工单状态分布',
-    left: 'center'
-  },
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left'
-  },
-  series: [
-    {
-      name: '状态分布',
-      type: 'pie',
-      radius: '50%',
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 20
-        }
-      }
-    }
-  ]
+
+// 状态映射
+const statusMap = {
+  1: '待排程',
+  2: '已排程',
+  3: '生产中',
+  4: '暂停',
+  5: '已完成',
+  6: '已关闭'
 }
-
-// 响应式数据
-const queryParams = ref({
-  page: 1,
-  size: 10,
-  orderNo: '',
-  equipmentCode: '',
-  status: '',
-  orderType: '',
-  createTimeRange: []
-})
-
-const statusOptions = ref([
-  { value: '待处理', label: '待处理' },
-  { value: '进行中', label: '进行中' },
-  { value: '已完成', label: '已完成' }
-])
-
-const typeOptions = ref([
-  { value: '生产', label: '生产工单' },
-  { value: '维护', label: '维护工单' },
-  { value: '维修', label: '维修工单' }
-])
 
 const statusTagMap = {
-  '待处理': 'warning',
-  '进行中': 'primary',
-  '已完成': 'success'
+  1: 'info',
+  2: 'primary',
+  3: 'success',
+  4: 'warning',
+  5: 'success',
+  6: 'danger'
 }
 
-const typeTagMap = {
-  '生产工单': '',
-  '维护工单': 'info',
-  '维修工单': 'danger'
+// 优先级映射
+const priorityMap = {
+  1: '紧急',
+  2: '高',
+  3: '普通',
+  4: '低'
 }
 
+const priorityTagMap = {
+  1: 'danger',
+  2: 'warning',
+  3: 'primary',
+  4: 'info'
+}
+
+// 查询相关
+const queryForm = ref({
+  orderNo: '',
+  productCode: '',
+  status: null
+})
+
+const dateRange = ref([])
+const statusOptions = [
+  { value: 1, label: '待排程' },
+  { value: 2, label: '已排程' },
+  { value: 3, label: '生产中' },
+  { value: 4, label: '暂停' },
+  { value: 5, label: '已完成' },
+  { value: 6, label: '已关闭' }
+]
+
+// 分页
+const pagination = ref({
+  current: 1,
+  size: 10,
+  total: 0
+})
+
+// 表格数据
 const tableData = ref([])
-const total = ref(0)
 const loading = ref(false)
-const detailVisible = ref(false)
-const currentDetail = ref({})
-const chartRef = ref(null)
-let chartInstance = null
 
-// 方法
-const loadData = async () => {
+// 创建工单相关
+const createVisible = ref(false)
+const productOptions = ref([])
+const createForm = ref({
+  productId: null,
+  orderQuantity: 1,
+  priority: 2,
+  plannedDate: [],
+  productionLine: ''
+})
+
+const priorityOptions = [
+  { value: 1, label: '紧急' },
+  { value: 2, label: '高' },
+  { value: 3, label: '普通' },
+  { value: 4, label: '低' }
+]
+
+const rules = {
+  productId: [{ required: true, message: '请选择产品', trigger: 'blur' }],
+  orderQuantity: [{ required: true, message: '请输入数量', trigger: 'blur' }],
+  priority: [{ required: true, message: '请选择优先级', trigger: 'change' }],
+  plannedDate: [{ required: true, message: '请选择计划日期', trigger: 'change' }],
+  productionLine: [{ required: true, message: '请输入生产线', trigger: 'blur' }]
+}
+
+// 工单详情
+const detailVisible = ref(false)
+const currentOrder = ref(null)
+
+onMounted(() => {
+  fetchOrders()
+  fetchProducts()
+})
+
+// 获取产品列表
+const fetchProducts = async () => {
+  try {
+    productOptions.value = await axios.get('/order/product/list')
+  } catch (error) {
+    ElMessage.error('获取产品列表失败')
+  }
+}
+
+// 获取工单列表
+const fetchOrders = async () => {
   try {
     loading.value = true
-    const params = {
-      ...queryParams.value,
-      createTimeStart: queryParams.value.createTimeRange?.[0],
-      createTimeEnd: queryParams.value.createTimeRange?.[1]
-    }
-    delete params.createTimeRange
 
-    const data = await axios.post('/order/listWorkOrders', params)
-    tableData.value = data.records
-    total.value = data.total
-
-    // 更新图表
-    updateChart(data.records)
+    const res = await axios.post('/order/list', {
+      page: pagination.value.current,
+      size: pagination.value.size,
+      orderNo: queryForm.value.orderNo,
+      productCode: queryForm.value.productCode,
+      status: queryForm.value.status,
+      startDate: dateRange.value?.[0],
+      endDate: dateRange.value?.[1]
+    })
+    tableData.value = res.records
+    pagination.value.total = res.total
   } catch (error) {
-    ElMessage.error('数据加载失败')
+    ElMessage.error('获取工单列表失败')
   } finally {
     loading.value = false
   }
 }
 
-const updateChart = (data) => {
-  if (!chartInstance) return
-
-  const statusCount = data.reduce((acc, cur) => {
-    acc[cur.status] = (acc[cur.status] || 0) + 1
-    return acc
-  }, {})
-
-  const chartData = Object.entries(statusCount).map(([name, value]) => ({
-    name,
-    value
-  }))
-
-  chartInstance.setOption({
-    series: [{
-      data: chartData,
-      label: {
-        formatter: '{b}: {c} ({d}%)'
-      }
-    }]
-  })
-}
-
+// 查询处理
 const handleSearch = () => {
-  queryParams.value.page = 1
-  loadData()
+  pagination.value.current = 1
+  fetchOrders()
 }
 
 const handleReset = () => {
-  queryParams.value = {
-    page: 1,
-    size: 10,
+  queryForm.value = {
     orderNo: '',
-    equipmentCode: '',
-    status: '',
-    orderType: '',
-    createTimeRange: []
+    productCode: '',
+    status: null
   }
-  loadData()
+  dateRange.value = []
+  handleSearch()
 }
 
-const handleSizeChange = (size) => {
-  queryParams.value.size = size
-  loadData()
+// 创建工单
+const showCreateDialog = () => {
+  createVisible.value = true
 }
 
-const handleCurrentChange = (page) => {
-  queryParams.value.page = page
-  loadData()
-}
-
-const handleRowClick = async (row) => {
+const submitCreate = async () => {
   try {
-    currentDetail.value = await axios.get(`/order/getWorkOrderDetail/${row.orderId}`)
+    await axios.post('/order/create', {
+      productId: createForm.value.productId,
+      orderQuantity: createForm.value.orderQuantity,
+      priority: createForm.value.priority,
+      plannedStartDate: createForm.value.plannedDate[0],
+      plannedEndDate: createForm.value.plannedDate[1],
+      productionLine: createForm.value.productionLine
+    })
+    ElMessage.success('创建成功')
+    createVisible.value = false
+    fetchOrders()
+  } catch (error) {
+    ElMessage.error('创建失败')
+  }
+}
+
+// 更新状态为已排程
+const updateStatus = async (orderId) => {
+  try {
+    await ElMessageBox.confirm('确认要为此工单生成排程计划吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+
+    await axios.post(`/order/update-status/${orderId}/2`)
+    ElMessage.success('状态更新成功')
+    fetchOrders()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('操作失败')
+    }
+  }
+}
+
+// 显示详情
+const showDetail = async (row) => {
+  try {
+    currentOrder.value = await axios.get(`/order/detail/${row.orderId}`)
     detailVisible.value = true
   } catch (error) {
-    ElMessage.error('详情加载失败')
+    ElMessage.error('获取详情失败')
   }
 }
 
-const formatJSON = (str) => {
-  try {
-    return JSON.stringify(JSON.parse(str), null, 2)
-  } catch {
-    return str || '无数据'
-  }
+// 查看排程
+const viewSchedule = (orderId) => {
+  router.push(`/scheduling/plan/${orderId}`)
 }
-
-// 生命周期
-onMounted(() => {
-  chartInstance = echarts.init(chartRef.value)
-  chartInstance.setOption(chartOptions)
-  loadData()
-
-  window.addEventListener('resize', () => {
-    chartInstance?.resize()
-  })
-})
-
-// 自动更新图表
-watchEffect(() => {
-  if (tableData.value.length > 0) {
-    nextTick(() => updateChart(tableData.value))
-  }
-})
 </script>
 
 <style scoped>
-.work-order-container {
-  padding: 20px;
-  background: #fff;
+.order-manage-container {
+  padding: 10px;
 }
 
-.search-form {
+.query-card {
   margin-bottom: 20px;
 }
 
-.text-right {
-  text-align: right;
+.data-card {
+  margin-top: 20px;
 }
 
-.pagination {
+.pagination-wrapper {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }
 
-pre {
-  background: #f5f7fa;
-  padding: 10px;
-  border-radius: 4px;
-  white-space: pre-wrap;
-}
-
-:deep(.el-table tr) {
-  transition: background-color 0.3s;
-}
-
-:deep(.el-table tr:hover) {
-  background-color: #c1caf1 !important;
-  cursor: pointer;
-}
-
-.detail-dialog {
-  --group-margin: 16px;
-  --highlight-color: #409EFF;
-}
-
-.dialog-content {
-  padding-right: 10px;
-}
-
-.info-group {
-  margin-bottom: var(--group-margin);
-  background: #f8fafc;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.group-title {
-  color: var(--highlight-color);
-  margin: 0 0 16px 0;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.json-preview {
-  background: #fafafa;
-  border: 1px solid #e4e7ed;
-  border-radius: 4px;
-  padding: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  line-height: 1.6;
-  max-height: 200px;
-  overflow: auto;
-  transition: all 0.3s;
-}
-
-.json-preview:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.highlight-text {
-  color: var(--highlight-color);
-  font-weight: 500;
-  font-size: 15px;
-}
-
-.number-text {
-  color: #67C23A;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.time-text {
-  color: #909399;
-  font-style: italic;
-}
-
-::v-deep(.detail-label) {
-  width: 100px;
-  background: #f5f7fa !important;
-  font-weight: 600;
-}
-
-::v-deep(.el-tabs__content) {
-  padding: 12px;
-  background: white;
-}
-
-::v-deep(.el-descriptions__body) {
-  background: white;
+.text-right {
+  text-align: right;
 }
 </style>

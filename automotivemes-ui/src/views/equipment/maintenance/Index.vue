@@ -115,7 +115,7 @@
 
       <el-table-column prop="cost" label="成本(元)" width="120" align="center">
         <template #default="{ row }">
-          {{ row.cost ? row.cost.toFixed(2) : '--' }}
+          {{ row.cost !== null ? row.cost.toFixed(2) : '--' }}
         </template>
       </el-table-column>
 
@@ -252,7 +252,6 @@ const fetchData = async () => {
     const data = await axios.post('/equipment/listMaintenanceRecord', params)
     tableData.value = data.records || []
     pagination.value.total = data.total || 0
-
   } catch (error) {
     ElMessage.error('数据加载失败')
     console.error('Error fetching data:', error)

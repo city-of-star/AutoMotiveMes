@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.order.ProductionOrderMapper">
+    <select id="listOrders" resultType="com.autoMotiveMes.dto.order.ProductionOrderListDto">
+        SELECT o.*, p.product_code, p.product_name
+        FROM production_order o
+        JOIN product p ON o.product_id = p.product_id
+        <where>
+            <if test="dto.orderNo != null and dto.orderNo != ''">
+                AND o.order_no LIKE CONCAT('%', #{dto.orderNo}, '%')
+            </if>
+            <if test="dto.productCode != null and dto.productCode != ''">
+                AND p.product_code LIKE CONCAT('%', #{dto.productCode}, '%')
+            </if>
+            <if test="dto.status != null">
+                AND o.status = #{dto.status}
+            </if>
+            <if test="dto.startDate != null">
+                AND o.planned_start_date >= #{dto.startDate}
+            </if>
+            <if test="dto.endDate != null">
+                AND o.planned_end_date &lt;= #{dto.endDate}
+            </if>
+        </where>
+        ORDER BY o.priority ASC, o.create_time DESC
+    </select>
+
+    <select id="getOrderDetail" resultType="com.autoMotiveMes.dto.order.ProductionOrderDetailDto">
+        SELECT o.*, p.product_code, p.product_name, p.specifications, u.real_name AS creator_name
+        FROM production_order o
+                 JOIN product p ON o.product_id = p.product_id
+                 JOIN sys_user u ON o.creator = u.user_id
+        WHERE o.order_id = #{orderId}
+    </select>
+
+    <!-- 查询当日最大工单流水号 -->
+    <select id="selectMaxOrderSeq" resultType="java.lang.Integer">
+        SELECT
+            MAX(CAST(SUBSTRING(order_no, 7) AS UNSIGNED))
+        FROM production_order
+        WHERE
+            order_no LIKE CONCAT(#{datePart}, '%')
+          AND LENGTH(order_no) = 10  -- 确保工单号长度合法
+          AND order_no REGEXP '^[0-9]{10}$'  -- 正则校验全数字
+    </select>
+</mapper>
