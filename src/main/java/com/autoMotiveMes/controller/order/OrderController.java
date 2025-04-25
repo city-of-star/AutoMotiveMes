@@ -36,13 +36,13 @@ public class OrderController {
     @PostMapping("/create")
     public R<?> createOrder(@RequestBody CreateProductionOrderDto dto) {
         orderService.createOrder(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @PostMapping("/update-status/{orderId}/{status}")
     public R<?> updateStatus(@PathVariable Long orderId, @PathVariable Integer status) {
         orderService.updateOrderStatus(orderId, status);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @GetMapping("/schedules/{orderId}")
@@ -56,7 +56,7 @@ public class OrderController {
     @PostMapping("/generate-schedule/{orderId}")
     public R<?> generateSchedule(@PathVariable Long orderId) {
         orderService.generateSchedule(orderId);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @GetMapping("/product/list")

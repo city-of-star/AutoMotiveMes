@@ -9,4 +9,4 @@ spring:
 
 security:
   jwt:
-    expiration: 3 # 公共过期时间(1天)
+    expiration: 86400 # 公共过期时间(1天)

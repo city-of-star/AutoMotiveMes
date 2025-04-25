@@ -21,13 +21,28 @@ public class R<T> {
     // 业务失败基础码
     public static final int BUSINESS_ERROR_BASE = 1000;
 
-    private int code;
+    private Integer code;
     private String msg;
     private T data;
+
+    // 成功响应
+    public static <T> R<T> success() {
+        return new R<>(SUCCESS_CODE, "success", null);
+    }
 
     // 成功响应（带数据）
     public static <T> R<T> success(T data) {
         return new R<>(SUCCESS_CODE, "success", data);
+    }
+
+    // 认证失败
+    public static <T> R<T> unauthorized() {
+        return new R<>(null, null, null);
+    }
+
+    // 无权访问
+    public static <T> R<T> forbidden() {
+        return new R<>(null, null, null);
     }
 
     // 业务失败

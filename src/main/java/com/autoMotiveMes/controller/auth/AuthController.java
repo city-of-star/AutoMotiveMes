@@ -20,12 +20,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public R<?> register(@RequestBody RegisterRequestDto registerRequestDto) {
-        authService.register(registerRequestDto);
-        return R.successWithoutData();
-    }
-
     @PostMapping("/login")
     public R<AuthResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         AuthResponseDto authResponseDto = authService.login(loginRequestDto);
@@ -47,6 +41,6 @@ public class AuthController {
     @PostMapping("/isValidToken")
     public R<?> isValidToken(HttpServletRequest request) {
         authService.isValidToken(request);
-        return R.successWithoutData();
+        return R.success();
     }
 }

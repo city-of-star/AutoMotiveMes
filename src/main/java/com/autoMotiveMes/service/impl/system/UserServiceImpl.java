@@ -1,6 +1,7 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.common.exception.BadRequestException;
+import com.autoMotiveMes.common.exception.BusinessException;
+import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.common.exception.ServerException;
 import com.autoMotiveMes.entity.system.SysUser;
@@ -11,6 +12,7 @@ import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,25 +29,22 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final RedisTemplate<String, SysUser> userRedisTemplate;
     private final SysUserMapper userMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public Page<SysUser> searchSysUserList(SearchSysUserListRequestDto dto) {
-        // 定义返回值
-        Page<SysUser> res;
-
         try {
             // 创建分页对象
             Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
                     dto.getSize() == null ? 10 : dto.getSize());
 
-            res = userMapper.selectUserList(page, dto);
+            return userMapper.selectUserList(page, dto);
         } catch (Exception e) {
             throw new ServerException("查询用户列表出错 || " + e.getMessage());
         }
-        return res;
     }
 
     @Override
@@ -74,6 +73,9 @@ public class UserServiceImpl implements UserService {
                 throw new ServerException("修改失败，非法的用户状态");
             }
             userMapper.updateById(user);
+
+            // 清除旧缓存
+            userRedisTemplate.delete("user:" + user.getUsername());
         } catch (Exception e) {
             throw new ServerException("切换用户状态出错 || " + e.getMessage());
         }
@@ -82,13 +84,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addUser(AddUserRequestDto dto) {
         if (userMapper.selectByUsername(dto.getUsername()) != null) {
-            throw new BadRequestException("用户名已存在");
+            throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
         if (userMapper.selectByPhone(dto.getPhone()) != null) {
-            throw new BadRequestException("手机号码已存在");
+            throw new BusinessException(ErrorCode.PHONE_EXISTS);
         }
         if (userMapper.selectByEmail(dto.getEmail()) != null) {
-            throw new BadRequestException("邮箱已存在");
+            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
         }
 
         try {
@@ -122,11 +124,11 @@ public class UserServiceImpl implements UserService {
         SysUser user = userMapper.selectById(dto.getUserId());  // 原本的用户信息
         SysUser toUserByPhone = userMapper.selectByPhone(dto.getPhone());  // 用户改手机号码，查询是否已有该手机号码
         if (toUserByPhone != null && !toUserByPhone.getPhone().equals(user.getPhone())) {
-            throw new BadRequestException("手机号码已存在");
+            throw new BusinessException(ErrorCode.PHONE_EXISTS);
         }
         SysUser toUserByEmail = userMapper.selectByEmail(dto.getEmail());  // 用户改邮箱，查询是否已有该邮箱
         if (toUserByEmail != null && !toUserByEmail.getEmail().equals(user.getEmail())) {
-            throw new BadRequestException("邮箱已存在");
+            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
         }
 
         try {
@@ -147,6 +149,10 @@ public class UserServiceImpl implements UserService {
             userRoleMapper.deleteByUserId(userId);  // 删除用户原本的角色
             SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
             userRoleMapper.insert(userRole);  // 添加新的用户角色关系
+
+            // 清除旧缓存
+            SysUser updatedUser = userMapper.selectById(userId);
+            userRedisTemplate.delete("user:" + updatedUser.getUsername());
         } catch (Exception e) {
             throw new ServerException("修改失败 || " +  e.getMessage());
         }

@@ -2,6 +2,7 @@ package com.autoMotiveMes.config.security;
 
 import com.autoMotiveMes.common.exception.BusinessException;
 import com.autoMotiveMes.common.exception.ServerException;
+import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,9 +43,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 验证头格式（保留原始逻辑，但改用更精确的异常）
+        // 验证请求头格式
         if (!authHeader.startsWith("Bearer ")) {
-            throw new BadCredentialsException("Invalid authorization header format");
+            throw new BadCredentialsException(ErrorCode.ERROR_AUTHENTICATION_HEADER.getMsg());  // 无效的请求头
         }
 
         String token = authHeader.substring(7);
@@ -67,8 +68,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (UsernameNotFoundException e) {
-            // 用户不存在（401 未授权）
-            throw new BadCredentialsException("Invalid credentials", e);
+            // 用户不存在
+            throw new BadCredentialsException(ErrorCode.USER_NOT_EXISTS.getMsg());
         } catch (BusinessException | BadCredentialsException e) {
             // 已知的业务异常直接抛出（会被全局处理器捕获）
             throw e;

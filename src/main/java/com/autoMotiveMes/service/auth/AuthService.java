@@ -10,9 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
  * @date 2025-02-15 16:46:31
  */
 public interface AuthService {
-    // 注册
-    void register(RegisterRequestDto registerRequestDto);
-
     // 登录
     AuthResponseDto login(LoginRequestDto loginRequestDto);
 

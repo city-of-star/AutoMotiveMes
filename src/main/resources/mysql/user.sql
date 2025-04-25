@@ -141,7 +141,7 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     -- 生产排程模块
     ('scheduling:manage', '生产排程', 'MENU', 0, '/scheduling', 'Layout', '/api/scheduling', NULL), -- 30
     ('scheduling:order:manage', '工单管理', 'MENU', 30, 'orders', '@/views/scheduling/orders/Index.vue', '/api/scheduling/orders', 'GET'), -- 31
-    ('scheduling:plan:manage', '排程计划', 'MENU', 30, 'plan', '@/views/scheduling/plan/Index.vue', '/api/scheduling/plan', 'GET'), -- 32
+    ('scheduling:production:record', '生产记录', 'MENU', 30, 'plan', '@/views/scheduling/record/Index.vue', '/api/scheduling/record', 'GET'), -- 32
 
     -- 设备管理模块
     ('equipment:manage', '设备管理', 'MENU', 0, '/equipment', 'Layout', '/api/equipment', NULL), -- 33

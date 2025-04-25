@@ -127,7 +127,7 @@ const asyncRoutes = [
         name: 'production-record',
         component: () => import('@/views/scheduling/record/Index.vue'),
         meta: {
-          permissions: 'scheduling:plan:manage',
+          permissions: 'scheduling:production:record',
           title: '生产记录',
           icon: 'TableCellsIcon'
         },

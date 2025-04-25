@@ -1,7 +1,5 @@
 package com.autoMotiveMes.service.impl.auth;
 
-import com.autoMotiveMes.common.exception.AuthException;
-import com.autoMotiveMes.common.exception.BadRequestException;
 import com.autoMotiveMes.common.exception.BusinessException;
 import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.config.security.UserDetailsImpl;
@@ -14,6 +12,9 @@ import com.autoMotiveMes.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 实现功能【用户认证服务实现类】
@@ -35,54 +37,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    // jwt 过期时间，用户信息缓存过期时间
+    @Value("${security.jwt.expiration}")
+    private int expiration;
     private final SysUserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-
-    @Override
-    public void register(RegisterRequestDto registerRequestDto) {
-        // 检查用户名是否已存在
-        if (userMapper.selectByUsername(registerRequestDto.getUsername()) != null) {
-            throw new BusinessException(ErrorCode.USERNAME_EXISTS);
-        }
-        // 检查邮箱是否已存在
-        if (userMapper.selectByEmail(registerRequestDto.getEmail()) != null) {
-            throw new BadRequestException("注册失败，邮箱已存在");
-        }
-        // 检查两次输入的密码是否一致
-        if (!Objects.equals(registerRequestDto.getPassword(), registerRequestDto.getConfirmPassword())) {
-            throw new BadRequestException("注册失败，两次输入的密码不一致");
-        }
-
-        try {
-            SysUser user = new SysUser();
-            user.setUsername(registerRequestDto.getUsername());
-            user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
-            user.setEmail(registerRequestDto.getEmail());
-            user.setStatus(1); // 默认启用状态
-            user.setAccountLocked(1);  // 默认没有锁定
-            user.setLoginAttempts(0);  // 初始化连续登陆失败次数为 0
-            user.setCreateTime(LocalDateTime.now());
-            userMapper.insert(user);
-
-            log.info("用户 {} 注册成功", registerRequestDto.getUsername());
-        } catch (Exception e) {
-            throw new ServerException("注册失败 || " + e.getMessage());
-        }
-    }
+    private final RedisTemplate<String, SysUser> userRedisTemplate;
 
     @Override
     public AuthResponseDto login(LoginRequestDto loginRequestDto) {
         // 验证用户的密码
         SysUser user = userMapper.selectByUsername(loginRequestDto.getUsername());
         if (user == null || !passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new AuthException("用户名或密码错误");
+            throw new BusinessException(ErrorCode.ERROR_USERNAME_OR_PASSWORD);
         }
         if (user.getStatus() == 0) {
-            throw new AuthException("抱歉，您的账号已停用");
+            throw new BusinessException(ErrorCode.ACCOUNT_DISABLED);
         }
         if (user.getAccountLocked() == 0) {
-            throw new AuthException("抱歉，您的账号已锁定");
+            throw new BusinessException(ErrorCode.ACCOUNT_LOCKED);
         }
 
         try {
@@ -97,6 +71,15 @@ public class AuthServiceImpl implements AuthService {
             LocalDateTime date = LocalDateTime.now();
             user.setLastLogin(date);
             userMapper.updateById(user);
+
+            // 将用户信息存入 Redis，有效期与 Token 一致
+            userRedisTemplate.opsForValue().set(
+                    "user:" + user.getUsername(),
+                    user,
+                    // 添加随机偏移量，避免大量缓存同时失效
+                    expiration + new Random().nextInt(300),
+                    TimeUnit.SECONDS
+            );
 
             log.info("用户 {} 登录成功", loginRequestDto.getUsername());
 
@@ -115,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
         if (authentication != null) {
             log.warn("用户 {} 尝试获取个人信息，但是用户未认证或认证失败", authentication.getName());
         }
-        throw new AuthException("登录信息过期，请重新登录");
+        throw new BadCredentialsException(ErrorCode.LOGIN_INFO_EXPIRED.getMsg());
     }
 
     @Override
@@ -139,14 +122,14 @@ public class AuthServiceImpl implements AuthService {
         if (authentication != null) {
             log.warn("用户 {} 尝试获取个人角色和权限，但是用户未认证或认证失败", authentication.getName());
         }
-        throw new AuthException("登录信息过期，请重新登录");
+        throw new BadCredentialsException(ErrorCode.LOGIN_INFO_EXPIRED.getMsg());
     }
 
     @Override
     public void isValidToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new AuthException("无效的认证头");
+            throw new BadCredentialsException(ErrorCode.ERROR_AUTHENTICATION_HEADER.getMsg());
         }
 
         String token = header.substring(7);

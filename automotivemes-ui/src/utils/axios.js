@@ -11,7 +11,7 @@ const service = axios.create({
     }
 })
 
-// 请求拦截器（保持不变）
+// 请求拦截器
 service.interceptors.request.use(
     config => {
         if (store.state.user.token) {
@@ -21,10 +21,10 @@ service.interceptors.request.use(
     }
 )
 
-// 响应拦截器（优化后）
+// 响应拦截器
 service.interceptors.response.use(
     response => {
-        // HTTP 200 表示请求成功，直接返回数据
+        // 直接返回数据
         return response.data.data;
     },
     error => {
@@ -32,7 +32,6 @@ service.interceptors.response.use(
         if (error.response) {
             const httpStatus = error.response.status
             const res = error.response.data
-            console.log(res)
 
             // 根据 HTTP 状态码处理
             switch (httpStatus) {
@@ -43,29 +42,47 @@ service.interceptors.response.use(
                     handleUnauthorized()
                     break
                 case 403:
-                    ElMessage.error(res.msg || '没有操作权限')
+                    ElMessage.error('没有操作权限')
                     break
                 case 404:
                     router.push({ name: '404' })
                     ElMessage.error(res.msg || '资源不存在')
                     break
                 case 500:
-                    ElMessage.error(res.msg || '服务器内部错误')
+                    ElMessage.error(res.msg || '系统内部错误')
                     break
-                default:
-                    ElMessage.error(`请求错误 (${httpStatus})`)
+                case 502:
+                case 503:
+                    ElMessage.error('服务维护升级中，请30分钟后重试')
+                    break
+                case 504: ElMessage.error('网关响应超时')
+                    break
+                default: {
+                    if (httpStatus >= 500) {
+                        ElMessage.error('服务器开小差了，工程师正在抢修中')
+                    } else {
+                        ElMessage.error(`${httpStatus}: 请求发生未知错误`)
+                    }
+                }
             }
         } else {
-            ElMessage.error('网络连接异常，请检查网络')
+            // 处理无响应的情况（超时/断网）
+            if (error.code === 'ECONNABORTED') {
+                ElMessage.error('请求超时，请检查网络后重试')
+            } else if (!window.navigator.onLine) {
+                ElMessage.error('网络连接已断开，请检查网络设置')
+            } else {
+                ElMessage.error('服务连接异常，请稍后重试')
+            }
         }
 
         return Promise.reject(error)
     }
 )
 
-/* 通用错误处理函数 */
+// 统一授权处理
 function handleUnauthorized() {
-    ElMessage.error('登录已过期或未登录')
+    ElMessage.error('登录信息已过期，请重新登录')
     store.dispatch('user/logout').then(() => {
         router.push({
             path: '/login',

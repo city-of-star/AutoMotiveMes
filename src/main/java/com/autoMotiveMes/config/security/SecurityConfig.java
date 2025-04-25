@@ -1,6 +1,7 @@
 package com.autoMotiveMes.config.security;
 
 import com.alibaba.fastjson2.JSON;
+import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.common.response.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,9 +40,6 @@ public class SecurityConfig {
     // 注入 JWT 认证过滤器
     private final JwtAuthFilter jwtAuthFilter;
 
-    // 注入 Rbac 服务
-    private final RbacService rbacService;
-
     /**
      * 配置安全过滤链，定义请求的访问规则、会话管理和过滤器顺序。
      *
@@ -66,7 +64,25 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 在 UsernamePasswordAuthenticationFilter 之前添加自定义的 JWT 认证过滤器
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        // 认证失败处理(401)
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.getWriter().write(JSON.toJSONString(
+                                    R.unauthorized()
+                            ));
+                        })
+                        // 权限不足处理(403)
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            response.getWriter().write(JSON.toJSONString(
+                                    R.forbidden()
+                            ));
+                        })
+                );
 
         // 构建并返回配置好的安全过滤链
         return http.build();

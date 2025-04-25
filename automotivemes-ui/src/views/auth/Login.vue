@@ -154,7 +154,7 @@ const handleLogin = async () => {
     })
 
   } catch (error) {
-    ElMessage.error(error.message || '认证失败，请检查工号密码')
+    console.log(error)
   } finally {
     loading.value = false
   }

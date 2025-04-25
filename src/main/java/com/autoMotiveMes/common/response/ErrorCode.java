@@ -10,30 +10,39 @@ import lombok.Getter;
  */
 @Getter
 public enum ErrorCode {
-    // 认证相关
-    UNAUTHORIZED(1, "登录凭证已过期"),
-    INVALID_CREDENTIALS(2, "用户名或密码错误"),
-    ACCOUNT_DISABLED(3, "账号已停用"),
-    ACCOUNT_LOCK(4, "账号已锁定"),
+    // 认证相关(401)
+    LOGIN_INFO_EXPIRED(1, "登录信息已过期，请重新登录"),
+    ERROR_AUTHENTICATION_HEADER(2, "无效的认证头"),
+    USER_NOT_EXISTS(3, "用户不存在"),
+    ERROR_TOKEN(4, "无效的token"),
 
+    // 权限相关(403)
+    NOT_PERMISSION(10, "没有操作权限"),
+    ACCOUNT_DISABLED(11, "账号已停用"),
+    ACCOUNT_LOCKED(12, "账号已锁定"),
 
-    // 注册相关
-    USERNAME_EXISTS(10, "用户名已存在"),
-    EMAIL_EXISTS(11, "邮箱已被注册"),
-    phone_EXISTS(11, "手机号码已存在"),
+    // 登录与注册业务相关(400)
+    ERROR_USERNAME_OR_PASSWORD(20, "用户名或密码错误"),
+    USERNAME_EXISTS(21, "用户名已存在"),
+    EMAIL_EXISTS(22, "邮箱已被注册"),
+    PHONE_EXISTS(23, "手机号码已存在"),
+    PASSWORDS_DIFFER(24, "两次输入的密码不一致"),
 
-    // 业务操作
-    INVALID_OPERATION(20, "非法操作"),
+    // 其他业务相关(400)
+    INVALID_OPERATION(30, "非法操作"),
+
+    // 系统内部错误
+    SYSTEM_ERROR(90, "系统内部错误"),
 
     // 系统保留
-    UNKNOWN_ERROR(999, "系统繁忙");
+    UNKNOWN_ERROR(99, "系统繁忙");
 
     private final int code;
-    private final String defaultMsg;
+    private final String msg;
 
-    ErrorCode(int code, String defaultMsg) {
+    ErrorCode(int code, String msg) {
         this.code = code;
-        this.defaultMsg = defaultMsg;
+        this.msg = msg;
     }
 
 }

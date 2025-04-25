@@ -52,7 +52,7 @@ public class EquipmentController {
     @PostMapping("/handleAlarm")
     public R<?> handleAlarm(@RequestBody HandleAlarmRequestDto dto) {
         equipmentService.handleAlarmMaintenance(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @GetMapping("/historyData/{equipmentId}")

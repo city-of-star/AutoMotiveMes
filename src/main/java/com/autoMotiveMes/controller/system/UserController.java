@@ -35,28 +35,28 @@ public class UserController {
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:delete')")
     public R<?> deleteSysUser(@RequestBody DeleteUserRequestDto dto) {
         userService.deleteUserByID(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @PostMapping("/switchStatus")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
     public R<?> switchUserStatus(@RequestBody SwitchUserStatusRequestDto dto) {
         userService.switchUserStatus(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @PostMapping("/add")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:add')")
     public R<?> addUser(@RequestBody AddUserRequestDto dto) {
         userService.addUser(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @PostMapping("/update")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:update')")
     public R<?> updateUser(@RequestBody UpdateUserRequestDto dto) {
         userService.updateUser(dto);
-        return R.successWithoutData();
+        return R.success();
     }
 
     @PostMapping("/getInfo")

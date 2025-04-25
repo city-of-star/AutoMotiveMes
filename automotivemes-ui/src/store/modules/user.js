@@ -78,10 +78,6 @@ export default {
             ElMessage.success("登录成功!")
             await router.push({ name: 'home' });
         },
-        async register(_, data){
-            await service.post('/auth/register', data);
-            ElMessage.success("注册成功!")
-        },
         async getUserRoleAndPermission({ commit }) {
             const response = await service.post('/auth/getRoleAndPermission');
             commit('SET_ROLES', response.roles)
