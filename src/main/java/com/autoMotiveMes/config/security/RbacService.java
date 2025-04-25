@@ -1,35 +1,32 @@
 package com.autoMotiveMes.config.security;
 
-import com.autoMotiveMes.common.exception.AuthException;
-import com.autoMotiveMes.common.exception.ForbiddenException;
+import com.autoMotiveMes.common.response.ErrorCode;
+import com.autoMotiveMes.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-/**
- * 实现功能【基于角色的访问控制逻辑】
- *
- * @author li.hongyu
- * @date 2025-02-15 14:28:36
- */
 @Slf4j
 @Service("rbacService")
 public class RbacService {
 
     public boolean hasPermission(Authentication authentication, String permissionCode) {
+        // 检查认证状态（使用Spring Security标准异常）
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthException("登录信息过期，请重新登录");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getDefaultMsg());
         }
 
-        boolean flag = authentication.getAuthorities().stream()
+        // 权限校验逻辑
+        boolean hasPermission = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(perm -> perm.equals(permissionCode));
 
-        if (flag) {  // 鉴权通过
-            return true;
-        } else {  // 鉴权失败
-            throw new ForbiddenException("抱歉，您暂无权限访问");
+        if (!hasPermission) {
+            log.warn("权限校验失败: user={}, required={}", authentication.getName(), permissionCode);
+            throw new AccessDeniedException("权限不足");  // 触发403响应
         }
+        return true;
     }
 }

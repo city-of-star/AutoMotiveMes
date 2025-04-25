@@ -1,9 +1,12 @@
 package com.autoMotiveMes.config.security;
 
+import com.alibaba.fastjson2.JSON;
+import com.autoMotiveMes.common.response.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -54,29 +57,16 @@ public class SecurityConfig {
                 // 配置跨域
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // 配置会话管理策略为无状态，即不使用 HTTP 会话来存储用户的认证信息
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 配置请求的授权规则
                 .authorizeHttpRequests(auth -> auth
-                        // 允许 /api/auth/login 和 /api/auth/register 这两个接口匿名访问
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/getRoleAndPermission", "/api/auth/isValidToken").permitAll()
                         .requestMatchers("/api/equipment/acceptData").permitAll()
                         .requestMatchers("/mes-websocket/**", "/topic/**", "/app/**").permitAll()
-                        // 其他所有请求都需要进行身份验证
                         .anyRequest().authenticated()
                 )
                 // 在 UsernamePasswordAuthenticationFilter 之前添加自定义的 JWT 认证过滤器
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exception -> {
-                    exception.authenticationEntryPoint((request, response, authException) -> {
-                        // 处理认证失败（如Token无效/过期）
-                        response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage());
-                    });
-                    exception.accessDeniedHandler((request, response, accessDeniedException) -> {
-                        // 处理权限不足
-                        response.sendError(HttpStatus.FORBIDDEN.value(), "Access Denied");
-                    });
-                });
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         // 构建并返回配置好的安全过滤链
         return http.build();

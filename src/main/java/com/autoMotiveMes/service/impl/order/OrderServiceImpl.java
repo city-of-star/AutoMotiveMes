@@ -1,7 +1,7 @@
 package com.autoMotiveMes.service.impl.order;
 
 
-import com.autoMotiveMes.common.exception.GlobalException;
+import com.autoMotiveMes.common.exception.ServerException;
 import com.autoMotiveMes.dto.order.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.order.ProcessDefinition;
@@ -63,13 +63,13 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(CreateProductionOrderDto dto) {
         // 校验产品是否存在
         if (productMapper.selectById(dto.getProductId()) == null) {
-            throw new GlobalException("指定产品不存在");
+            throw new ServerException("指定产品不存在");
         }
 
         // 校验时间顺序
         if (LocalDate.parse(dto.getPlannedStartDate())
                 .isAfter(LocalDate.parse(dto.getPlannedEndDate()))) {
-            throw new GlobalException("计划开始时间不能晚于结束时间");
+            throw new ServerException("计划开始时间不能晚于结束时间");
         }
 
         // 生成工单号（YYMMDD+4位流水）
@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
         // 1. 获取工单信息
         ProductionOrder order = orderMapper.selectById(orderId);
         if (order == null || order.getStatus() != 2) {
-            throw new GlobalException("工单状态不合法或不存在");
+            throw new ServerException("工单状态不合法或不存在");
         }
 
         // 2. 获取产品工序定义
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
             // 3.1 获取可用设备
             Equipment equipment = selectAvailableEquipment(process.getEquipmentType());
             if (equipment == null) {
-                throw new GlobalException("工序["+process.getProcessName()+"]无可用设备");
+                throw new ServerException("工序["+process.getProcessName()+"]无可用设备");
             }
 
             // 3.2 计算时间窗口

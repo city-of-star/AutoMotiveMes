@@ -2,10 +2,12 @@ package com.autoMotiveMes.service.impl.auth;
 
 import com.autoMotiveMes.common.exception.AuthException;
 import com.autoMotiveMes.common.exception.BadRequestException;
+import com.autoMotiveMes.common.exception.BusinessException;
+import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.config.security.UserDetailsImpl;
 import com.autoMotiveMes.dto.auth.*;
 import com.autoMotiveMes.entity.system.SysUser;
-import com.autoMotiveMes.common.exception.GlobalException;
+import com.autoMotiveMes.common.exception.ServerException;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
 import com.autoMotiveMes.service.auth.AuthService;
 import com.autoMotiveMes.utils.JwtUtils;
@@ -20,8 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequestDto registerRequestDto) {
         // 检查用户名是否已存在
         if (userMapper.selectByUsername(registerRequestDto.getUsername()) != null) {
-            throw new BadRequestException("注册失败，用户名已存在");
+            throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
         // 检查邮箱是否已存在
         if (userMapper.selectByEmail(registerRequestDto.getEmail()) != null) {
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
             log.info("用户 {} 注册成功", registerRequestDto.getUsername());
         } catch (Exception e) {
-            throw new GlobalException("注册失败 || " + e.getMessage());
+            throw new ServerException("注册失败 || " + e.getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
 
             return response;
         } catch (Exception e) {
-            throw new GlobalException("用户登录失败 || " + e.getMessage());
+            throw new ServerException("用户登录失败 || " + e.getMessage());
         }
     }
 

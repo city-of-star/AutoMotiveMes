@@ -16,29 +16,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class R<T> {
+    // 成功状态码
+    public static final int SUCCESS_CODE = 200;
+    // 业务失败基础码
+    public static final int BUSINESS_ERROR_BASE = 1000;
+
     private int code;
     private String msg;
     private T data;
 
-    // 200 有数据的成功响应
+    // 成功响应（带数据）
     public static <T> R<T> success(T data) {
-        return new R<>(200, "success", data);
+        return new R<>(SUCCESS_CODE, "success", data);
     }
 
-    // 200 无数据的成功响应
-    public static <T> R<T> successWithoutData() {
-        return new R<>(200, "success", null);
+    // 业务失败
+    public static <T> R<T> fail(ErrorCode errorCode, String message) {
+        return new R<>(BUSINESS_ERROR_BASE + errorCode.getCode(), message, null);
     }
 
-    // 400 错误请求响应
-    public static <T> R<T> badRequest(String message) { return new R<>(400, message, null); }
-
-    // 401 未授权响应
-    public static <T> R<T> unauthorized(String message) { return new R<>(401, message, null); }
-
-    // 403 禁止访问响应
-    public static <T> R<T> forbidden(String message) { return new R<>(403, message, null); }
-
-    // 500 服务器内部错误响应
-    public static <T> R<T> serverError(String message) { return new R<>(500, message, null); }
+    // 系统级错误
+    public static <T> R<T> error(int code, String message) {
+        return new R<>(code, message, null);
+    }
 }

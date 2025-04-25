@@ -2,7 +2,6 @@ package com.autoMotiveMes.utils;
 
 import com.autoMotiveMes.common.exception.AuthException;
 import com.autoMotiveMes.common.exception.ForbiddenException;
-import com.autoMotiveMes.common.exception.GlobalException;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
 import io.jsonwebtoken.*;
@@ -80,8 +79,16 @@ public class JwtUtils {
 
         } catch (ExpiredJwtException ex) {
             throw new AuthException("登录信息已过期，请重新登录");
-        } catch (JwtException | IllegalArgumentException ex) {
-            // 处理其他JWT异常（如签名无效、令牌格式错误）
+        } catch (UnsupportedJwtException ex) {
+            throw new AuthException("不支持的令牌类型");
+        } catch (MalformedJwtException ex) {
+            throw new AuthException("令牌格式错误");
+        } catch (SecurityException ex) {
+            throw new AuthException("令牌签名无效");
+        } catch (IllegalArgumentException ex) {
+            throw new AuthException("令牌参数缺失");
+        } catch (JwtException ex) {
+            // 通用的 JwtException 兜底
             throw new AuthException("令牌无效");
         }
     }
