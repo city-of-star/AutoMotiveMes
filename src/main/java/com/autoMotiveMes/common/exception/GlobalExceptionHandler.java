@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public R<?> handleBusinessException(BusinessException e) {
         log.warn("业务异常: 【{}】", e.getErrorCode().getMsg());
-        return R.fail(e.getErrorCode(), e.getErrorCode().getMsg());
+        return R.fail(e.getErrorCode().getCode() , e.getErrorCode().getMsg());
     }
 
     // 处理服务器异常（HTTP 500）

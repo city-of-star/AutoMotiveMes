@@ -29,8 +29,10 @@ public enum ErrorCode {
     PASSWORDS_DIFFER(24, "两次输入的密码不一致"),
 
     // 其他业务相关(400)
-    INVALID_OPERATION(30, "非法操作"),
-
+    INVALID_OPERATION(30, "指定产品不存在"),
+    INVALID_OPERATION1(31, "计划开始时间不能晚于结束时间"),
+    INVALID_OPERATION2(32, "工单状态不合法或不存在"),
+    INVALID_OPERATION3(33, "指定产品不存在"),
     // 系统内部错误
     SYSTEM_ERROR(90, "系统内部错误"),
 

@@ -109,9 +109,9 @@ CREATE TABLE quality_inspection_record (
 
 -- 插入产品数据（3个不同产品）
 INSERT INTO product (product_code, product_name, specifications, standard_cycle_time, safety_stock) VALUES
-                                                                                                        ('A-1001', '智能控制器', '{"材质":"铝合金","尺寸":"120×80×30mm","电压":"24VDC"}', 85, 500),
-                                                                                                        ('B-2002', '伺服电机', '{"功率":"750W","扭矩":"2.4N·m","防护等级":"IP65"}', 120, 300),
-                                                                                                        ('C-3003', '工业机器人臂', '{"负载":"5kg","重复精度":"±0.02mm","轴数":6}', 360, 50);
+    ('A-1001', '智能控制器', '{"材质":"铝合金","尺寸":"120×80×30mm","电压":"24VDC"}', 85, 500),
+    ('B-2002', '伺服电机', '{"功率":"750W","扭矩":"2.4N·m","防护等级":"IP65"}', 120, 300),
+    ('C-3003', '工业机器人臂', '{"负载":"5kg","重复精度":"±0.02mm","轴数":6}', 360, 50);
 
 -- 插入工序定义（每个产品3道工序）
 INSERT INTO process_definition (process_code, process_name, product_id, sequence, equipment_type, standard_time, quality_checkpoints) VALUES
