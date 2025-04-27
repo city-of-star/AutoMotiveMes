@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column prop="plannedStartDate" label="计划开始" align="center"/>
         <el-table-column prop="plannedEndDate" label="计划完成" align="center"/>
-        <el-table-column label="操作" fixed="right" align="center" width="250">
+        <el-table-column label="操作" fixed="right" align="center" width="280">
           <template #default="{row}">
             <el-button size="small" @click="showDetail(row)">详情</el-button>
             <el-button
@@ -98,6 +98,14 @@
                 :disabled="row.status < 2"
             >
               查看排程
+            </el-button>
+            <el-button
+                size="small"
+                type="danger"
+                @click="handleDelete(row.orderId)"
+                :disabled="row.status !== 1 && row.status !== 6"
+            >
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -398,11 +406,9 @@ const updateStatus = async (orderId) => {
 
     await axios.post(`/order/update-status/${orderId}/2`)
     ElMessage.success('状态更新成功')
-    fetchOrders()
+    await fetchOrders()
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('操作失败')
-    }
+    console.log(error)
   }
 }
 
@@ -419,6 +425,23 @@ const showDetail = async (row) => {
 // 查看排程
 const viewSchedule = (orderId) => {
   router.push(`/scheduling/plan/${orderId}`)
+}
+
+// 删除工单
+const handleDelete = async (orderId) => {
+  try {
+    await ElMessageBox.confirm('确认删除该工单吗？此操作不可恢复！', '警告', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+
+    await axios.post(`/order/delete/${orderId}`)
+    ElMessage.success('删除成功')
+    await fetchOrders() // 刷新列表
+  } catch (error) {
+    console.log(error)
+  }
 }
 </script>
 

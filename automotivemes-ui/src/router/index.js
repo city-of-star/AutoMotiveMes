@@ -161,6 +161,22 @@ const asyncRoutes = [
     ]
   },
   {
+    path: '/quality',
+    meta: { permissions: 'quality:manage', title: '质量管理', icon: 'ShieldCheckIcon' },
+    children: [
+      {
+        path: '/quality/inspection',
+        name: 'quality-inspection',
+        component: () => import('@/views/quality/inspection/Index.vue'),
+        meta: {
+          permissions: 'quality:manage:inspection',
+          title: '质检检测',
+          icon: 'MagnifyingGlassIcon'
+        },
+      }
+    ]
+  },
+  {
     path: '/alarm',
     meta: { permissions: 'alarm:manage', title: '报警中心', icon: 'BellAlertIcon' },
     children: [

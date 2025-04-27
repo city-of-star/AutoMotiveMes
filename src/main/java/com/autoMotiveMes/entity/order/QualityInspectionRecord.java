@@ -32,6 +32,11 @@ public class QualityInspectionRecord {
     private Long itemId;
 
     /**
+     * 生产记录ID
+     */
+    private Long recordId;
+
+    /**
      * 检测结果：1-合格 2-不合格 3-待复检
      */
     private Integer inspectionResult;

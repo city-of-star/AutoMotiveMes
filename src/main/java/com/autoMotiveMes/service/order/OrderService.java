@@ -24,6 +24,9 @@ public interface OrderService {
     // 创建工单
     void createOrder(CreateProductionOrderDto dto);
 
+    // 删除工单
+    void deleteOrder(Long orderId);
+
     // 更新工单状态
     void updateOrderStatus(Long orderId, Integer status);
 
@@ -38,4 +41,13 @@ public interface OrderService {
 
     // 查询生产记录
     Page<ProductionRecordResponseDto> listProductionRecord(ProductionRecordQueryDTO dto);
+
+    //
+    Page<QualityTaskDto> listQualityTasks(QualityTaskQueryDto dto);
+
+    //
+    void submitQualityResult(SubmitQualityResultDto dto);
+
+    //
+    void generateQualityTasks(Long recordId);
 }

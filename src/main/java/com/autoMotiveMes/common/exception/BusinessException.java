@@ -17,6 +17,12 @@ public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 9196224339724626039L;
 
     private final ErrorCode errorCode;
+    private String message = null;
+
+    public BusinessException(ErrorCode errorCode, String message) {
+        this.errorCode = errorCode;
+        this.message = message;
+    }
 
     public BusinessException(ErrorCode errorCode) {
         this.errorCode = errorCode;

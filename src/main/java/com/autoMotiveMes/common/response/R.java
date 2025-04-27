@@ -46,8 +46,8 @@ public class R<T> {
     }
 
     // 业务失败
-    public static <T> R<T> fail(ErrorCode errorCode, String message) {
-        return new R<>(BUSINESS_ERROR_BASE + errorCode.getCode(), message, null);
+    public static <T> R<T> fail(int code, String message) {
+        return new R<>(BUSINESS_ERROR_BASE + code, message, null);
     }
 
     // 系统级错误

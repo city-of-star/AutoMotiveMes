@@ -156,7 +156,11 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
     -- 生产报表模块
     ('report:view', '生产报表', 'MENU', 0, '/report', 'Layout', '/api/report', NULL), -- 39
     ('report:daily:view', '生产日报', 'MENU', 39, 'daily', '@/views/report/daily/Index.vue', '/api/report/daily', 'GET'), -- 40
-    ('report:quality:view', '质量分析', 'MENU', 39, 'quality', '@/views/report/quality/Index.vue', '/api/report/quality', 'GET'); -- 41
+    ('report:quality:view', '质量分析', 'MENU', 39, 'quality', '@/views/report/quality/Index.vue', '/api/report/quality', 'GET'), -- 41
+
+    -- 质量管理模块
+    ('quality:manage', '质量管理', 'MENU', 0, '/quality', 'Layout', '/api/quality', NULL), -- 42
+    ('quality:manage:inspection', '质量检测', 'MENU', 39, 'quality', '@/views/quality/inspection/Index.vue', '/api/quality/inspection', 'GET'); -- 43
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, sex, theme_color, dept_id, post_id, email, phone, status, account_locked, login_attempts, head_img) VALUES
@@ -243,7 +247,7 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (1, 29),(1, 30),(1, 31),(1, 32),
     (1, 33),(1, 34),(1, 35),(1, 36),
     (1, 37),(1, 38),(1, 39),(1, 40),
-    (1, 41),
+    (1, 41),(1, 42),(1, 43),
 
     -- 管理员
     (2, 1),(2, 2),(2, 3),(2, 4),
@@ -256,7 +260,7 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (2, 29),(2, 30),(2, 31),(2, 32),
     (2, 33),(2, 34),(2, 35),(2, 36),
     (2, 37),(2, 38),(2, 39),(2, 40),
-    (2, 41),
+    (2, 41),(2, 42),(2, 43),
 
     -- 生产人员
     (3, 27),(3, 28),(3, 29),
@@ -267,4 +271,5 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
     (4, 36),(4, 37),(4, 38),
 
     -- 质检人员
-    (5, 39),(5, 40),(5, 41);
+    (5, 39),(5, 40),(5, 41),
+    (5, 42),(5, 43);

@@ -30,6 +30,15 @@ public enum ErrorCode {
 
     // 其他业务相关(400)
     INVALID_OPERATION(30, "非法操作"),
+    INVALID_OPERATION1(31, "指定产品不存在"),
+    INVALID_OPERATION2(32, "计划开始时间不能晚于结束时间"),
+    INVALID_OPERATION3(33, "工单状态不合法或不存在"),
+    INVALID_OPERATION4(34, "工序[?]无可用设备"),
+    INVALID_OPERATION5(35, "工单不存在"),
+    INVALID_OPERATION6(36, "当前状态不允许删除"),
+    INVALID_OPERATION7(37, "存在此工单的排程计划，无法删除"),
+    INVALID_OPERATION8(38, ""),
+
 
     // 系统内部错误
     SYSTEM_ERROR(90, "系统内部错误"),

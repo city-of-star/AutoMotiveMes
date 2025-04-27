@@ -39,6 +39,12 @@ public class OrderController {
         return R.success();
     }
 
+    @PostMapping("/delete/{orderId}")
+    public R<?> deleteOrder(@PathVariable Long orderId) {
+        orderService.deleteOrder(orderId);
+        return R.success();
+    }
+
     @PostMapping("/update-status/{orderId}/{status}")
     public R<?> updateStatus(@PathVariable Long orderId, @PathVariable Integer status) {
         orderService.updateOrderStatus(orderId, status);
@@ -67,5 +73,16 @@ public class OrderController {
     @PostMapping("/listProductionRecord")
     public R<Page<ProductionRecordResponseDto>> listProductionRecord(@RequestBody ProductionRecordQueryDTO dto) {
         return R.success(orderService.listProductionRecord(dto));
+    }
+
+    @PostMapping("/listQualityTasks")
+    public R<Page<QualityTaskDto>> listQualityTasks(QualityTaskQueryDto dto) {
+        return R.success(orderService.listQualityTasks(dto));
+    }
+
+    @PostMapping("/submitQualityResult")
+    public R<?> submitQualityResult(SubmitQualityResultDto dto) {
+        orderService.submitQualityResult(dto);
+        return R.success();
     }
 }

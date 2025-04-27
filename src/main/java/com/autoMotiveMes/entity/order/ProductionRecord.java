@@ -47,6 +47,11 @@ public class ProductionRecord {
     private Integer defectiveQuantity;
 
     /**
+     * 质检任务生成标记：0-未生成 1-已生成
+     */
+    private Integer qualityCheckGenerated;
+
+    /**
      * 开始时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
