@@ -276,6 +276,10 @@ public class OrderServiceImpl implements OrderService {
                     log.warn("未找到匹配的质检项: productId={}, itemName={}", process.getProductId(), itemName);
                 }
             });
+
+            // 更新状态标记
+            record.setQualityCheckGenerated(1);
+            recordMapper.updateById(record);
         } catch (JsonProcessingException e) {
             log.error("质检项解析失败：{}", process.getQualityCheckpoints(), e);
         }
@@ -301,10 +305,10 @@ public class OrderServiceImpl implements OrderService {
 
             records.forEach(record -> {
                 try {
-                    // 检查是否为末道工序
-                    if(isLastProcess(record.getProcessId())) {
-                        generateQualityTasks(record.getRecordId());
-                    }
+//                    // 检查是否为末道工序
+//                    if(isLastProcess(record.getProcessId())) {
+//                        generateQualityTasks(record.getRecordId());
+//                    }
 
                     // 更新标记
                     record.setQualityCheckGenerated(1);
@@ -454,6 +458,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createInspectionTask(Long orderId, Long itemId, Long recordId) {
+        Long count = inspectionRecordMapper.selectCount(
+                new QueryWrapper<QualityInspectionRecord>()
+                        .eq("order_id", orderId)
+                        .eq("item_id", itemId)
+                        .eq("record_id", recordId)
+        );
+        if (count > 0) {
+            log.warn("质检任务已存在，跳过创建");
+            return;
+        }
+
         QualityInspectionRecord task = new QualityInspectionRecord();
         task.setOrderId(orderId);
         task.setItemId(itemId);
