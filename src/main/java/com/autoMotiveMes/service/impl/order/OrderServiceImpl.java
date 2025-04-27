@@ -239,7 +239,14 @@ public class OrderServiceImpl implements OrderService {
             ProductionOrder order = orderMapper.selectById(record.getOrderId());
             // 判断是否全部合格
             long unqualifiedCount = inspectionRecordMapper.selectUnqualifiedCount(order.getOrderId());
-            order.setStatus(unqualifiedCount > 0 ? 4 : 5); // 4-需返工 5-已完成
+
+            if (unqualifiedCount > 0) {
+                order.setStatus(4); // 需返工
+                // 自动生成返工工单
+                createReworkOrder(order);
+            } else {
+                order.setStatus(5); // 已完成
+            }
             orderMapper.updateById(order);
         }
     }
@@ -274,6 +281,12 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+//    @Override
+//    public ProductionOrder getOriginalOrder(Long reworkOrderId) {
+//        return orderMapper.selectOne(new QueryWrapper<ProductionOrder>()
+//                .eq("rework_of", reworkOrderId));
+//    }
+
     @Scheduled(cron = "0 0/1 * * * ?") // 每1分钟检查一次
     public void checkCompletedProcess() {
         // 获取需要处理的记录（包含分页防止大数据量）
@@ -302,6 +315,53 @@ public class OrderServiceImpl implements OrderService {
             });
 
             page++;
+        }
+    }
+
+    private void createReworkOrder(ProductionOrder originalOrder) {
+        // 校验是否存在有效不良品
+        if (originalOrder.getDefectiveQuantity() == null || originalOrder.getDefectiveQuantity() <= 0) {
+            log.error("工单{}没有需要返工的不良品数量", originalOrder.getOrderId());
+            return;
+        }
+
+        // 防止重复创建返工工单
+        Long existCount = orderMapper.selectCount(new QueryWrapper<ProductionOrder>()
+                .eq("rework_of", originalOrder.getOrderId()));
+        if (existCount > 0) {
+            log.info("工单{}已存在返工工单，跳过创建", originalOrder.getOrderId());
+            return;
+        }
+
+        // 创建返工工单实体
+        ProductionOrder reworkOrder = new ProductionOrder();
+        try {
+            // 生成返工工单号（R+原工单号）
+            String reworkNo = "R" + originalOrder.getOrderNo();
+            if (orderMapper.selectCount(new QueryWrapper<ProductionOrder>().eq("order_no", reworkNo)) > 0) {
+                reworkNo = reworkNo + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+            }
+
+            // 设置返工工单属性
+            reworkOrder.setOrderNo(reworkNo);
+            reworkOrder.setProductId(originalOrder.getProductId());
+            reworkOrder.setOrderQuantity(originalOrder.getDefectiveQuantity());
+            reworkOrder.setPriority(1); // 最高优先级
+            reworkOrder.setPlannedStartDate(LocalDate.now());
+            reworkOrder.setPlannedEndDate(LocalDate.now().plusDays(3));
+            reworkOrder.setProductionLine(originalOrder.getProductionLine());
+            reworkOrder.setCreator(CommonUtils.getCurrentUserId());
+            reworkOrder.setStatus(1); // 待排程状态
+            reworkOrder.setReworkOf(originalOrder.getOrderId()); // 关联原工单
+
+            // 保存返工工单
+            orderMapper.insert(reworkOrder);
+            log.info("创建返工工单成功，原工单：{}，返工工单：{}",
+                    originalOrder.getOrderId(), reworkOrder.getOrderId());
+
+        } catch (Exception e) {
+            log.error("创建返工工单失败：{}", e.getMessage());
+            throw new ServerException("返工工单创建失败");
         }
     }
 
@@ -415,9 +475,18 @@ public class OrderServiceImpl implements OrderService {
         );
 
         // 选择负载最小的设备
+        // 优先选择正在处理返工工单的设备
         return equipments.stream()
-                .min(Comparator.comparingInt(e -> scheduleMapper.countRunningSchedules(e.getEquipmentId())))
+                .min(Comparator.comparingInt((Equipment e) -> {
+                    // 优先考虑正在处理返工工单的设备
+                    int reworkPriority = hasActiveReworkOrders(e.getEquipmentId()) ? 0 : 1;
+                    return reworkPriority * 1000 + scheduleMapper.countRunningSchedules(e.getEquipmentId());
+                }).thenComparing(Equipment::getEquipmentId)) // 添加次要排序条件
                 .orElse(null);
+    }
+
+    private boolean hasActiveReworkOrders(Long equipmentId) {
+        return orderMapper.countActiveReworkOrders(equipmentId) > 0;
     }
 
     // 时间窗口计算

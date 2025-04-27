@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -27,4 +28,11 @@ public interface ProductionOrderMapper extends BaseMapper<ProductionOrder> {
     ProductionOrderDetailDto getOrderDetail(Long orderId);
 
     Integer selectMaxOrderSeq(String datePart);
+
+    @Select("SELECT COUNT(*) FROM production_order o " +
+            "JOIN production_schedule s ON o.order_id = s.order_id " +
+            "WHERE o.rework_of IS NOT NULL " +
+            "AND s.equipment_id = #{equipmentId} " +
+            "AND s.schedule_status IN (1, 2)")  // 1-待执行 2-执行中
+    int countActiveReworkOrders(Long equipmentId);
 }
