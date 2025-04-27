@@ -28,6 +28,11 @@ public class ProductionOrder {
     private String orderNo;
 
     /**
+     * 原工单ID（返工专用）
+     */
+    private Long reworkOf;
+
+    /**
      * 产品ID
      */
     private Long productId;

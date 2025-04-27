@@ -76,12 +76,12 @@ public class OrderController {
     }
 
     @PostMapping("/listQualityTasks")
-    public R<Page<QualityTaskDto>> listQualityTasks(QualityTaskQueryDto dto) {
+    public R<Page<QualityTaskDto>> listQualityTasks(@RequestBody QualityTaskQueryDto dto) {
         return R.success(orderService.listQualityTasks(dto));
     }
 
     @PostMapping("/submitQualityResult")
-    public R<?> submitQualityResult(SubmitQualityResultDto dto) {
+    public R<?> submitQualityResult(@RequestBody SubmitQualityResultDto dto) {
         orderService.submitQualityResult(dto);
         return R.success();
     }

@@ -86,12 +86,12 @@
       <el-table-column label="操作" width="120" align="center">
         <template #default="{ row }">
           <el-button
-              type="primary"
-              size="small"
-              :disabled="row.taskStatus === 3"
-              @click="showSubmitDialog(row)"
+            type="primary"
+            size="small"
+            :disabled="row.taskStatus !== 3"
+            @click="showSubmitDialog(row)"
           >
-            {{ row.taskStatus === 3 ? '已完成' : '检验' }}
+            {{ {1:'已通过',2:'已拒绝',3:'提交复检'}[row.taskStatus] || '开始检验' }}
           </el-button>
         </template>
       </el-table-column>
@@ -211,11 +211,12 @@ const pagination = ref({
 
 // 状态格式化
 const formatStatus = (status) => {
-  return ['待检验', '检验中', '已完成'][status - 1] || '未知状态'
+  const statusMap = {1:'合格', 2:'不合格', 3:'待复检'}
+  return statusMap[status] || '未知状态'
 }
 
 const statusTagType = (status) => {
-  return ['warning', 'primary', 'success'][status - 1] || 'info'
+  return {1:'success', 2:'danger', 3:'warning'}[status] || 'info'
 }
 
 // 时间格式化

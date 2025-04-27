@@ -398,7 +398,8 @@ public class OrderServiceImpl implements OrderService {
         task.setOrderId(orderId);
         task.setItemId(itemId);
         task.setRecordId(recordId);
-        task.setInspectionResult(3); // 待复检
+        task.setInspectionResult(3);  // 待复检
+        task.setInspectionTime(LocalDateTime.now());
         task.setInspector(CommonUtils.getCurrentUserId());
         inspectionRecordMapper.insert(task);
     }

@@ -13,6 +13,7 @@ CREATE TABLE product (
 CREATE TABLE production_order (
     order_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工单ID',
     order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '工单号（规则：YYMMDD+4位流水）',
+    rework_of BIGINT UNSIGNED COMMENT '原工单ID（返工专用）',
     product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
     order_quantity INT NOT NULL COMMENT '计划数量',
     completed_quantity INT DEFAULT 0 COMMENT '已完成数量',
@@ -29,7 +30,8 @@ CREATE TABLE production_order (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     FOREIGN KEY (product_id) REFERENCES product(product_id),
     INDEX idx_order_status (status),
-    INDEX idx_planned_date (planned_start_date)
+    INDEX idx_planned_date (planned_start_date),
+    INDEX idx_rework (rework_of)
 ) ENGINE=InnoDB COMMENT='生产工单主表';
 
 CREATE TABLE process_definition (
