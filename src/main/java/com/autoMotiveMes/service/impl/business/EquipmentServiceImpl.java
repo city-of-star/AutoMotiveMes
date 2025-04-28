@@ -1,5 +1,6 @@
-package com.autoMotiveMes.service.impl.equipment;
+package com.autoMotiveMes.service.impl.business;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
@@ -8,9 +9,9 @@ import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.mapper.equipment.EquipmentAlarmMapper;
 import com.autoMotiveMes.mapper.equipment.EquipmentMaintenanceMapper;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
-import com.autoMotiveMes.service.equipment.EquipmentService;
+import com.autoMotiveMes.service.business.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
-import com.autoMotiveMes.utils.EquipmentRealTimeDataSimulatorService;
+import com.autoMotiveMes.service.simulationService.EquipmentRealTimeDataSimulatorService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
@@ -32,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 实现功能【设备实现类】
+ * 实现功能【设备服务实现类】
  *
  * @author li.hongyu
  * @date 2025-04-16 16:39:45
@@ -55,11 +56,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     // 模拟服务
     private final EquipmentRealTimeDataSimulatorService simulatorService;
 
-    // redis 存入的设备实时参数数据的公共key
-    private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
-    // redis 存入的设备实时参数数据的过期时间
-    private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
-
     /**
      * 接受设备实时运行参数数据
      * 将其存入 redis 并设置 5 分钟的过期时间
@@ -68,8 +64,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public void acceptEquipmentRealTimeData(EquipmentParameters data) {
         Long equipmentId = data.getEquipmentId();
-        String redisKey = REDIS_KEY_PREFIX + equipmentId;
-        int keepSize = DATA_EXPIRE_MINUTES * 5 * 60;
+        String redisKey = CommonConstant.REDIS_KEY_PREFIX + equipmentId;
+        int keepSize = CommonConstant.DATA_EXPIRE_MINUTES * 5 * 60;
 
         // 1. 将数据插入到列表头部（左侧）
         redisTemplate.opsForList().leftPush(redisKey, data);
@@ -78,7 +74,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         redisTemplate.opsForList().trim(redisKey, 0, keepSize - 1);
 
         // 3. 设置键的过期时间（每次插入都续期）
-        redisTemplate.expire(redisKey, DATA_EXPIRE_MINUTES, TimeUnit.MINUTES);
+        redisTemplate.expire(redisKey, CommonConstant.DATA_EXPIRE_MINUTES, TimeUnit.MINUTES);
 
         // 4. 推送WebSocket消息
         messagingTemplate.convertAndSend("/topic/equipment/realtime", data);
@@ -91,18 +87,20 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Scheduled(fixedDelay = 30_000) // 每30秒检测一次
     public void checkAlarmConditions() {
-        Set<String> keys = redisTemplate.keys(CommonUtils.REDIS_KEY_PREFIX + "*");
-        keys.forEach(key -> {
-            Long equipmentId = Long.parseLong(key.substring(10));
-            List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49);  // 取最近50条
+        Set<String> keys = redisTemplate.keys(CommonConstant.REDIS_KEY_PREFIX + "*");
+        if (keys != null) {
+            keys.forEach(key -> {
+                Long equipmentId = Long.parseLong(key.substring(10));
+                List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49);  // 取最近50条
 
-            if (params != null) {
-                checkContinuousAbnormal(equipmentId, params);
-            }
-            if (params != null) {
-                checkMultiParamAbnormal(equipmentId, params);
-            }
-        });
+                if (params != null) {
+                    checkContinuousAbnormal(equipmentId, params);
+                }
+                if (params != null) {
+                    checkMultiParamAbnormal(equipmentId, params);
+                }
+            });
+        }
     }
 
     private void checkContinuousAbnormal(Long equipmentId, List<EquipmentParameters> params) {

@@ -1,5 +1,6 @@
 package com.autoMotiveMes.service.scheduledTask;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.entity.equipment.EquipmentStatus;
@@ -22,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 实现功能【设备状态记录定时任务】
+ * 实现功能【设备状态记录定时任务服务】
  *
  * @author li.hongyu
  * @date 2025-04-17 17:10:29
@@ -30,7 +31,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EquipmentStatusTask {
+public class EquipmentStatusRecordScheduledTask {
     private final EquipmentStatusMapper statusMapper;
     private final EquipmentMapper equipmentMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate; // 注入 RedisTemplate
@@ -59,7 +60,7 @@ public class EquipmentStatusTask {
     private List<EquipmentParameters> getRecentParamsFromRedis(Long equipmentId,
                                                                LocalDateTime windowStart,
                                                                LocalDateTime windowEnd) {
-        String redisKey = CommonUtils.REDIS_KEY_PREFIX + equipmentId;
+        String redisKey = CommonConstant.REDIS_KEY_PREFIX + equipmentId;
         List<EquipmentParameters> allData = redisTemplate.opsForList().range(redisKey, 0, -1);
         if (allData == null) return Collections.emptyList();
 

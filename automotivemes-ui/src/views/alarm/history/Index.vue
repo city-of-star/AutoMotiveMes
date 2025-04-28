@@ -244,15 +244,16 @@ const fetchData = async () => {
   try {
     loading.value = true
 
-    const params = {
-      ...queryForm.value,
+    const data = await axios.post('/equipment/listEquipmentAlarmHistory', {
+      equipmentCode: queryForm.value.equipmentCode,
+      alarmLevel: queryForm.value.alarmLevel,
+      status: queryForm.value.status,
+      handler: queryForm.value.handler,
       page: pagination.value.current,
       size: pagination.value.size,
       startDate: timeRange.value?.[0],
       endDate: timeRange.value?.[1]
-    }
-
-    const data = await axios.get('/equipment/listEquipmentAlarmHistory', { params })
+    })
     tableData.value = data.records || []
     pagination.value.total = data.total || 0
 

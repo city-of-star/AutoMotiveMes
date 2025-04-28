@@ -1,5 +1,6 @@
 package com.autoMotiveMes.service.scheduledTask;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.mapper.equipment.EquipmentParametersMapper;
 import com.autoMotiveMes.utils.CommonUtils;
@@ -15,7 +16,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 实现功能【设备实时参数数据迁移定时任务】
+ * 实现功能【设备实时参数数据迁移定时任务服务】
  *
  * @author li.hongyu
  * @date 2025-04-17 16:43:26
@@ -24,15 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DataMigrationTask {
+public class EquipmentRealTimeDataMigrationScheduledTask {
 
     private final EquipmentParametersMapper equipmentParametersMapper;
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
-
-    // redis 存入的设备实时参数数据的公共key
-    private static final String REDIS_KEY_PREFIX = CommonUtils.REDIS_KEY_PREFIX;
-    // redis 存入的设备实时参数数据的过期时间
-    private static final int DATA_EXPIRE_MINUTES = CommonUtils.DATA_EXPIRE_MINUTES;
 
     /**
      * 定时任务：每 3 分钟将过期数据迁移到 equipment_parameters 表
@@ -42,7 +38,7 @@ public class DataMigrationTask {
         long startTime = System.currentTimeMillis();
         log.info("过期数据迁移任务--开始");
 
-        Set<String> keys = redisTemplate.keys(REDIS_KEY_PREFIX + "*");
+        Set<String> keys = redisTemplate.keys(CommonConstant.REDIS_KEY_PREFIX + "*");
 
         if (keys.isEmpty()) {
             log.info("未找到需要保存的设备实时参数数据");
@@ -63,7 +59,8 @@ public class DataMigrationTask {
                 List<EquipmentParameters> expiredData = allData.stream()
                         .filter(entry -> entry.getCollectTime() != null)
                         .filter(entry ->
-                                currentTime.isAfter(entry.getCollectTime().plusMinutes(DATA_EXPIRE_MINUTES)))
+                                currentTime.isAfter(entry.getCollectTime().
+                                        plusMinutes(CommonConstant.DATA_EXPIRE_MINUTES)))
                         .toList();
 
 

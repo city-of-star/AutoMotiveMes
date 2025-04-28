@@ -1,11 +1,11 @@
 package com.autoMotiveMes.controller.equipment;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
-import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
-import com.autoMotiveMes.service.equipment.EquipmentService;
+import com.autoMotiveMes.service.business.EquipmentService;
 import com.autoMotiveMes.utils.CommonUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +44,8 @@ public class EquipmentController {
         return R.success(equipmentService.listRealTimeEquipmentAlarm());
     }
 
-    @GetMapping("/listEquipmentAlarmHistory")
-    public R<Page<AlarmHistoryResponseDto>> listEquipmentAlarmHistory(AlarmHistoryRequestDto dto) {
+    @PostMapping("/listEquipmentAlarmHistory")
+    public R<Page<AlarmHistoryResponseDto>> listEquipmentAlarmHistory(@RequestBody AlarmHistoryRequestDto dto) {
         return R.success(equipmentService.listEquipmentAlarmHistory(dto));
     }
 
@@ -57,7 +57,7 @@ public class EquipmentController {
 
     @GetMapping("/historyData/{equipmentId}")
     public R<List<EquipmentParameters>> getHistoryData(@PathVariable Long equipmentId) {
-        String redisKey = CommonUtils.REDIS_KEY_PREFIX + equipmentId;
+        String redisKey = CommonConstant.REDIS_KEY_PREFIX + equipmentId;
         List<EquipmentParameters> data = redisTemplate.opsForList().range(redisKey, 0, -1);
         return R.success(data != null ? data : Collections.emptyList());
     }

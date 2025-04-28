@@ -3,7 +3,10 @@ package com.autoMotiveMes.controller.order;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.dto.order.*;
 import com.autoMotiveMes.entity.order.Product;
-import com.autoMotiveMes.service.order.OrderService;
+import com.autoMotiveMes.service.business.OrderService;
+import com.autoMotiveMes.service.business.ProductionRecordService;
+import com.autoMotiveMes.service.business.QualityInspectionService;
+import com.autoMotiveMes.service.business.SchedulingService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,9 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final SchedulingService schedulingService;
+    private final QualityInspectionService qualityInspectionService;
+    private final ProductionRecordService productionRecordService;
 
     @PostMapping("/list")
     public R<Page<ProductionOrderListDto>> listOrders(@RequestBody ProductionOrderQueryDto dto) {
@@ -56,12 +62,12 @@ public class OrderController {
             @PathVariable Long orderId,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
-        return R.success(orderService.listSchedules(orderId, page, size));
+        return R.success(schedulingService.listSchedules(orderId, page, size));
     }
 
     @PostMapping("/generate-schedule/{orderId}")
     public R<?> generateSchedule(@PathVariable Long orderId) {
-        orderService.generateSchedule(orderId);
+        schedulingService.generateSchedule(orderId);
         return R.success();
     }
 
@@ -72,17 +78,17 @@ public class OrderController {
 
     @PostMapping("/listProductionRecord")
     public R<Page<ProductionRecordResponseDto>> listProductionRecord(@RequestBody ProductionRecordQueryDTO dto) {
-        return R.success(orderService.listProductionRecord(dto));
+        return R.success(productionRecordService.listProductionRecord(dto));
     }
 
     @PostMapping("/listQualityTasks")
     public R<Page<QualityTaskDto>> listQualityTasks(@RequestBody QualityTaskQueryDto dto) {
-        return R.success(orderService.listQualityTasks(dto));
+        return R.success(qualityInspectionService.listQualityTasks(dto));
     }
 
     @PostMapping("/submitQualityResult")
     public R<?> submitQualityResult(@RequestBody SubmitQualityResultDto dto) {
-        orderService.submitQualityResult(dto);
+        qualityInspectionService.submitQualityResult(dto);
         return R.success();
     }
 }

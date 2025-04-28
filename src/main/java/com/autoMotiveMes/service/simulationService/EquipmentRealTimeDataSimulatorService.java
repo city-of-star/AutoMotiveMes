@@ -1,4 +1,4 @@
-package com.autoMotiveMes.utils;
+package com.autoMotiveMes.service.simulationService;
 
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentType;
