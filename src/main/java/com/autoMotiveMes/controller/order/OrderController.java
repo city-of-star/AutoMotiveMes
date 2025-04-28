@@ -91,4 +91,9 @@ public class OrderController {
         qualityInspectionService.submitQualityResult(dto);
         return R.success();
     }
+
+    @GetMapping("/statistics")
+    public R<ProductionStatisticsDto> getProductionStats() {
+        return R.success(productionRecordService.getProductionStatistics());
+    }
 }

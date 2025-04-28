@@ -53,6 +53,4 @@ public interface OrderService {
      * @return 产品列表
      */
     List<Product> listProduct();
-
-
 }

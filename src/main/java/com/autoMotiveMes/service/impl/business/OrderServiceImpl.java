@@ -34,7 +34,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final SchedulingService schedulingService;
 
-    private final QualityInspectionRecordMapper inspectionRecordMapper;
     private final ProductMapper productMapper;
     private final ProductionOrderMapper orderMapper;
     private final ProductionScheduleMapper scheduleMapper;

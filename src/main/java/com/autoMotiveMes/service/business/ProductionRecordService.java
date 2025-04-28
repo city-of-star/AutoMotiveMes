@@ -2,6 +2,7 @@ package com.autoMotiveMes.service.business;
 
 import com.autoMotiveMes.dto.order.ProductionRecordQueryDTO;
 import com.autoMotiveMes.dto.order.ProductionRecordResponseDto;
+import com.autoMotiveMes.dto.order.ProductionStatisticsDto;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -19,4 +20,9 @@ public interface ProductionRecordService {
      */
     Page<ProductionRecordResponseDto> listProductionRecord(ProductionRecordQueryDTO dto);
 
+    /**
+     * 获取今日产量统计数据
+     * @return 今日产量统计数据
+     */
+    ProductionStatisticsDto getProductionStatistics();
 }
