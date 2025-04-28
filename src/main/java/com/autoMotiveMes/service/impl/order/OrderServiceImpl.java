@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -421,7 +423,14 @@ public class OrderServiceImpl implements OrderService {
                 record.setProcessId(schedule.getProcessId());
                 record.setEquipmentId(schedule.getEquipmentId());
                 record.setOutputQuantity(order.getOrderQuantity());
-                record.setDefectiveQuantity(0);  // 假设无不良品
+
+                // 根据工序类型生成不良品数量
+                int defectiveQty = calculateDefectiveQuantity(order, process);
+                record.setDefectiveQuantity(defectiveQty);
+                // 更新工单累计不良品数量
+                order.setDefectiveQuantity(order.getDefectiveQuantity() + defectiveQty);
+                orderMapper.updateById(order);
+
                 record.setQualityCheckGenerated(0);
                 record.setStartTime(schedule.getActualStartTime());
                 record.setEndTime(schedule.getActualEndTime());
@@ -442,6 +451,47 @@ public class OrderServiceImpl implements OrderService {
                 log.error("生产记录生成失败: {}", e.getMessage());
             }
         });
+    }
+
+    // 不良品计算逻辑
+    private int calculateDefectiveQuantity(ProductionOrder order, ProcessDefinition process) {
+        // 获取工序基准不良率
+        DefectRateRange rateRange = getDefectRateRange(process);
+
+        // 生成随机不良率（正态分布）
+        double defectRate = ThreadLocalRandom.current().nextDouble(rateRange.minRate, rateRange.maxRate);
+        defectRate = Math.max(rateRange.minRate, Math.min(defectRate, rateRange.maxRate));
+
+        // 计算不良数量
+        int defective = (int) Math.round(order.getOrderQuantity() * defectRate);
+
+        // 保证有效范围
+        return Math.max(0, Math.min(defective, order.getOrderQuantity()));
+    }
+
+    // 定义不同工序类型的不良率范围
+    private DefectRateRange getDefectRateRange(ProcessDefinition process) {
+        // 汽车行业典型工序不良率基准
+        String processName = process.getProcessName();
+
+        if (processName.contains("压铸")) {
+            return new DefectRateRange(0.005, 0.015); // 0.5%-1.5%
+        } else if (processName.contains("焊接")) {
+            return new DefectRateRange(0.002, 0.008); // 0.2%-0.8%
+        } else if (processName.contains("装配")) {
+            return new DefectRateRange(0.001, 0.005); // 0.1%-0.5%
+        } else if (processName.contains("测试")) {
+            return new DefectRateRange(0.0005, 0.002); // 0.05%-0.2%
+        } else {
+            return new DefectRateRange(0.001, 0.01); // 默认0.1%-1%
+        }
+    }
+
+    // 不良率范围值对象
+    @AllArgsConstructor
+    private static class DefectRateRange {
+        double minRate;
+        double maxRate;
     }
 
     private boolean isLastProcess(Long processId) {
@@ -488,6 +538,10 @@ public class OrderServiceImpl implements OrderService {
                         .eq("status", 1)
                         .apply("DATE_ADD(last_maintenance_date, INTERVAL maintenance_cycle DAY) >= CURDATE()")
         );
+
+        if (equipments.isEmpty()) {
+            return null;
+        }
 
         // 选择负载最小的设备
         // 优先选择正在处理返工工单的设备
