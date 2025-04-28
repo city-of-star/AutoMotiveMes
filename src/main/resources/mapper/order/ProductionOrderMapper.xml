@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.autoMotiveMes.mapper.order.ProductionOrderMapper">
+
+    <!-- 查询工单列表 -->
     <select id="listOrders" resultType="com.autoMotiveMes.dto.order.ProductionOrderListDto">
         SELECT o.*, p.product_code, p.product_name,
         o2.order_no as rework_order_no
@@ -27,12 +29,14 @@
         ORDER BY o.priority ASC, o.create_time DESC
     </select>
 
+    <!-- 获取工单详情 -->
     <select id="getOrderDetail" resultType="com.autoMotiveMes.dto.order.ProductionOrderDetailDto">
-        SELECT o.*, p.product_code, p.product_name,
+        SELECT o.*, p.product_code, p.product_name, u.real_name as creatorName,
                o2.order_no as rework_order_no, o2.status as rework_order_status
         FROM production_order o
-                 JOIN product p ON o.product_id = p.product_id
-                 LEFT JOIN production_order o2 ON o.rework_of = o2.order_id
+        JOIN product p ON o.product_id = p.product_id
+        LEFT JOIN production_order o2 ON o.rework_of = o2.order_id
+        JOIN sys_user u ON o.creator = u.user_id
         WHERE o.order_id = #{orderId}
     </select>
 
@@ -45,5 +49,15 @@
             order_no LIKE CONCAT(#{datePart}, '%')
           AND LENGTH(order_no) = 10  -- 确保工单号长度合法
           AND order_no REGEXP '^[0-9]{10}$'  -- 正则校验全数字
+    </select>
+
+
+    <select id="countActiveReworkOrders" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM production_order o
+        JOIN production_schedule s ON o.order_id = s.order_id
+        WHERE o.rework_of IS NOT NULL
+          AND s.equipment_id = #{equipmentId}
+          AND s.schedule_status IN (1, 2)
     </select>
 </mapper>

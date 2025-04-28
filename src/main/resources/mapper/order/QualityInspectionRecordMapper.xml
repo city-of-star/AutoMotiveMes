@@ -35,4 +35,11 @@
         </where>
         ORDER BY r.inspection_time DESC
     </select>
+
+    <select id="selectUnqualifiedCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM quality_inspection_record
+        WHERE order_id = #{orderId}
+          AND inspection_result = 2
+    </select>
 </mapper>

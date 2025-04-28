@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.order.ProcessDefinitionMapper">
+
+    <!-- 根据产品ID获取工序定义 -->
+    <select id="selectByProductId" resultType="com.autoMotiveMes.entity.order.ProcessDefinition">
+        SELECT * FROM process_definition WHERE product_id = #{productId} ORDER BY sequence
+    </select>
+
+    <!-- 获取指定产品ID下的最大工序序号 -->
+    <select id="selectMaxSequence" resultType="java.lang.Integer">
+        SELECT MAX(sequence) FROM process_definition WHERE product_id = #{productId}
+    </select>
+
+</mapper>

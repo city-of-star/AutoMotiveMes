@@ -14,4 +14,10 @@
         WHERE s.order_id = #{orderId}
         ORDER BY pd.sequence ASC
     </select>
+
+    <select id="countRunningSchedules" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM production_schedule
+        WHERE equipment_id = #{equipmentId} AND schedule_status IN (1, 2)
+    </select>
 </mapper>

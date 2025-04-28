@@ -8,9 +8,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 
 /**
  * 实现功能【生产工单主表 mapper】
@@ -27,12 +24,8 @@ public interface ProductionOrderMapper extends BaseMapper<ProductionOrder> {
     // 获取工单详情
     ProductionOrderDetailDto getOrderDetail(Long orderId);
 
+    // 查询当日最大工单流水号
     Integer selectMaxOrderSeq(String datePart);
 
-    @Select("SELECT COUNT(*) FROM production_order o " +
-            "JOIN production_schedule s ON o.order_id = s.order_id " +
-            "WHERE o.rework_of IS NOT NULL " +
-            "AND s.equipment_id = #{equipmentId} " +
-            "AND s.schedule_status IN (1, 2)")  // 1-待执行 2-执行中
     int countActiveReworkOrders(Long equipmentId);
 }

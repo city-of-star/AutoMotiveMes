@@ -132,4 +132,12 @@
         ORDER BY pr.start_time DESC
     </select>
 
+    <select id="selectUncheckedRecords" resultType="com.autoMotiveMes.entity.order.ProductionRecord">
+        SELECT *
+        FROM production_record
+        WHERE quality_check_generated = 0
+          AND end_time IS NOT NULL
+        ORDER BY end_time ASC
+    </select>
+
 </mapper>
