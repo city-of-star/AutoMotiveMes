@@ -126,7 +126,7 @@
         <el-table-column prop="realName" label="真实姓名" width="140" align="center" header-align="center" />
         <el-table-column prop="deptName" label="部门" width="140" align="center" header-align="center" show-overflow-tooltip />
         <el-table-column prop="phone" label="手机号码" width="180" align="center" header-align="center" />
-        <el-table-column prop="status" label="状态" width="140" align="center" header-align="center">
+        <el-table-column prop="status" label="状态" width="100" align="center" header-align="center">
           <template #default="scope">
             <el-switch
                 :model-value="scope.row.status"
@@ -137,8 +137,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" align="center" header-align="center"/>
-        <el-table-column label="操作" width="180" align="center" header-align="center">
-
+        <el-table-column label="操作" width="220" align="center" header-align="center">
+          <template #default="scope">
+            <el-button type="text" @click="handleEditUser(scope.row)">修改</el-button>
+            <el-button type="text" @click="handleSingleDelete(scope.row)">删除</el-button>
+            <el-button type="text" @click="handleResetPassword(scope.row)">重置密码</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -168,6 +172,13 @@
       v-model:visible="deleteUserDialog"
       :message="`确认要删除此用户吗？`"
       @confirm="deleteUser"
+  />
+
+  <!--  删除用户系统提示对话框-->
+  <ConfirmDialog
+      v-model:visible="DeleteUserDialog"
+      :message="`确认要删除此用户吗？`"
+      @confirm="DeleteUser"
   />
 
   <!-- 新增用户对话框 -->
@@ -372,6 +383,12 @@
     </span>
     </template>
   </el-dialog>
+
+  <ConfirmDialog
+      v-model:visible="resetDialogVisible"
+      message="确认重置密码为默认值123456？"
+      @confirm="confirmResetPassword"
+  />
 </template>
 
 <script setup>
@@ -756,6 +773,58 @@ const handleDeptNodeClick = (data) => {
 /* 其他功能 */
 const importUsers = () => ElMessage.error('尚未实现此功能')
 const exportUsers = () => ElMessage.error('尚未实现此功能')
+
+// 操作栏三个按钮的功能实现
+const handleEditUser = async (row) => {
+  try {
+    const res = await axios.post('/system/user/getInfo', { userId: row.userId })
+    editForm.value = { ...res }
+    await fetchOptions()
+    editDialogVisible.value = true
+  } catch (error) {
+    ElMessage.error('获取用户信息失败')
+  }
+}
+
+const selectedUserIds = ref([])
+const DeleteUserDialog = ref(false)
+
+// 单个删除
+const handleSingleDelete = (row) => {
+  selectedUserIds.value = [row.userId]
+  DeleteUserDialog.value = true
+}
+
+const DeleteUser = async () => {
+  try {
+    await axios.post('/system/user/delete', { userIds: selectedUserIds.value })
+    ElMessage.success('删除成功')
+    await search()
+    DeleteUserDialog.value = false
+  } catch (error) {
+    ElMessage.error('删除失败')
+  }
+}
+
+const resetDialogVisible = ref(false)
+const resetUserId = ref(null)
+
+const handleResetPassword = (row) => {
+  resetUserId.value = row.userId
+  resetDialogVisible.value = true
+}
+
+const confirmResetPassword = async () => {
+  try {
+    await axios.post('/system/user/resetPassword', {
+      userId: resetUserId.value,
+    })
+    ElMessage.success('密码已重置为默认值')
+    resetDialogVisible.value = false
+  } catch (error) {
+    ElMessage.error('重置失败')
+  }
+}
 
 /* 生命周期钩子 */
 onMounted(() => {

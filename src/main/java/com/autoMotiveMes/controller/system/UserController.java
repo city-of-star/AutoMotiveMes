@@ -64,4 +64,11 @@ public class UserController {
     public R<?> getUserInfo(@RequestBody GetUserInfoRequestDto dto) {
         return R.success(userService.getUserInfo(dto));
     }
+
+    @PostMapping("/resetPassword")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
+    public R<?> resetPassword(@RequestBody ResetPasswordRequestDto dto) {
+        userService.resetPassword(dto);
+        return R.success();
+    }
 }

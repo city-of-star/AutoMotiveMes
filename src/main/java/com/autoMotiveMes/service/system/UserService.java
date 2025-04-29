@@ -28,4 +28,7 @@ public interface UserService {
 
     // 通过userId获取用户信息(用于修改用户信息时获取用户原本信息)
     GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto);
+
+    // 重置密码
+    void resetPassword(ResetPasswordRequestDto dto);
 }

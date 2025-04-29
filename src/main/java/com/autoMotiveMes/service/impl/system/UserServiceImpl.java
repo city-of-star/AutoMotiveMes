@@ -1,5 +1,6 @@
 package com.autoMotiveMes.service.impl.system;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.common.exception.BusinessException;
 import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.dto.system.*;
@@ -176,8 +177,22 @@ public class UserServiceImpl implements UserService {
             SysUserRole userRole = userRoleMapper.selectByUserId(user.getUserId());
             res.setRoleId(userRole.getRoleId());
         } catch (Exception e) {
-            throw new ServerException("获取用户信息出错" + e.getMessage());
+            throw new ServerException("获取用户信息失败" + e.getMessage());
         }
         return res;
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequestDto dto) {
+        SysUser user = userMapper.selectById(dto.getUserId());
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+        }
+        try {
+            user.setPassword(passwordEncoder.encode(CommonConstant.defaultPassword));
+            userMapper.updateById(user);
+        } catch (Exception e) {
+            throw new ServerException("重置用户密码失败" + e.getMessage());
+        }
     }
 }
