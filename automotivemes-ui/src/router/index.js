@@ -96,16 +96,6 @@ const asyncRoutes = [
           keepAlive: false
         },
       },
-      {
-        path: '/production/history',
-        name: 'history-query',
-        component: () => import('@/views/production/history/Index.vue'),
-        meta: {
-          permissions: 'production:monitor:history',
-          title: '历史查询',
-          icon: 'ClockIcon'
-        },
-      }
     ]
   },
   {

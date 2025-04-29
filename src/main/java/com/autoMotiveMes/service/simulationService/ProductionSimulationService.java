@@ -56,6 +56,8 @@ public class ProductionSimulationService {
     }
 
     private void processNextSchedule(List<ProductionSchedule> schedules, int index) {
+        productionScheduleMapper.flushStatusUpdates();
+
         if (index >= schedules.size()) {
             // 所有工序完成，更新工单状态
             ProductionOrder order = productionOrderMapper.selectById(schedules.get(0).getOrderId());
@@ -95,8 +97,9 @@ public class ProductionSimulationService {
                 // 根据工序类型生成不良品数量
                 int defectiveQty = calculateDefectiveQuantity(order, process);
                 record.setDefectiveQuantity(defectiveQty);
-                // 更新工单累计不良品数量
+                // 更新工单累计不良品数量和完工量
                 order.setDefectiveQuantity(order.getDefectiveQuantity() + defectiveQty);
+                order.setCompletedQuantity(order.getCompletedQuantity() + record.getOutputQuantity());
                 productionOrderMapper.updateById(order);
 
                 record.setQualityCheckGenerated(0);

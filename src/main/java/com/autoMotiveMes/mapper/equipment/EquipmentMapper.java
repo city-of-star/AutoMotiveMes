@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -32,4 +33,13 @@ public interface EquipmentMapper extends BaseMapper<Equipment> {
     // 获取在线的设备数量
     @Select("select count(1) from equipment where status != 4")
     Integer getOnlineEquipmentCount();
+
+    @Select("SELECT ROUND( " +
+            "SUM(TIMESTAMPDIFF(SECOND, start_time, end_time)) / " +
+            "(COUNT(DISTINCT equipment_id) * 86400) * 100 " +
+            ") AS utilization " +
+            "FROM equipment_status " +
+            "WHERE status_code = 1 " +
+            "AND DATE(start_time) = #{date}")
+    Integer selectDailyUtilization(@Param("date") LocalDate date);
 }

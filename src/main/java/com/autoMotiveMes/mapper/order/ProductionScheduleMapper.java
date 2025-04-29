@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 实现功能【生产排程计划表 mapper】
@@ -20,4 +21,7 @@ public interface ProductionScheduleMapper extends BaseMapper<ProductionSchedule>
     Page<SchedulePlanDto> listSchedules(Page<SchedulePlanDto> page, @Param("orderId") Long orderId);
 
     int countRunningSchedules(Long equipmentId);
+
+    @Update("FLUSH TABLES")
+    void flushStatusUpdates();
 }

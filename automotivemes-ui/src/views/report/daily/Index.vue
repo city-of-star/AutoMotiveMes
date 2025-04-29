@@ -1,320 +1,435 @@
 <template>
   <div class="daily-report-container">
-    <!-- 头部操作栏 -->
-    <div class="report-header">
-      <div class="header-left">
-        <el-date-picker
-            v-model="reportDate"
-            type="date"
-            placeholder="选择日期"
-            value-format="YYYY-MM-DD"
-            @change="loadData"
-        />
-        <el-button type="primary" @click="loadData">查询</el-button>
-      </div>
-      <div class="header-right">
-        <el-button type="success" @click="exportPDF">导出PDF</el-button>
-        <el-button @click="printReport">打印</el-button>
-      </div>
+    <!-- 头部筛选区域 -->
+    <div class="filter-header">
+      <el-date-picker
+          v-model="selectedDate"
+          type="date"
+          placeholder="选择日期"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
+          @change="handleDateChange"
+      />
+      <el-button type="primary" @click="fetchData">刷新数据</el-button>
+      <el-button type="success" @click="exportExcel" :loading="loading.export">导出Excel</el-button>
     </div>
 
-    <!-- 生产概览 -->
-    <el-card class="summary-card">
-      <div class="summary-title">生产概览</div>
-      <div class="summary-grid">
-        <div class="summary-item" v-for="item in summaryData" :key="item.title">
-          <div class="summary-value">{{ item.value }}</div>
-          <div class="summary-title">{{ item.title }}</div>
-          <div class="summary-compare" :class="item.status">
-            <span v-if="item.compareValue">{{ item.compareValue }}</span>
+    <!-- 概况统计 -->
+    <div class="summary-cards">
+      <el-card shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <span>生产概况</span>
+          </div>
+        </template>
+        <div v-loading="loading.summary" class="card-content">
+          <div class="summary-item">
+            <span class="label">总产量：</span>
+            <el-tag type="info">{{ summaryData.totalOutput || 0 }}</el-tag>
+          </div>
+          <div class="summary-item">
+            <span class="label">合格率：</span>
+            <el-tag type="success">{{ summaryData.qualifiedRate || 0 }}%</el-tag>
+          </div>
+          <div class="summary-item">
+            <span class="label">设备利用率：</span>
+            <el-tag type="warning">{{ summaryData.equipmentUtilization || 0 }}%</el-tag>
+          </div>
+          <div class="summary-item">
+            <span class="label">异常记录：</span>
+            <el-tag type="danger">{{ summaryData.abnormalRecords || 0 }}</el-tag>
           </div>
         </div>
-      </div>
-    </el-card>
+      </el-card>
+    </div>
 
-    <!-- 生产详情 -->
-    <el-card class="detail-card">
-      <div class="detail-header">
-        <h3>生产明细</h3>
-        <el-tag type="warning">数据更新于 {{ lastUpdateTime }}</el-tag>
-      </div>
+    <!-- 生产明细表格 -->
+    <div class="detail-table">
+      <el-card shadow="hover">
+        <template #header>
+          <div class="card-header">
+            <span>生产明细</span>
+          </div>
+        </template>
+        <el-table
+            :data="detailData.records"
+            v-loading="loading.details"
+            style="width: 100%"
+        >
+          <el-table-column prop="orderNo" label="工单号" align="center"/>
+          <el-table-column prop="productCode" label="产品型号" align="center"/>
+          <el-table-column prop="processName" label="工序" align="center"/>
+          <el-table-column prop="equipmentCode" label="设备编号" align="center"/>
+          <el-table-column prop="outputQuantity" label="产出量" align="center"/>
+          <el-table-column prop="defectiveQuantity" label="不良数" align="center"/>
+          <el-table-column prop="operatorName" label="操作员" align="center"/>
+          <el-table-column label="生产时间" align="center">
+            <template #default="{row}">
+              {{ formatTime(row.startTime) }} ~ {{ formatTime(row.endTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="duration" label="时长" align="center"/>
+        </el-table>
+        <el-pagination
+            v-model:current-page="pagination.current"
+            v-model:page-size="pagination.size"
+            :total="detailData.total"
+            @current-change="handlePageChange"
+            @size-change="handleSizeChange"
+            layout="total, sizes, prev, pager, next, jumper"
+            style="float: right"
+        />
+      </el-card>
+    </div>
 
-      <el-table
-          :data="productionData"
-          stripe
-          style="width: 100%"
-          v-loading="loading"
-      >
-        <el-table-column prop="line" label="生产线" width="120" />
-        <el-table-column prop="productType" label="产品类型" width="150" />
-        <el-table-column prop="planQuantity" label="计划产量" sortable width="120" />
-        <el-table-column prop="actualQuantity" label="实际产量" sortable width="120" />
-        <el-table-column prop="completionRate" label="达成率" sortable width="120">
-          <template #default="{ row }">
-            <el-tag :type="getRateType(row.completionRate)">
-              {{ row.completionRate }}%
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="goodRate" label="良品率" sortable width="120">
-          <template #default="{ row }">
-            <el-tag :type="getRateType(row.goodRate)" effect="dark">
-              {{ row.goodRate }}%
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="downtime" label="停机时间" width="120" />
-        <el-table-column prop="oee" label="设备综合效率" sortable width="140">
-          <template #default="{ row }">
-            <el-progress
-                :percentage="row.oee"
-                :color="customColors"
-                :format="formatOEE"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-
-    <!-- 生产趋势图表 -->
-    <el-card class="chart-card">
-      <h3>生产趋势分析</h3>
-      <div ref="trendChart" class="chart-container"></div>
-    </el-card>
+    <!-- 底部统计区域 -->
+    <div class="bottom-stats">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-card shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>工单进度</span>
+              </div>
+            </template>
+            <div v-loading="loading.progress" class="progress-list">
+              <div v-for="item in orderProgress" :key="item.orderNo" class="progress-item">
+                <div class="order-info">
+                  <span class="order-no">{{ item.orderNo }}</span>
+                  <span class="product-name">{{ item.productName }}</span>
+                </div>
+                <el-progress
+                    :percentage="item.progressRate || 0"
+                    :status="getProgressStatus(item.progressRate)"
+                />
+                <div class="quantity-info">
+                  <span>已完成 {{ item.completedQuantity }}/{{ item.totalQuantity }}</span>
+                  <span>当前工序：{{ item.currentProcess }}</span>
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card shadow="hover">
+            <template #header>
+              <div class="card-header">
+                <span>设备状态分布</span>
+              </div>
+            </template>
+            <div v-loading="loading.equipment" class="equipment-stats">
+              <el-row :gutter="20">
+                <el-col :span="6" v-for="(value, key) in equipmentStatus" :key="key">
+                  <div class="status-item">
+                    <div class="status-label">{{ getStatusLabel(key) }}</div>
+                    <div class="status-value">{{ value }}</div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
-import { ElMessage } from 'element-plus'
-import * as echarts from 'echarts'
+import {onMounted, reactive, ref} from 'vue'
+import axios from '@/utils/axios'
+import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
+import {ElMessage} from "element-plus";
 
-// 图表实例
-const trendChart = ref(null)
-let chartInstance = null
+// 响应式数据
+const selectedDate = ref(new Date().toISOString().split('T')[0])
+const loading = reactive({
+  summary: false,
+  details: false,
+  progress: false,
+  equipment: false,
+  export: false
+})
 
-// 数据状态
-const reportDate = ref(getCurrentDate())
-const lastUpdateTime = ref('--:--:--')
-const loading = ref(false)
+const summaryData = ref({})
+const detailData = reactive({
+  records: [],
+  total: 0
+})
+const orderProgress = ref([])
+const equipmentStatus = ref({})
+const pagination = reactive({
+  current: 1,
+  size: 10
+})
 
-// 生产概览数据
-const summaryData = reactive([
-  { title: '总产量', value: 0, compareValue: '+0%', status: 'normal' },
-  { title: '良品率', value: '0%', compareValue: '+0%', status: 'normal' },
-  { title: '工时利用率', value: '0%', compareValue: '-0%', status: 'warning' },
-  { title: '异常工时', value: '0h', compareValue: '-0%', status: 'normal' }
-])
-
-// 生产明细数据
-const productionData = ref([])
-
-// 获取当前日期
-function getCurrentDate() {
-  const today = new Date()
-  return today.toISOString().split('T')[0]
+// 状态标签映射
+const statusLabels = {
+  totalEquipment: '总设备数',
+  normalCount: '正常',
+  maintenanceCount: '维护中',
+  standbyCount: '待机',
+  scrapCount: '报废'
 }
 
-// 模拟数据生成
-const generateMockData = () => {
-  const data = []
-  const lines = ['焊装线', '涂装线', '总装线', '检测线']
-  const types = ['SUV', '轿车', 'MPV', '新能源']
-
-  lines.forEach(line => {
-    types.forEach(type => {
-      data.push({
-        line,
-        productType: type,
-        planQuantity: Math.floor(Math.random() * 1000 + 500),
-        actualQuantity: Math.floor(Math.random() * 1000 + 480),
-        completionRate: Math.floor(Math.random() * 5 + 95),
-        goodRate: (95 + Math.random() * 4).toFixed(1),
-        downtime: `${Math.floor(Math.random() * 3)}h${Math.floor(Math.random() * 60)}m`,
-        oee: Math.floor(Math.random() * 20 + 80)
-      })
-    })
-  })
-  return data
-}
-
-// 加载数据
-const loadData = async () => {
-  loading.value = true
+// 方法
+const fetchData = async () => {
   try {
-    // 模拟API请求
-    await new Promise(resolve => setTimeout(resolve, 800))
-    productionData.value = generateMockData()
-    updateSummaryData()
-    updateChart()
-    lastUpdateTime.value = new Date().toLocaleTimeString()
+    // 获取概况数据
+    loading.summary = true
+    summaryData.value = await axios.get('/report/daily/summary', {
+      params: {date: selectedDate.value}
+    })
+
+    // 获取明细数据
+    loading.details = true
+    const detailRes = await axios.get('/report/daily/details', {
+      params: {
+        date: selectedDate.value,
+        page: pagination.current,
+        size: pagination.size
+      }
+    })
+    detailData.records = detailRes.records
+    detailData.total = detailRes.total
+
+    // 获取工单进度
+    loading.progress = true
+    orderProgress.value = await axios.get('/report/daily/order-progress', {
+      params: {date: selectedDate.value}
+    })
+
+    // 获取设备状态
+    loading.equipment = true
+    equipmentStatus.value = await axios.get('/report/daily/equipment-status', {
+      params: {date: selectedDate.value}
+    })
   } catch (error) {
-    ElMessage.error('数据加载失败')
+    console.error('数据获取失败:', error)
   } finally {
-    loading.value = false
+    loading.summary = false
+    loading.details = false
+    loading.progress = false
+    loading.equipment = false
   }
 }
 
-// 更新概览数据
-const updateSummaryData = () => {
-  const total = productionData.value.reduce((sum, item) => sum + item.actualQuantity, 0)
-  const goodTotal = productionData.value.reduce((sum, item) =>
-      sum + item.actualQuantity * (item.goodRate/100), 0)
-
-  summaryData[0].value = total.toLocaleString()
-  summaryData[1].value = `${(goodTotal / total * 100).toFixed(1)}%`
+const handleDateChange = () => {
+  pagination.current = 1
+  fetchData()
 }
 
-// 图表配置
-const initChart = () => {
-  chartInstance = echarts.init(trendChart.value)
+const handlePageChange = (newPage) => {
+  pagination.current = newPage
+  fetchData()
+}
 
-  const option = {
-    tooltip: { trigger: 'axis' },
-    xAxis: {
-      type: 'category',
-      data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00']
-    },
-    yAxis: { type: 'value' },
-    series: [{
-      name: '生产速率',
-      type: 'line',
-      smooth: true,
-      data: [820, 932, 901, 934, 1290, 1330],
-      areaStyle: { color: 'rgba(64, 158, 255, 0.2)' }
-    }]
+const handleSizeChange = (newSize) => {
+  pagination.size = newSize
+  // 切换每页条数后重置到第一页
+  pagination.current = 1
+  fetchData()
+}
+
+const formatTime = (datetime) => {
+  return datetime ? datetime.slice(11, 16) : '--'
+}
+
+const getProgressStatus = (percentage) => {
+  return percentage >= 100 ? 'success' : 'primary'
+}
+
+const getStatusLabel = (key) => {
+  return statusLabels[key] || key
+}
+
+// 导出逻辑
+const exportExcel = async () => {
+  try {
+    loading.export = true;
+
+    // 获取全部数据（分页请求）
+    let allData = [];
+    let currentPage = 1;
+    let total = 0;
+    const pageSize = 1000; // 每次请求1000条
+
+    do {
+      const res = await axios.get('/report/daily/details', {
+        params: {
+          date: selectedDate.value,
+          page: currentPage,
+          size: pageSize
+        }
+      });
+      allData = allData.concat(res.records);
+      total = res.total;
+      currentPage++;
+    } while (allData.length < total);
+
+    allData.reverse();  // 倒序排列
+
+    // 创建Excel工作簿
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('生产明细');
+
+    // 设置列定义（包含宽度和样式）
+    worksheet.columns = [
+      { header: '工单号', key: 'orderNo', width: 24 },
+      { header: '产品型号', key: 'productCode', width: 18 },
+      { header: '工序', key: 'processName', width: 15 },
+      { header: '设备编号', key: 'equipmentCode', width: 15 },
+      { header: '产出量', key: 'outputQuantity', width: 12 },
+      { header: '不良数', key: 'defectiveQuantity', width: 12 },
+      { header: '操作员', key: 'operatorName', width: 14 },
+      { header: '生产时间', key: 'productionTime', width: 28 },
+      { header: '时长(分钟)', key: 'duration', width: 14 }
+    ];
+
+    // 设置标题行样式
+    const titleRow = worksheet.getRow(1);
+    titleRow.eachCell(cell => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4F81BD' } // 深蓝色背景
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' } // 白色字体
+      };
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center'
+      };
+    });
+
+    // 添加数据行
+    allData.forEach(record => {
+      worksheet.addRow({
+        orderNo: record.orderNo,
+        productCode: record.productCode,
+        processName: record.processName,
+        equipmentCode: record.equipmentCode,
+        outputQuantity: record.outputQuantity,
+        defectiveQuantity: record.defectiveQuantity,
+        operatorName: record.operatorName,
+        productionTime: `${formatTime(record.startTime)} ~ ${formatTime(record.endTime)}`,
+        duration: record.duration
+      });
+    });
+
+    // 设置数据行样式
+    worksheet.eachRow({ from: 2 }, (row, rowNumber) => {
+      row.eachCell(cell => {
+        cell.alignment = {
+          vertical: 'middle',
+          horizontal: 'center'
+        };
+
+        // 隔行变色
+        if (rowNumber % 2 === 0) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFF2F4F7' } // 浅灰色背景
+          };
+        }
+      });
+    });
+
+    // 生成文件并保存
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    saveAs(blob, `生产日报_${selectedDate.value}.xlsx`);
+
+  } catch (error) {
+    console.error('导出失败:', error);
+    ElMessage.error('导出失败，请检查网络或重试');
+  } finally {
+    loading.export = false;
   }
+};
 
-  chartInstance.setOption(option)
-}
-
-const updateChart = () => {
-  // 实际项目中更新图表数据
-}
-
-// 工具方法
-const getRateType = (rate) => {
-  return rate >= 95 ? 'success' : rate >= 90 ? 'warning' : 'danger'
-}
-
-const formatOEE = (percentage) => {
-  return `OEE ${percentage}%`
-}
-
-// 导出功能
-const exportPDF = () => {
-  ElMessage.success('PDF导出功能开发中')
-}
-
-const printReport = () => {
-  window.print()
-}
-
-// 生命周期
+// 生命周期钩子
 onMounted(() => {
-  initChart()
-  loadData()
+  fetchData()
 })
-
-onBeforeUnmount(() => {
-  if (chartInstance) chartInstance.dispose()
-})
-
-// 样式相关
-const customColors = [
-  { color: '#f56c6c', percentage: 60 },
-  { color: '#e6a23c', percentage: 80 },
-  { color: '#67c23a', percentage: 100 }
-]
 </script>
 
 <style scoped>
 .daily-report-container {
   padding: 20px;
-  background-color: #f5f5f5;
-  min-height: 100vh;
 }
 
-.report-header {
+.filter-header {
+  margin-bottom: 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
+  gap: 15px;
 }
 
-.summary-card {
+.summary-cards {
   margin-bottom: 20px;
 }
 
-.summary-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+.card-content {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
 }
 
 .summary-item {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  position: relative;
-}
-
-.summary-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #409eff;
-  margin-bottom: 8px;
-}
-
-.summary-compare {
-  font-size: 12px;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-
-.summary-compare.normal { background: #f0f9eb; color: #67c23a; }
-.summary-compare.warning { background: #fdf6ec; color: #e6a23c; }
-
-.detail-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  gap: 10px;
 }
 
-.chart-card {
+.detail-table {
+  margin-bottom: 20px;
+}
+
+.bottom-stats {
   margin-top: 20px;
 }
 
-.chart-container {
-  height: 400px;
+.progress-list {
+  padding: 10px;
 }
 
-@media print {
-  .report-header, .el-card__header {
-    display: none;
-  }
+.progress-item {
+  margin-bottom: 15px;
+}
 
-  .daily-report-container {
-    padding: 0;
-    background: white;
-  }
+.order-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
 
-  .el-table {
-    border: 1px solid #ebeef5;
-  }
+.quantity-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.status-item {
+  text-align: center;
+  padding: 15px;
+  border-radius: 4px;
+  background: #f5f7fa;
+}
+
+.status-label {
+  color: #909399;
+  margin-bottom: 8px;
+}
+
+.status-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #409eff;
 }
 </style>
