@@ -27,47 +27,47 @@ public class UserController {
 
     @PostMapping("/search")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
-    public R<Page<SysUser>> searchSysUserList(@RequestBody SearchSysUserListRequestDto searchSysUserListRequestDto) {
-        return R.success(userService.searchSysUserList(searchSysUserListRequestDto));
+    public R<Page<SysUser>> searchSysUserList(@RequestBody SearchSysUserListDto searchSysUserListDto) {
+        return R.success(userService.searchSysUserList(searchSysUserListDto));
     }
 
     @PostMapping("/delete")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:delete')")
-    public R<?> deleteSysUser(@RequestBody DeleteUserRequestDto dto) {
+    public R<?> deleteSysUser(@RequestBody DeleteUserDto dto) {
         userService.deleteUserByID(dto);
         return R.success();
     }
 
     @PostMapping("/switchStatus")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
-    public R<?> switchUserStatus(@RequestBody SwitchUserStatusRequestDto dto) {
+    public R<?> switchUserStatus(@RequestBody SwitchUserStatusDto dto) {
         userService.switchUserStatus(dto);
         return R.success();
     }
 
     @PostMapping("/add")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:add')")
-    public R<?> addUser(@RequestBody AddUserRequestDto dto) {
+    public R<?> addUser(@RequestBody AddUserDto dto) {
         userService.addUser(dto);
         return R.success();
     }
 
     @PostMapping("/update")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:update')")
-    public R<?> updateUser(@RequestBody UpdateUserRequestDto dto) {
+    public R<?> updateUser(@RequestBody UpdateUserDto dto) {
         userService.updateUser(dto);
         return R.success();
     }
 
     @PostMapping("/getInfo")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
-    public R<?> getUserInfo(@RequestBody GetUserInfoRequestDto dto) {
+    public R<?> getUserInfo(@RequestBody GetUserInfoDto dto) {
         return R.success(userService.getUserInfo(dto));
     }
 
     @PostMapping("/resetPassword")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
-    public R<?> resetPassword(@RequestBody ResetPasswordRequestDto dto) {
+    public R<?> resetPassword(@RequestBody ResetPasswordDto dto) {
         userService.resetPassword(dto);
         return R.success();
     }

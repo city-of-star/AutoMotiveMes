@@ -9,6 +9,6 @@ import lombok.Data;
  * @date 2025-04-13 21:14:39
  */
 @Data
-public class GetUserInfoRequestDto {
+public class GetUserInfoDto {
     private Long userId;
 }

@@ -1,8 +1,11 @@
 package com.autoMotiveMes.mapper.system;
 
+import com.autoMotiveMes.dto.system.GetRolePageDto;
 import com.autoMotiveMes.entity.system.SysRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 实现功能【角色表 mapper】
@@ -12,4 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysRoleMapper extends BaseMapper<SysRole> {
+
+    // 分页查询角色列表
+    Page<SysRole> getRolePage(Page<SysRole> page, @Param("dto") GetRolePageDto dto);
 }

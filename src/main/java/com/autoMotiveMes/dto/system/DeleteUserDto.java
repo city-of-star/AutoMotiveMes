@@ -9,6 +9,6 @@ import lombok.Data;
  * @date 2025-04-09 16:00:04
  */
 @Data
-public class DeleteUserRequestDto {
+public class DeleteUserDto {
     private Long[] userIds;
 }

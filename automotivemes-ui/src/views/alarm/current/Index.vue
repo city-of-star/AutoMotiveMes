@@ -17,6 +17,7 @@
         :empty-text="'当前没有未处理的报警'"
         v-loading="loading"
         stripe
+        border
     >
       <el-table-column
           prop="alarmCode"

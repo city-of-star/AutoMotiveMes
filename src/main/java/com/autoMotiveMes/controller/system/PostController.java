@@ -1,7 +1,6 @@
 package com.autoMotiveMes.controller.system;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.system.GetPostListResponseDto;
 import com.autoMotiveMes.entity.system.SysPost;
 import com.autoMotiveMes.service.system.PostService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class PostController {
 
     @GetMapping("/list")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:post:list')")
-    public R<GetPostListResponseDto> getPostList() {
+    public R<List<SysPost>> getPostList() {
         return R.success(postService.getPostList());
     }
 }

@@ -28,16 +28,21 @@ public enum ErrorCode {
     PHONE_EXISTS(23, "手机号码已存在"),
     PASSWORDS_DIFFER(24, "两次输入的密码不一致"),
 
+    // 系统管理业务相关
+    ROLE_IS_USE(30, "角色存在关联用户，无法删除"),
+    ROLE_NAME_EXISTS(31, "角色名称已存在"),
+    ROLE_CODE_EXISTS(32, "角色编码已存在"),
+
     // 其他业务相关(400)
-    INVALID_OPERATION(30, "非法操作"),
-    INVALID_OPERATION1(31, "指定产品不存在"),
-    INVALID_OPERATION2(32, "计划开始时间不能晚于结束时间"),
-    INVALID_OPERATION3(33, "工单状态不合法或不存在"),
-    INVALID_OPERATION4(34, "工序[?]无可用设备"),
-    INVALID_OPERATION5(35, "工单不存在"),
-    INVALID_OPERATION6(36, "当前状态不允许删除"),
-    INVALID_OPERATION7(37, "存在此工单的排程计划，无法删除"),
-    INVALID_OPERATION8(38, ""),
+    INVALID_OPERATION(100, "非法操作"),
+    INVALID_OPERATION1(101, "指定产品不存在"),
+    INVALID_OPERATION2(102, "计划开始时间不能晚于结束时间"),
+    INVALID_OPERATION3(103, "工单状态不合法或不存在"),
+    INVALID_OPERATION4(104, "工序[?]无可用设备"),
+    INVALID_OPERATION5(105, "工单不存在"),
+    INVALID_OPERATION6(106, "当前状态不允许删除"),
+    INVALID_OPERATION7(107, "存在此工单的排程计划，无法删除"),
+    INVALID_OPERATION8(108, ""),
 
 
     // 系统内部错误

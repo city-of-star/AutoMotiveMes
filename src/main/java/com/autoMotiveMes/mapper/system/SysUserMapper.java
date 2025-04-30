@@ -1,13 +1,12 @@
 package com.autoMotiveMes.mapper.system;
 
-import com.autoMotiveMes.dto.system.SearchSysUserListRequestDto;
+import com.autoMotiveMes.dto.system.SearchSysUserListDto;
 import com.autoMotiveMes.dto.auth.UserInfoResponseDto;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -38,5 +37,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     UserInfoResponseDto getUserInfoByUsername(@Param("username") String username);
 
     // 获取用户列表
-    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListRequestDto dto);
+    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListDto dto);
 }

@@ -12,23 +12,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface UserService {
     // 查询用户列表
-    Page<SysUser> searchSysUserList(SearchSysUserListRequestDto searchSysUserListRequestDto);
+    Page<SysUser> searchSysUserList(SearchSysUserListDto searchSysUserListDto);
 
     // 删除用户
-    void deleteUserByID(DeleteUserRequestDto dto);
+    void deleteUserByID(DeleteUserDto dto);
 
     // 切换用户状态
-    void switchUserStatus(SwitchUserStatusRequestDto dto);
+    void switchUserStatus(SwitchUserStatusDto dto);
 
     // 新增用户
-    void addUser(AddUserRequestDto dto);
+    void addUser(AddUserDto dto);
 
     // 修改用户
-    void updateUser(UpdateUserRequestDto dto);
+    void updateUser(UpdateUserDto dto);
 
     // 通过userId获取用户信息(用于修改用户信息时获取用户原本信息)
-    GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto);
+    GetUserInfoVo getUserInfo(GetUserInfoDto dto);
 
     // 重置密码
-    void resetPassword(ResetPasswordRequestDto dto);
+    void resetPassword(ResetPasswordDto dto);
 }

@@ -505,12 +505,8 @@ const fetchDeptTree = async () => {
 // 获取岗位和角色选项
 const fetchOptions = async () => {
   try {
-    const [resRoles, resPosts] = await Promise.all([
-      axios.get('/system/role/list'),
-      axios.get('/system/post/list')
-    ])
-    roleOptions.value = resRoles.roles
-    postOptions.value = resPosts.posts
+    roleOptions.value = await axios.get('/system/role/list')
+    postOptions.value = await axios.get('/system/post/list')
   } catch (error) {
     console.error('获取选项失败:', error)
   }

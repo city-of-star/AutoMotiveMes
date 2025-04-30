@@ -3,14 +3,15 @@ package com.autoMotiveMes.dto.system;
 import lombok.Data;
 
 /**
- * 实现功能【修改用户入参】
+ * 实现功能【增加用户入参】
  *
  * @author li.hongyu
- * @date 2025-04-08 20:04:05
+ * @date 2025-04-08 20:03:39
  */
 @Data
-public class UpdateUserRequestDto {
-    private String userId;
+public class AddUserDto {
+    private String username;
+    private String password;
     private String realName;
     private Integer roleId;
     private String phone;

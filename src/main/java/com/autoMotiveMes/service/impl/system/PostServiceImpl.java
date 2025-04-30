@@ -1,11 +1,15 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.dto.system.GetPostListResponseDto;
+import com.autoMotiveMes.dto.system.GetPostPageDto;
+import com.autoMotiveMes.entity.system.SysPost;
 import com.autoMotiveMes.mapper.system.SysPostMapper;
 import com.autoMotiveMes.service.system.PostService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 实现功能【岗位管理服务实现类】
@@ -21,9 +25,16 @@ public class PostServiceImpl implements PostService {
     private final SysPostMapper postMapper;
 
     @Override
-    public GetPostListResponseDto getPostList() {
-        GetPostListResponseDto dto = new GetPostListResponseDto();
-        dto.setPosts(postMapper.selectList(null));
-        return dto;
+    public List<SysPost> getPostList() {
+        return postMapper.selectList(null);
+    }
+
+    @Override
+    public Page<SysPost> getPostPage(GetPostPageDto dto) {
+        Page<SysPost> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+                dto.getSize() == null ? 10 : dto.getSize());
+
+
+        return null;
     }
 }

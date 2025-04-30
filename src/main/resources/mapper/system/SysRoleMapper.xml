@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.system.SysRoleMapper">
+
+    <select id="getRolePage" resultType="com.autoMotiveMes.entity.system.SysRole">
+        SELECT
+            role_id,
+            role_code,
+            role_name,
+            description
+        FROM sys_role
+        <where>
+            <!-- 角色名称模糊查询 -->
+            <if test="dto.roleName != null and dto.roleName != ''">
+                AND role_name LIKE CONCAT('%', #{dto.roleName}, '%')
+            </if>
+            <!-- 角色编码模糊查询 -->
+            <if test="dto.roleCode != null and dto.roleCode != ''">
+                AND role_code LIKE CONCAT('%', #{dto.roleCode}, '%')
+            </if>
+        </where>
+        ORDER BY role_id ASC
+    </select>
+
+</mapper>

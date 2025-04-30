@@ -1,7 +1,8 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.system.GetPostListResponseDto;
+import com.autoMotiveMes.dto.system.GetPostPageDto;
 import com.autoMotiveMes.entity.system.SysPost;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 
@@ -14,5 +15,8 @@ import java.util.List;
 public interface PostService {
 
     // 获取岗位列表
-    GetPostListResponseDto getPostList();
+    List<SysPost> getPostList();
+
+    // 分页查询岗位列表
+    Page<SysPost> getPostPage(GetPostPageDto dto);
 }

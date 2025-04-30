@@ -9,6 +9,6 @@ import lombok.Data;
  * @date 2025-04-09 16:51:52
  */
 @Data
-public class SwitchUserStatusRequestDto {
+public class SwitchUserStatusDto {
     private Long userId;
 }

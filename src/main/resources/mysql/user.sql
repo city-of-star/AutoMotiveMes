@@ -160,7 +160,7 @@ INSERT INTO sys_permission (perm_code, perm_name, perm_type, parent_id, path, co
 
     -- 质量管理模块
     ('quality:manage', '质量管理', 'MENU', 0, '/quality', 'Layout', '/api/quality', NULL), -- 42
-    ('quality:manage:inspection', '质量检测', 'MENU', 39, 'quality', '@/views/quality/inspection/Index.vue', '/api/quality/inspection', 'GET'); -- 43
+    ('quality:manage:inspection', '质量检测', 'MENU', 42, 'quality', '@/views/quality/inspection/Index.vue', '/api/quality/inspection', 'GET'); -- 43
 
 -- 插入用户数据 测试密码统一为123456（使用BCrypt加密存储）
 INSERT INTO sys_user (username, password, real_name, sex, theme_color, dept_id, post_id, email, phone, status, account_locked, login_attempts, head_img) VALUES

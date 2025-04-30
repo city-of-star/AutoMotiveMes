@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Page<SysUser> searchSysUserList(SearchSysUserListRequestDto dto) {
+    public Page<SysUser> searchSysUserList(SearchSysUserListDto dto) {
         try {
             // 创建分页对象
             Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserByID(DeleteUserRequestDto dto) {
+    public void deleteUserByID(DeleteUserDto dto) {
         try {
             for (Long userId : dto.getUserIds()) {
                 userRoleMapper.deleteByUserId(userId);
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void switchUserStatus(SwitchUserStatusRequestDto dto) {
+    public void switchUserStatus(SwitchUserStatusDto dto) {
         try {
             SysUser user = userMapper.selectById(dto.getUserId());
             if (user == null) {
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(AddUserRequestDto dto) {
+    public void addUser(AddUserDto dto) {
         if (userMapper.selectByUsername(dto.getUsername()) != null) {
             throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UpdateUserRequestDto dto) {
+    public void updateUser(UpdateUserDto dto) {
         SysUser user = userMapper.selectById(dto.getUserId());  // 原本的用户信息
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
@@ -175,9 +175,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetUserInfoResponseDto getUserInfo(GetUserInfoRequestDto dto) {
+    public GetUserInfoVo getUserInfo(GetUserInfoDto dto) {
 
-        GetUserInfoResponseDto res = new GetUserInfoResponseDto();
+        GetUserInfoVo res = new GetUserInfoVo();
         try {
             SysUser user = userMapper.selectById(dto.getUserId());
             res.setUsername(user.getUsername());
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(ResetPasswordRequestDto dto) {
+    public void resetPassword(ResetPasswordDto dto) {
         SysUser user = userMapper.selectById(dto.getUserId());
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
