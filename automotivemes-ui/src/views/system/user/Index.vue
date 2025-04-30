@@ -137,11 +137,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" align="center" header-align="center"/>
-        <el-table-column label="操作" width="220" align="center" header-align="center">
+        <el-table-column label="操作" width="270" align="center" header-align="center">
           <template #default="scope">
-            <el-button type="text" @click="handleEditUser(scope.row)">修改</el-button>
-            <el-button type="text" @click="handleSingleDelete(scope.row)">删除</el-button>
-            <el-button type="text" @click="handleResetPassword(scope.row)">重置密码</el-button>
+            <el-button size="small" type="text" :icon="Edit" @click="handleEditUser(scope.row)">修改</el-button>
+            <el-button size="small" type="text" :icon="Delete" @click="handleSingleDelete(scope.row)">删除</el-button>
+            <el-button size="small" type="text" :icon="Refresh" @click="handleResetPassword(scope.row)">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -159,7 +159,14 @@
     </div>
   </div>
 
-  <!--  切换用户状态系统提示对话框-->
+  <!-- 重置密码提示对话框 -->
+  <ConfirmDialog
+      v-model:visible="resetDialogVisible"
+      message="确认重置密码为默认值123456？"
+      @confirm="confirmResetPassword"
+  />
+
+  <!-- 切换用户状态系统提示对话框 -->
   <ConfirmDialog
       v-model:visible="centerDialogVisible"
       :message="`确认要${currentNewStatus === 1 ? '启用' : '停用'}此用户吗？`"
@@ -167,18 +174,11 @@
       @cancel="cancelSwitch"
   />
 
-  <!--  删除用户系统提示对话框-->
+  <!-- 删除用户系统提示对话框 -->
   <ConfirmDialog
       v-model:visible="deleteUserDialog"
       :message="`确认要删除此用户吗？`"
       @confirm="deleteUser"
-  />
-
-  <!--  删除用户系统提示对话框-->
-  <ConfirmDialog
-      v-model:visible="DeleteUserDialog"
-      :message="`确认要删除此用户吗？`"
-      @confirm="DeleteUser"
   />
 
   <!-- 新增用户对话框 -->
@@ -383,12 +383,6 @@
     </span>
     </template>
   </el-dialog>
-
-  <ConfirmDialog
-      v-model:visible="resetDialogVisible"
-      message="确认重置密码为默认值123456？"
-      @confirm="confirmResetPassword"
-  />
 </template>
 
 <script setup>
@@ -770,7 +764,7 @@ const handleDeptNodeClick = (data) => {
   search()
 }
 
-/* 其他功能 */
+/* 导入导出功能 */
 const importUsers = () => ElMessage.error('尚未实现此功能')
 const exportUsers = () => ElMessage.error('尚未实现此功能')
 
@@ -786,24 +780,10 @@ const handleEditUser = async (row) => {
   }
 }
 
-const selectedUserIds = ref([])
-const DeleteUserDialog = ref(false)
-
-// 单个删除
 const handleSingleDelete = (row) => {
-  selectedUserIds.value = [row.userId]
-  DeleteUserDialog.value = true
-}
-
-const DeleteUser = async () => {
-  try {
-    await axios.post('/system/user/delete', { userIds: selectedUserIds.value })
-    ElMessage.success('删除成功')
-    await search()
-    DeleteUserDialog.value = false
-  } catch (error) {
-    ElMessage.error('删除失败')
-  }
+  tableData.value.forEach(item => item.select = false);
+  row.select = true;
+  deleteUserDialog.value = true
 }
 
 const resetDialogVisible = ref(false)

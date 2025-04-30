@@ -23,11 +23,13 @@
     </select>
 
     <select id="selectByEmail" resultType="com.autoMotiveMes.entity.system.SysUser">
-        SELECT * FROM sys_user WHERE email = #{email}
+        SELECT * FROM sys_user
+        WHERE email = #{email}
     </select>
 
     <select id="selectByPhone" resultType="com.autoMotiveMes.entity.system.SysUser">
-        SELECT * FROM sys_user WHERE phone = #{phone}
+        SELECT * FROM sys_user
+        WHERE phone = #{phone}
     </select>
 
     <select id="getUserInfoByUsername" resultType="com.autoMotiveMes.dto.auth.UserInfoResponseDto">

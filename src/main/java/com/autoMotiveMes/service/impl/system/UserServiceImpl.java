@@ -10,6 +10,7 @@ import com.autoMotiveMes.entity.system.SysUserRole;
 import com.autoMotiveMes.mapper.system.SysUserMapper;
 import com.autoMotiveMes.mapper.system.SysUserRoleMapper;
 import com.autoMotiveMes.service.system.UserService;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,11 +88,17 @@ public class UserServiceImpl implements UserService {
         if (userMapper.selectByUsername(dto.getUsername()) != null) {
             throw new BusinessException(ErrorCode.USERNAME_EXISTS);
         }
-        if (userMapper.selectByPhone(dto.getPhone()) != null) {
-            throw new BusinessException(ErrorCode.PHONE_EXISTS);
+        // 仅在手机号码非空时检查唯一性
+        if (StringUtils.isNotBlank(dto.getPhone())) {
+            if (userMapper.selectByPhone(dto.getPhone()) != null) {
+                throw new BusinessException(ErrorCode.PHONE_EXISTS);
+            }
         }
-        if (userMapper.selectByEmail(dto.getEmail()) != null) {
-            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+        // 仅在邮箱非空时检查唯一性
+        if (StringUtils.isNotBlank(dto.getEmail())) {
+            if (userMapper.selectByEmail(dto.getEmail()) != null) {
+                throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+            }
         }
 
         try {
@@ -123,15 +130,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UpdateUserRequestDto dto) {
         SysUser user = userMapper.selectById(dto.getUserId());  // 原本的用户信息
-        SysUser toUserByPhone = userMapper.selectByPhone(dto.getPhone());  // 用户改手机号码，查询是否已有该手机号码
-        if (toUserByPhone != null && !toUserByPhone.getPhone().equals(user.getPhone())) {
-            throw new BusinessException(ErrorCode.PHONE_EXISTS);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
         }
-        SysUser toUserByEmail = userMapper.selectByEmail(dto.getEmail());  // 用户改邮箱，查询是否已有该邮箱
-        if (toUserByEmail != null && !toUserByEmail.getEmail().equals(user.getEmail())) {
-            throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+        // 仅在手机号码非空时检查唯一性
+        if (StringUtils.isNotBlank(dto.getPhone())) {
+            SysUser toUserByPhone = userMapper.selectByPhone(dto.getPhone());  // 用户改手机号码，查询是否已有该手机号码
+            if (toUserByPhone != null && !toUserByPhone.getPhone().equals(user.getPhone())) {
+                throw new BusinessException(ErrorCode.PHONE_EXISTS);
+            }
         }
-
+        // 仅在邮箱非空时检查唯一性
+        if (StringUtils.isNotBlank(dto.getEmail())) {
+            SysUser toUserByEmail = userMapper.selectByEmail(dto.getEmail());  // 用户改邮箱，查询是否已有该邮箱
+            if (toUserByEmail != null && !toUserByEmail.getEmail().equals(user.getEmail())) {
+                throw new BusinessException(ErrorCode.EMAIL_EXISTS);
+            }
+        }
         try {
             Long userId = user.getUserId();  // 获取userId
 
