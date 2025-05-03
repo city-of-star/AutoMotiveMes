@@ -2,7 +2,7 @@
     <!-- 欢迎横幅 -->
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h1>欢迎来到<span class="highlight">Luminova智能制造平台</span></h1>
+        <h1>欢迎来到<span class="highlight">汽车 MES 生产监控中心</span></h1>
         <p class="subtitle">科技驱动未来 · 智能引领生产</p>
       </div>
       <img src="@/assets/logo.png" alt="公司Logo" class="company-logo">
@@ -89,7 +89,7 @@
       <div class="info-content">
         <img src="@/assets/logo.png" alt="智能工厂" class="factory-image">
         <div class="info-text">
-          <h3>Luminova汽车智能制造基地</h3>
+          <h3>汽车智能制造基地</h3>
           <p>成立于2005年，国家级智能制造示范工厂，占地面积120万平方米，拥有全自动生产线12条，年产能达45万辆。</p>
           <div class="info-tags">
             <el-tag type="info">ISO 9001认证</el-tag>

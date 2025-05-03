@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Page<SysUser> searchSysUserList(SearchSysUserListDto dto) {
+    public Page<SysUser> getUserPage(GetUserPageDto dto) {
         try {
             // 创建分页对象
             Page<SysUser> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserByID(DeleteUserDto dto) {
+    public void deleteUser(DeleteUserDto dto) {
         try {
             for (Long userId : dto.getUserIds()) {
                 userRoleMapper.deleteByUserId(userId);

@@ -16,7 +16,9 @@ import java.util.List;
 @Mapper
 public interface SysRolePermissionMapper extends BaseMapper<SysRolePermission> {
 
+    // 通过角色id删除对应的权限
     void deleteByRoleId(@Param("roleId") Integer roleId);
 
+    // 通过角色id查询对应的权限id列表
     List<Integer> selectPermIdsByRoleId(@Param("roleId") Integer roleId);
 }

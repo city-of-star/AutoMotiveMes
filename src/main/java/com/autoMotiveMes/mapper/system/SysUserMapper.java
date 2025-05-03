@@ -1,6 +1,6 @@
 package com.autoMotiveMes.mapper.system;
 
-import com.autoMotiveMes.dto.system.SearchSysUserListDto;
+import com.autoMotiveMes.dto.system.GetUserPageDto;
 import com.autoMotiveMes.dto.auth.UserInfoResponseDto;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
+
     // 通过用户名获取用户权限编码
     List<String> selectUserPermissionsByUsername(@Param("username") String username);
 
@@ -37,5 +38,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     UserInfoResponseDto getUserInfoByUsername(@Param("username") String username);
 
     // 获取用户列表
-    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") SearchSysUserListDto dto);
+    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") GetUserPageDto dto);
 }

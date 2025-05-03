@@ -1,7 +1,6 @@
 package com.autoMotiveMes.config.security;
 
 import com.autoMotiveMes.common.response.ErrorCode;
-import com.autoMotiveMes.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service("rbacService")
+@SuppressWarnings("unused")  // 取消显示未使用警告
 public class RbacService {
 
     public boolean hasPermission(Authentication authentication, String permissionCode) {

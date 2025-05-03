@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 实现功能【用户管理服务controller】
+ * 实现功能【用户管理服务 controller】
  *
  * @author li.hongyu
  * @date 2025-04-05 17:59:04
@@ -25,19 +25,34 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 分页查询用户列表
+     * @param dto 查询条件
+     * @return 分页用户列表
+     */
     @PostMapping("/search")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
-    public R<Page<SysUser>> searchSysUserList(@RequestBody SearchSysUserListDto searchSysUserListDto) {
-        return R.success(userService.searchSysUserList(searchSysUserListDto));
+    public R<Page<SysUser>> getUserPage(@RequestBody GetUserPageDto dto) {
+        return R.success(userService.getUserPage(dto));
     }
 
+    /**
+     * 批量删除用户
+     * @param dto 待删除的用户id数组
+     * @return 操作结果（无具体数据返回）
+     */
     @PostMapping("/delete")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:delete')")
-    public R<?> deleteSysUser(@RequestBody DeleteUserDto dto) {
-        userService.deleteUserByID(dto);
+    public R<?> deleteUser(@RequestBody DeleteUserDto dto) {
+        userService.deleteUser(dto);
         return R.success();
     }
 
+    /**
+     * 切换用户状态（启用/禁用）
+     * @param dto 用户状态切换参数（用户ID）
+     * @return 操作结果（无具体数据返回）
+     */
     @PostMapping("/switchStatus")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
     public R<?> switchUserStatus(@RequestBody SwitchUserStatusDto dto) {
@@ -45,6 +60,11 @@ public class UserController {
         return R.success();
     }
 
+    /**
+     * 新增用户
+     * @param dto 用户信息参数
+     * @return 操作结果（无具体数据返回）
+     */
     @PostMapping("/add")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:add')")
     public R<?> addUser(@RequestBody AddUserDto dto) {
@@ -52,6 +72,11 @@ public class UserController {
         return R.success();
     }
 
+    /**
+     * 更新用户信息
+     * @param dto 用户更新参数
+     * @return 操作结果（无具体数据返回）
+     */
     @PostMapping("/update")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:update')")
     public R<?> updateUser(@RequestBody UpdateUserDto dto) {
@@ -59,12 +84,22 @@ public class UserController {
         return R.success();
     }
 
+    /**
+     * 获取用户详细信息
+     * @param dto 用户信息查询参数（用户ID）
+     * @return 用户详细信息
+     */
     @PostMapping("/getInfo")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
     public R<?> getUserInfo(@RequestBody GetUserInfoDto dto) {
         return R.success(userService.getUserInfo(dto));
     }
 
+    /**
+     * 重置用户密码
+     * @param dto 密码重置参数（用户ID和新密码）
+     * @return 操作结果（无具体数据返回）
+     */
     @PostMapping("/resetPassword")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:manage')")
     public R<?> resetPassword(@RequestBody ResetPasswordDto dto) {

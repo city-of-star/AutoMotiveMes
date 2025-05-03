@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025-04-01 22:54:41
  */
 @Data
-public class SearchSysUserListDto {
+public class GetUserPageDto {
     private Integer page;
     private Integer size;
     private String deptName;

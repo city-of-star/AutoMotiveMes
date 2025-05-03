@@ -36,14 +36,12 @@ public class UserDetailsImpl implements UserDetails {
         userDetails.setStatus(user.getStatus());
         userDetails.setAccountNonLocked(user.getAccountLocked());
         userDetails.setRoles(roles);
-        // 将权限字符串转换为 GrantedAuthority
         userDetails.authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
         return userDetails;
     }
 
-    // 实现 UserDetails 接口方法
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -17,24 +17,48 @@ import java.util.List;
  */
 public interface RoleService {
 
-    // 获取角色列表
+    /**
+     * 获取角色列表
+     * @return 角色列表
+     */
     List<SysRole> getRoleList();
 
-    // 分页查询角色列表
+    /**
+     * 分页查询角色列表
+     * @param dto 查询条件
+     * @return 分页角色列表
+     */
     Page<SysRole> getRolePage(GetRolePageDto dto);
 
-    // 根据角色ID获取角色信息
+    /**
+     * 根据角色id查询角色详细信息
+     * @param roleId 角色id参数
+     * @return 对应角色的详细信息
+     */
     SysRole getRoleByRoleId(Integer roleId);
 
-    // 根据角色ID获取权限ID列表
+    /**
+     * 获取指定角色关联的权限id列表
+     * @param roleId 角色id参数
+     * @return 该角色拥有的权限id列表
+     */
     List<Integer> getPermIdsByRoleId(Integer roleId);
 
-    // 新增角色
+    /**
+     * 新增角色
+     * @param dto 角色信息参数
+     */
     void addRole(AddRoleDto dto);
 
-    // 修改角色
+    /**
+     * 更新角色信息
+     * @param dto 角色更新参数
+     */
     void updateRole(UpdateRoleDto dto);
 
-    // 删除角色
+    /**
+     * 删除指定角色
+     * @param dto 角色id参数
+     */
     void deleteRole(DeleteRoleDto dto);
 }

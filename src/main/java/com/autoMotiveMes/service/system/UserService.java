@@ -11,24 +11,48 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  * @date 2025-04-05 17:55:03
  */
 public interface UserService {
-    // 查询用户列表
-    Page<SysUser> searchSysUserList(SearchSysUserListDto searchSysUserListDto);
 
-    // 删除用户
-    void deleteUserByID(DeleteUserDto dto);
+    /**
+     * 分页查询用户列表
+     * @param dto 查询条件
+     * @return 分页用户列表
+     */
+    Page<SysUser> getUserPage(GetUserPageDto dto);
 
-    // 切换用户状态
+    /**
+     * 批量删除用户
+     * @param dto 待删除的用户id数组
+     */
+    void deleteUser(DeleteUserDto dto);
+
+    /**
+     * 切换用户状态（启用/禁用）
+     * @param dto 用户状态切换参数（用户ID）
+     */
     void switchUserStatus(SwitchUserStatusDto dto);
 
-    // 新增用户
+    /**
+     * 新增用户
+     * @param dto 用户信息参数
+     */
     void addUser(AddUserDto dto);
 
-    // 修改用户
+    /**
+     * 更新用户信息
+     * @param dto 用户更新参数
+     */
     void updateUser(UpdateUserDto dto);
 
-    // 通过userId获取用户信息(用于修改用户信息时获取用户原本信息)
+    /**
+     * 获取用户详细信息(用于修改用户信息时获取用户原本信息)
+     * @param dto 用户信息查询参数（用户ID）
+     * @return 用户详细信息
+     */
     GetUserInfoVo getUserInfo(GetUserInfoDto dto);
 
-    // 重置密码
+    /**
+     * 重置用户密码
+     * @param dto 密码重置参数（用户ID和新密码）
+     */
     void resetPassword(ResetPasswordDto dto);
 }

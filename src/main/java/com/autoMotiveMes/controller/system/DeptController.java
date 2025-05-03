@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 实现功能【部门管理服务controller】
+ * 实现功能【部门管理服务 controller】
  *
  * @author li.hongyu
  * @date 2025-04-05 21:03:35
