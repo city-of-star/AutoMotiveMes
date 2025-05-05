@@ -244,7 +244,7 @@ const fetchData = async () => {
   try {
     loading.value = true
 
-    const data = await axios.post('/equipment/listEquipmentAlarmHistory', {
+    const data = await axios.post('/alarm/listEquipmentAlarmHistory', {
       equipmentCode: queryForm.value.equipmentCode,
       alarmLevel: queryForm.value.alarmLevel,
       status: queryForm.value.status,

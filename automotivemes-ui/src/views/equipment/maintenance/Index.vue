@@ -227,7 +227,7 @@ const handlePageChange = () => {
 // 显示详情
 const showDetail = async (id) => {
   try {
-    currentDetail.value = await axios.get(`/equipment/maintenanceDetail/${id}`)
+    currentDetail.value = await axios.get(`/maintenance/maintenanceDetail/${id}`)
     detailVisible.value = true
   } catch (error) {
     ElMessage.error('获取详情失败')
@@ -249,7 +249,7 @@ const fetchData = async () => {
       actualEndDate: actualTimeRange.value?.[1]
     }
 
-    const data = await axios.post('/equipment/listMaintenanceRecord', params)
+    const data = await axios.post('/maintenance/listMaintenanceRecord', params)
     tableData.value = data.records || []
     pagination.value.total = data.total || 0
   } catch (error) {

@@ -322,7 +322,7 @@ const submitMaintenance = async () => {
   try {
     await formRef.value.validate()
 
-    await axios.post('/equipment/handleAlarm', {
+    await axios.post('/alarm/handleAlarm', {
       alarmId: currentAlarmId.value,
       maintenanceContent: maintenanceForm.value.maintenanceContent,
       result: maintenanceForm.value.result,
@@ -348,7 +348,7 @@ const submitMaintenance = async () => {
 // 获取正常和在线的设备数量
 const getEquipmentCount = async () => {
   try {
-    const res = await axios.get('/equipment/getEquipmentCount')
+    const res = await axios.get('/alarm/getEquipmentCount')
     onlineCount.value = res.onlineEquipmentCount
     normalCount.value = res.normalEquipmentCount
   } catch (error) {
@@ -359,7 +359,7 @@ const getEquipmentCount = async () => {
 // 获取初始数据
 const fetchInitialData = async () => {
   try {
-    alarmList.value = await axios.get('/equipment/listRealTimeAlarms')
+    alarmList.value = await axios.get('/alarm/listRealTimeAlarms')
   } catch (error) {
     ElMessage.error('数据加载失败')
   } finally {
