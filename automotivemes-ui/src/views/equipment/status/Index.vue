@@ -197,7 +197,7 @@ const fetchEquipmentList = async () => {
     overviewLoading.value = true
     equipmentList.value = await axios.get('/equipment/list')
     if (equipmentList.value.length > 0) {
-      handleEquipmentSelect(equipmentList.value[0])
+      await handleEquipmentSelect(equipmentList.value[0])
     }
   } catch (error) {
     ElMessage.error('设备列表加载失败')

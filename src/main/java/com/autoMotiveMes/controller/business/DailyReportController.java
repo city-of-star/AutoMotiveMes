@@ -1,11 +1,11 @@
-package com.autoMotiveMes.controller.order;
+package com.autoMotiveMes.controller.business;
 
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.dto.order.DailyOrderProgressDto;
 import com.autoMotiveMes.dto.order.DailyProductionDetailDto;
 import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
 import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
-import com.autoMotiveMes.service.business.ProductionDailyReportService;
+import com.autoMotiveMes.service.business.DailyReportService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 实现功能【】
+ * 实现功能【生产日报 controller】
  *
  * @author li.hongyu
  * @date 2025-04-29 09:18:10
@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DailyReportController {
 
-    private final ProductionDailyReportService reportService;
+    private final DailyReportService reportService;
 
     @GetMapping("/summary")
     public R<DailyProductionSummaryDto> getDailySummary(

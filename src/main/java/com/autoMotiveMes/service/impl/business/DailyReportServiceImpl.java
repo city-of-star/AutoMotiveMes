@@ -6,9 +6,7 @@ import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
 import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
 import com.autoMotiveMes.mapper.order.ProductionDailyReportMapper;
-import com.autoMotiveMes.mapper.order.ProductionOrderMapper;
-import com.autoMotiveMes.mapper.order.ProductionRecordMapper;
-import com.autoMotiveMes.service.business.ProductionDailyReportService;
+import com.autoMotiveMes.service.business.DailyReportService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 实现功能【】
+ * 实现功能【生产日报服务实现类】
  *
  * @author li.hongyu
  * @date 2025-04-29 09:13:12
@@ -26,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProductionDailyReportServiceImpl implements ProductionDailyReportService {
+public class DailyReportServiceImpl implements DailyReportService {
 
     private final ProductionDailyReportMapper productionDailyReportMapper;
     private final EquipmentMapper equipmentMapper;

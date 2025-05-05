@@ -15,7 +15,7 @@ import java.util.List;
  * @author li.hongyu
  * @date 2025-04-29 09:09:16
  */
-public interface ProductionDailyReportService {
+public interface DailyReportService {
     /**
      * 获取每日生产概况统计
      */

@@ -214,9 +214,8 @@ const initAlarmChart = () => {
 // 获取设备数据
 const fetchEquipmentData = async () => {
   try {
-    const res = await axios.get('/equipment/getEquipmentCount')
-    equipmentCount.value = res
-    updateStatusChart(res)
+    equipmentCount.value = await axios.get('/alarm/getEquipmentCount')
+    updateStatusChart(equipmentCount.value)
   } catch (error) {
     ElMessage.error('获取设备数据失败')
   }
@@ -241,7 +240,7 @@ const updateStatusChart = (data) => {
 // 获取报警数据
 const fetchAlarmData = async () => {
   try {
-    const res = await axios.get('/equipment/listRealTimeAlarms')
+    const res = await axios.get('/alarm/listRealTimeAlarms')
     alarmData.value.total = res.length
     updateAlarmChart(res)
   } catch (error) {
@@ -261,7 +260,7 @@ const updateAlarmChart = (data) => {
 // 获取生产数据
 const fetchProductionData = async () => {
   try {
-    const res = await axios.get('/order/statistics')
+    const res = await axios.get('/record/statistics')
     productionData.value = {
       todayOutput: res.qualified,
       yieldRate: res.yieldRate.toFixed(1)

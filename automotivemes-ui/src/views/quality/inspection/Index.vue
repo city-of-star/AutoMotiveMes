@@ -234,7 +234,7 @@ const fetchTasks = async () => {
       size: pagination.value.size
     }
 
-    const data = await axios.post('/order/listQualityTasks', params)
+    const data = await axios.post('/qualityInspection/listQualityTasks', params)
     taskData.value = data.records || []
     pagination.value.total = data.total || 0
   } catch (error) {
@@ -263,7 +263,7 @@ const handleSubmit = async () => {
     await submitFormRef.value.validate()
 
     const params = { ...submitForm.value }
-    await axios.post('/order/submitQualityResult', params)
+    await axios.post('/qualityInspection/submitQualityResult', params)
 
     ElMessage.success('提交成功')
     submitVisible.value = false

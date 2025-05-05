@@ -1,4 +1,4 @@
-package com.autoMotiveMes.controller.equipment;
+package com.autoMotiveMes.controller.business;
 
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;

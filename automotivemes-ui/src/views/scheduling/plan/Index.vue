@@ -103,7 +103,7 @@ const fetchOrderDetail = async () => {
 const fetchSchedules = async () => {
   try {
     loading.value = true
-    const res = await axios.get(`/order/schedules/${orderId.value}`, {
+    const res = await axios.get(`/scheduling/get/${orderId.value}`, {
       params: {
         page: 1,
         size: 100
@@ -120,7 +120,7 @@ const fetchSchedules = async () => {
 // 生成排程
 const generateSchedule = async () => {
   try {
-    await axios.post(`/order/generate-schedule/${orderId.value}`)
+    await axios.post(`/scheduling/generate/${orderId.value}`)
     ElMessage.success('排程生成成功')
     fetchSchedules()
   } catch (error) {

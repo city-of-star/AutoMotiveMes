@@ -405,7 +405,7 @@ const fetchData = async () => {
       page: pagination.value.current,
       size: pagination.value.size
     }
-    const data = await axios.post('/order/listProductionRecord', params)
+    const data = await axios.post('/record/listProductionRecord', params)
     tableData.value = data.records || []
     pagination.value.total = data.total || 0
   } catch (error) {

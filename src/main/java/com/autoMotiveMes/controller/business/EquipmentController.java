@@ -1,12 +1,15 @@
-package com.autoMotiveMes.controller.equipment;
+package com.autoMotiveMes.controller.business;
 
+import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.service.business.EquipmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +24,7 @@ import java.util.List;
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
+    private final RedisTemplate<String, EquipmentParameters> redisTemplate;
 
     @PostMapping("/acceptData")
     public void acceptEquipmentRealTimeData(@RequestBody EquipmentParameters data) {
@@ -32,4 +36,10 @@ public class EquipmentController {
         return R.success(equipmentService.listEquipment());
     }
 
+    @GetMapping("/historyData/{equipmentId}")
+    public R<List<EquipmentParameters>> getHistoryData(@PathVariable Long equipmentId) {
+        String redisKey = CommonConstant.REDIS_KEY_PREFIX + equipmentId;
+        List<EquipmentParameters> data = redisTemplate.opsForList().range(redisKey, 0, -1);
+        return R.success(data != null ? data : Collections.emptyList());
+    }
 }
