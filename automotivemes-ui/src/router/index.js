@@ -189,7 +189,17 @@ const asyncRoutes = [
           title: '报警历史',
           icon: 'ArchiveBoxIcon'
         },
-      }
+      },
+      {
+        path: '/alarm/rule',
+        name: 'alarm-rule',
+        component: () => import('@/views/alarm/rule/Index.vue'),
+        meta: {
+          permissions: 'alarm:rule:config',
+          title: '配置规则',
+          icon: 'ArchiveBoxIcon'
+        },
+      },
     ]
   },
   {
