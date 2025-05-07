@@ -64,7 +64,6 @@ const route = useRoute()
 const router = useRouter()
 
 const orderId = ref(route.params.orderId === ':orderId' ? 1 : route.params.orderId)
-console.log(orderId.value)
 const orderNo = ref('')
 const schedules = ref([])
 const loading = ref(false)
