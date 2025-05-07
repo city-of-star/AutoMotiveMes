@@ -48,6 +48,9 @@ public class EquipmentRealTimeDataSimulatorService {
     // 存储设备ID对应的定时任务
     private final Map<Long, ScheduledFuture<?>> equipmentTasks = new ConcurrentHashMap<>();
 
+    // 用于跟踪连续异常状态的Map
+    private final Map<String, Integer> continuousAbnormalCounts = new ConcurrentHashMap<>();
+
     // 时间格式化和数值格式化工具
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.####");
@@ -220,7 +223,7 @@ public class EquipmentRealTimeDataSimulatorService {
         }
 
         List<Map<String, Object>> parameters = new ArrayList<>();
-        configs.forEach(config -> parameters.add(createParameter(config)));
+        configs.forEach(config -> parameters.add(createParameter(equipment.getEquipmentId(), config)));
         return parameters;
     }
 
@@ -228,20 +231,37 @@ public class EquipmentRealTimeDataSimulatorService {
      * 创建单个参数项
      * @param config 参数配置
      */
-    private Map<String, Object> createParameter(ParameterConfig config) {
-        boolean isAbnormal = Math.random() < config.abnormalProbability;
+    private Map<String, Object> createParameter(Long equipmentId, ParameterConfig config) {
+        String key = equipmentId + "-" + config.getName();
+        Integer remaining = continuousAbnormalCounts.getOrDefault(key, 0);
+        boolean isAbnormal = false;
+
+        // 处理连续异常状态
+        if (remaining > 0) {
+            isAbnormal = true;
+            continuousAbnormalCounts.put(key, remaining - 1);
+        } else {
+            // 正常概率判断
+            isAbnormal = Math.random() < config.getAbnormalProbability();
+            // 异常时50%概率触发连续三次异常
+            if (isAbnormal && Math.random() < 0.5) {
+                continuousAbnormalCounts.put(key, 2); // 已触发1次，剩余2次
+            }
+        }
+
+        // 数值生成逻辑
         ThreadLocalRandom random = ThreadLocalRandom.current();
         double value = isAbnormal ?
-                random.nextDouble(config.abnormalMin, config.abnormalMax) :
-                random.nextDouble(config.normalMin, config.normalMax);
-        double formattedValue = Double.parseDouble(DECIMAL_FORMAT.format(value));
+                random.nextDouble(config.getAbnormalMin(), config.getAbnormalMax()) :
+                random.nextDouble(config.getNormalMin(), config.getNormalMax());
 
-        Map<String, Object> param = new HashMap<>();
-        param.put("name", config.name);
-        param.put("value", formattedValue);
-        param.put("unit", config.unit);
-        param.put("isNormal", isAbnormal ? 0 : 1);
-        return param;
+        // 数值格式化和返回
+        return Map.of(
+                "name", config.getName(),
+                "value", Double.parseDouble(DECIMAL_FORMAT.format(value)),
+                "unit", config.getUnit(),
+                "isNormal", isAbnormal ? 0 : 1
+        );
     }
 
     /**

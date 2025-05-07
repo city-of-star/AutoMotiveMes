@@ -57,7 +57,7 @@ public class AlarmServiceImpl implements AlarmService {
     // 模拟服务
     private final EquipmentRealTimeDataSimulatorService simulatorService;
 
-    @Scheduled(fixedDelay = 30_000) // 每30秒检测一次
+    @Scheduled(fixedDelay = 30_000)  // 每30秒检测一次
     public void checkAlarmConditions() {
         Set<String> keys = redisTemplate.keys(CommonConstant.REDIS_KEY_PREFIX + "*");
         keys.forEach(key -> {
@@ -74,16 +74,19 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     private void checkContinuousAbnormal(Long equipmentId, List<EquipmentParameters> params) {
-        int consecutiveCount = 0;
+        Map<String, Integer> paramConsecutiveCount = new HashMap<>();
+
         for (EquipmentParameters param : params) {
+            String paramName = param.getParamName();
             if (param.getIsNormal() == 0) {
-                consecutiveCount++;
-                if (consecutiveCount >= 3) {
-                    handleAlarm(equipmentId, "连续3次异常参数", 2);
-                    break;
+                int count = paramConsecutiveCount.getOrDefault(paramName, 0) + 1;
+                paramConsecutiveCount.put(paramName, count);
+                if (count >= 3) {
+                    handleAlarm(equipmentId, "参数["+paramName+"]连续3次异常", 2);
+                    paramConsecutiveCount.put(paramName, 0); // 重置避免重复报警
                 }
             } else {
-                consecutiveCount = 0;
+                paramConsecutiveCount.remove(paramName);
             }
         }
     }

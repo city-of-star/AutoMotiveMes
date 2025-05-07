@@ -371,6 +371,7 @@ const fetchInitialData = async () => {
 websocket.subscribe('/topic/equipment/alarm', () => {
   try {
     fetchInitialData()
+    getEquipmentCount()  // 更新数据
     // const newAlarm = JSON.parse(message.body);
     //
     // console.log(newAlarm)
