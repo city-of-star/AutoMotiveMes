@@ -48,6 +48,9 @@ service.interceptors.response.use(
                     router.push({ name: '404' })
                     ElMessage.error(res.msg || '资源不存在')
                     break
+                case 405:
+                    ElMessage.error(res.msg || '请求方法不匹配异常')
+                    break
                 case 500:
                     ElMessage.error(res.msg || '系统内部错误')
                     break

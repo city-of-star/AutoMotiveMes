@@ -163,7 +163,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import axios from '@/utils/axios'
 
 // 响应式数据
@@ -258,8 +257,7 @@ const fetchData = async () => {
     pagination.value.total = data.total || 0
 
   } catch (error) {
-    ElMessage.error('数据加载失败')
-    console.error('Error fetching data:', error)
+    console.error('获取设备报警历史列表出错:', error)
   } finally {
     loading.value = false
   }

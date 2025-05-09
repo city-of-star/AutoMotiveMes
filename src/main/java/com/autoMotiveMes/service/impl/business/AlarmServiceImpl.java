@@ -1,6 +1,7 @@
 package com.autoMotiveMes.service.impl.business;
 
 import com.autoMotiveMes.common.constant.CommonConstant;
+import com.autoMotiveMes.common.exception.ServerException;
 import com.autoMotiveMes.dto.equipment.*;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentAlarm;
@@ -47,9 +48,6 @@ public class AlarmServiceImpl implements AlarmService {
     private final EquipmentMaintenanceMapper maintenanceMapper;
     private final EquipmentAlarmMapper alarmMapper;
     private final EquipmentMapper equipmentMapper;
-
-    // 报警规则缓存（设备类型ID -> 规则配置）
-    private final Map<Integer, AlarmRuleConfig> alarmRules = new ConcurrentHashMap<>();
 
     private final RedisTemplate<String, EquipmentParameters> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
@@ -136,58 +134,75 @@ public class AlarmServiceImpl implements AlarmService {
         private int multiParamThreshold = 2;
     }
 
+    @Override
     @Transactional
     public void handleAlarmMaintenance(HandleAlarmRequestDto dto) {
-        String username = CommonUtils.getCurrentUsername();
-        EquipmentAlarm alarm = alarmMapper.selectById(dto.getAlarmId());
+        try {
+            String username = CommonUtils.getCurrentUsername();
+            EquipmentAlarm alarm = alarmMapper.selectById(dto.getAlarmId());
 
-        EquipmentMaintenance maintenance = new EquipmentMaintenance();
-        maintenance.setEquipmentId(alarm.getEquipmentId());
-        maintenance.setPlanDate(LocalDate.now());
-        maintenance.setActualDate(LocalDate.now());
-        maintenance.setMaintenanceType(3);  // 应急维修
-        maintenance.setOperator(username);
-        maintenance.setResult(dto.getResult());
-        maintenance.setCost(dto.getCost() == null ? BigDecimal.valueOf(0) : dto.getCost());
-        maintenance.setMaintenanceContent("(处理报警：" + alarm.getAlarmCode() + ") " + dto.getMaintenanceContent());
+            EquipmentMaintenance maintenance = new EquipmentMaintenance();
+            maintenance.setEquipmentId(alarm.getEquipmentId());
+            maintenance.setPlanDate(LocalDate.now());
+            maintenance.setActualDate(LocalDate.now());
+            maintenance.setMaintenanceType(3);  // 应急维修
+            maintenance.setOperator(username);
+            maintenance.setResult(dto.getResult());
+            maintenance.setCost(dto.getCost() == null ? BigDecimal.valueOf(0) : dto.getCost());
+            maintenance.setMaintenanceContent("(处理报警：" + alarm.getAlarmCode() + ") " + dto.getMaintenanceContent());
 
-        maintenanceMapper.insert(maintenance);
+            maintenanceMapper.insert(maintenance);
 
-        // 更新报警状态
-        alarm.setStatus(2);  // 已处理
-        alarm.setHandler(username);
-        alarm.setEndTime(LocalDateTime.now());
-        Duration duration = Duration.between(alarm.getStartTime(), alarm.getEndTime());
-        alarm.setDuration((int) duration.getSeconds());
-        alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + "\n处理结果: " + dto.getResult());
-        alarmMapper.updateById(alarm);
+            // 更新报警状态
+            alarm.setStatus(2);  // 已处理
+            alarm.setHandler(username);
+            alarm.setEndTime(LocalDateTime.now());
+            Duration duration = Duration.between(alarm.getStartTime(), alarm.getEndTime());
+            alarm.setDuration((int) duration.getSeconds());
+            alarm.setSolution("维护内容: " + dto.getMaintenanceContent() + "\n处理结果: " + dto.getResult());
+            alarmMapper.updateById(alarm);
 
-        // 更新设备状态
-        Equipment equipment = equipmentMapper.selectById(alarm.getEquipmentId());
-        equipment.setStatus(1);  // 运行中
-        equipmentMapper.updateById(equipment);
+            // 更新设备状态
+            Equipment equipment = equipmentMapper.selectById(alarm.getEquipmentId());
+            equipment.setStatus(1);  // 运行中
+            equipmentMapper.updateById(equipment);
 
-        // 启动该设备的模拟
-        simulatorService.startSimulatorForEquipment(equipment.getEquipmentId());
+            // 启动该设备的模拟
+            simulatorService.startSimulatorForEquipment(equipment.getEquipmentId());
+        } catch (ServerException e) {
+            throw new ServerException("处理警报并产生维护记录出错出错: " + e.getMessage());
+        }
     }
 
     @Override
     public List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm() {
-        return alarmMapper.listRealTimeEquipmentAlarm();
+        try {
+            return alarmMapper.listRealTimeEquipmentAlarm();
+        } catch (ServerException e) {
+            throw new ServerException("获取实时设备报警列表出错: " + e.getMessage());
+        }
     }
 
     @Override
     public Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto dto) {
-        Page<AlarmHistoryResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
-                dto.getSize() == null ? 10 : dto.getSize());
-        return alarmMapper.listEquipmentAlarmHistory(page, dto);
+        try {
+            Page<AlarmHistoryResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+                    dto.getSize() == null ? 10 : dto.getSize());
+            return alarmMapper.listEquipmentAlarmHistory(page, dto);
+        } catch (ServerException e) {
+            throw new ServerException("获取设备报警历史列表出错: " + e.getMessage());
+        }
     }
 
     @Override
     public GetEquipmentCountResponseDto getEquipmentCount() {
-        GetEquipmentCountResponseDto dto = new GetEquipmentCountResponseDto();
-        dto.setNormalEquipmentCount(equipmentMapper.getNormalEquipmentCount());
-        dto.setOnlineEquipmentCount(equipmentMapper.getOnlineEquipmentCount());
-        return dto;
+        try {
+            GetEquipmentCountResponseDto dto = new GetEquipmentCountResponseDto();
+            dto.setNormalEquipmentCount(equipmentMapper.getNormalEquipmentCount());
+            dto.setOnlineEquipmentCount(equipmentMapper.getOnlineEquipmentCount());
+            return dto;
+        } catch (ServerException e) {
+            throw new ServerException("获取设备总数量和在线数量出错: " + e.getMessage());
+        }
     }
 }

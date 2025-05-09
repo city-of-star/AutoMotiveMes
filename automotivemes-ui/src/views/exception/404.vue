@@ -22,7 +22,7 @@
       <div class="actions">
         <button @click="goHome" class="home-btn">
           <span class="icon">🏭</span>
-          返回监控面板
+          返回首页
         </button>
         <button @click="contactSupport" class="support-btn">
           <span class="icon">🔧</span>

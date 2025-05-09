@@ -6,6 +6,9 @@ spring:
   jackson:
     time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd HH:mm:ss  # 对 Date 有效
+  web:
+    resources:
+      add-mappings: false  # 禁用默认静态资源处理
 
 security:
   jwt:
