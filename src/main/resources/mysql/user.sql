@@ -17,7 +17,7 @@ CREATE TABLE sys_user (
     last_login DATETIME COMMENT '最后登录时间',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 角色表
 CREATE TABLE sys_role (
@@ -25,7 +25,7 @@ CREATE TABLE sys_role (
     role_code VARCHAR(50) NOT NULL UNIQUE COMMENT '角色编码',
     role_name VARCHAR(50) NOT NULL COMMENT '角色名称',
     description VARCHAR(255) COMMENT '角色描述'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 -- 权限表（菜单权限+操作权限）
 CREATE TABLE sys_permission (
@@ -40,7 +40,7 @@ CREATE TABLE sys_permission (
     order_num INT DEFAULT 0 COMMENT '显示顺序',
     api_path VARCHAR(100) COMMENT '后端接口路径',
     method VARCHAR(10) COMMENT '请求方法'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
 
 -- 部门表
 CREATE TABLE sys_dept (
@@ -54,7 +54,7 @@ CREATE TABLE sys_dept (
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     FOREIGN KEY (parent_id) REFERENCES sys_dept(dept_id),
     FOREIGN KEY (leader_id) REFERENCES sys_user(user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='部门表';
 
 -- 岗位表
 CREATE TABLE sys_post (
@@ -67,7 +67,7 @@ CREATE TABLE sys_post (
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     FOREIGN KEY (dept_id) REFERENCES sys_dept(dept_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='岗位表';
 
 -- 用户角色关系表
 CREATE TABLE sys_user_role (
@@ -76,7 +76,7 @@ CREATE TABLE sys_user_role (
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES sys_user(user_id),
     FOREIGN KEY (role_id) REFERENCES sys_role(role_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关系表';
 
 -- 角色权限关系表
 CREATE TABLE sys_role_permission (
@@ -85,7 +85,7 @@ CREATE TABLE sys_role_permission (
     PRIMARY KEY (role_id, perm_id),
     FOREIGN KEY (role_id) REFERENCES sys_role(role_id),
     FOREIGN KEY (perm_id) REFERENCES sys_permission(perm_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色权限关系表';
 
 -- 插入角色数据
 INSERT INTO sys_role (role_code, role_name, description) VALUES
