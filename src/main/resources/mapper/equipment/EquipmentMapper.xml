@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.equipment.EquipmentMapper">
+
+    <select id="selectByEquipmentStatus" resultType="com.autoMotiveMes.entity.equipment.Equipment">
+        select * from equipment where status = 1
+    </select>
+
+    <select id="selectByEquipmentId" resultType="com.autoMotiveMes.entity.equipment.Equipment">
+        select * from equipment where equipment_id = #{equipmentId}
+    </select>
+
+    <select id="getNormalEquipmentCount" resultType="java.lang.Integer">
+        select count(1) from equipment where status = 1
+    </select>
+
+    <select id="getOnlineEquipmentCount" resultType="java.lang.Integer">
+        select count(1) from equipment where status != 4
+    </select>
+
+    <select id="selectDailyUtilization" resultType="java.lang.Integer">
+        SELECT ROUND(
+                       SUM(TIMESTAMPDIFF(SECOND, start_time, end_time)) /
+                       (COUNT(DISTINCT equipment_id) * 86400) * 100
+               ) AS utilization
+        FROM equipment_status
+        WHERE status_code = 1
+          AND DATE(start_time) = #{date}
+    </select>
+
+</mapper>

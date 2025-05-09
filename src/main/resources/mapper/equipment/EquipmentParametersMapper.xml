@@ -16,4 +16,13 @@
             )
         </foreach>
     </insert>
+
+    <select id="selectByEquipmentAndTime" resultType="com.autoMotiveMes.entity.equipment.EquipmentParameters">
+        SELECT *
+        FROM equipment_parameters
+        WHERE equipment_id = #{equipmentId}
+          AND collect_time >= #{start}
+          AND collect_time &lt; #{end}
+        ORDER BY collect_time
+    </select>
 </mapper>

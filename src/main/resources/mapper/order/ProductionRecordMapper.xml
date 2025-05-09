@@ -139,4 +139,13 @@
         ORDER BY end_time
     </select>
 
+    <!-- 查询今日生产统计数据 -->
+    <select id="selectTodayStatistics" resultType="com.autoMotiveMes.dto.order.ProductionStatisticsVo">
+        SELECT
+            SUM(output_quantity) AS totalOutput,
+            SUM(output_quantity - defective_quantity) AS qualified
+        FROM production_record
+        WHERE DATE(start_time) = CURDATE()
+    </select>
+
 </mapper>
