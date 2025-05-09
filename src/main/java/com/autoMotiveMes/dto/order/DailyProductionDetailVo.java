@@ -5,13 +5,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【】
+ * 实现功能【日报页产品详情出参】
  *
  * @author li.hongyu
  * @date 2025-04-29 09:10:07
  */
 @Data
-public class DailyProductionDetailDto {
+public class DailyProductionDetailVo {
     private String orderNo;            // 工单号
     private String productCode;        // 产品型号
     private String processName;        // 工序名称

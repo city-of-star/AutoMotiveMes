@@ -3,7 +3,7 @@ package com.autoMotiveMes.dto.order;
 import lombok.Data;
 
 /**
- * 实现功能【质检任务查询DTO】
+ * 实现功能【质检任务查询】
  *
  * @author li.hongyu
  * @date 2025-04-27 14:57:43

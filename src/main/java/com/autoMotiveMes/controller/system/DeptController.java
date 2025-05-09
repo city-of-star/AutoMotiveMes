@@ -1,6 +1,6 @@
 package com.autoMotiveMes.controller.system;
 
-import com.autoMotiveMes.dto.system.SysDeptTreeNode;
+import com.autoMotiveMes.dto.system.SysDeptTreeNodeVo;
 import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.service.system.DeptService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class DeptController {
 
     @GetMapping("/tree")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:dept:list')")
-    public R<List<SysDeptTreeNode>> getDeptTree() {
+    public R<List<SysDeptTreeNodeVo>> getDeptTree() {
         return R.success(deptService.getDeptTree());
     }
 }

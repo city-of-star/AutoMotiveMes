@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.autoMotiveMes.mapper.equipment.EquipmentAlarmMapper">
 
-    <select id="listRealTimeEquipmentAlarm" resultType="com.autoMotiveMes.dto.equipment.RealTimeAlarmResponseDto">
+    <select id="listRealTimeEquipmentAlarm" resultType="com.autoMotiveMes.dto.equipment.RealTimeAlarmVo">
         SELECT
             a.alarm_id AS alarmId,
             a.alarm_code AS alarmCode,
@@ -33,7 +33,7 @@
         ORDER BY a.start_time DESC
     </select>
 
-    <select id="listEquipmentAlarmHistory" resultType="com.autoMotiveMes.dto.equipment.AlarmHistoryResponseDto">
+    <select id="listEquipmentAlarmHistory" resultType="com.autoMotiveMes.dto.equipment.AlarmHistoryVo">
         SELECT a.*, e.equipment_code, e.equipment_name, e.location, t.type_name
         FROM equipment_alarm a
         JOIN equipment e ON a.equipment_id = e.equipment_id

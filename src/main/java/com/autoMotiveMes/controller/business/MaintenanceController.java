@@ -1,9 +1,9 @@
 package com.autoMotiveMes.controller.business;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListRequestDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailVo;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListVo;
 import com.autoMotiveMes.service.business.MaintenanceService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ public class MaintenanceController {
     private final MaintenanceService maintenanceService;
 
     @PostMapping("/listMaintenanceRecord")
-    public R<Page<MaintenanceRecordListResponseDto>> listMaintenanceRecord(@RequestBody MaintenanceRecordListRequestDto dto) {
-        Page<MaintenanceRecordListResponseDto> page = maintenanceService.listMaintenanceRecord(dto);
+    public R<Page<MaintenanceRecordListVo>> listMaintenanceRecord(@RequestBody MaintenanceRecordListDto dto) {
+        Page<MaintenanceRecordListVo> page = maintenanceService.listMaintenanceRecord(dto);
         return R.success(page);
     }
 
     @GetMapping("/maintenanceDetail/{maintenanceId}")
-    public R<MaintenanceRecordDetailResponseDto> getMaintenanceDetail(@PathVariable Long maintenanceId) {
+    public R<MaintenanceRecordDetailVo> getMaintenanceDetail(@PathVariable Long maintenanceId) {
         return R.success(maintenanceService.getMaintenanceDetail(maintenanceId));
     }
 }

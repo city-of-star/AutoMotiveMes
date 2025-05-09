@@ -11,7 +11,7 @@ import java.util.Date;
  * @date 2025-02-15 16:48:29
  */
 @Data
-public class UserInfoResponseDto {
+public class UserInfoVo {
     private Long userId;
     private String username;
     private String realName;

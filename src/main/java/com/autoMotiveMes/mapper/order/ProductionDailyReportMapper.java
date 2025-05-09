@@ -1,9 +1,9 @@
 package com.autoMotiveMes.mapper.order;
 
-import com.autoMotiveMes.dto.order.DailyOrderProgressDto;
-import com.autoMotiveMes.dto.order.DailyProductionDetailDto;
-import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
-import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
+import com.autoMotiveMes.dto.order.DailyOrderProgressVo;
+import com.autoMotiveMes.dto.order.DailyProductionDetailVo;
+import com.autoMotiveMes.dto.order.DailyProductionSummaryVo;
+import com.autoMotiveMes.dto.order.EquipmentDailyStatusVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -27,7 +27,7 @@ public interface ProductionDailyReportMapper {
             "COALESCE(COUNT(CASE WHEN remark IS NOT NULL THEN 1 END), 0) AS abnormalRecords " +
             "FROM production_record " +
             "WHERE DATE(start_time) = #{date}")
-    DailyProductionSummaryDto selectDailySummary(@Param("date") LocalDate date);
+    DailyProductionSummaryVo selectDailySummary(@Param("date") LocalDate date);
 
     @Select("SELECT " +
             "po.order_no, p.product_code, pd.process_name, " +
@@ -42,7 +42,7 @@ public interface ProductionDailyReportMapper {
             "JOIN sys_user u ON pr.operator = u.user_id " +
             "WHERE DATE(pr.start_time) = #{date} " +
             "ORDER BY pr.start_time DESC")
-    Page<DailyProductionDetailDto> selectDailyDetails(Page<DailyProductionDetailDto> page, @Param("date") LocalDate date);
+    Page<DailyProductionDetailVo> selectDailyDetails(Page<DailyProductionDetailVo> page, @Param("date") LocalDate date);
 
     @Select("SELECT " +
             "COUNT(*) AS totalEquipment, " +
@@ -51,7 +51,7 @@ public interface ProductionDailyReportMapper {
             "COUNT(CASE WHEN status = 2 THEN 1 END) AS standbyCount, " +
             "COUNT(CASE WHEN status = 4 THEN 1 END) AS scrapCount " +
             "FROM equipment")
-    EquipmentDailyStatusDto selectEquipmentStatusStats();
+    EquipmentDailyStatusVo selectEquipmentStatusStats();
 
     @Select("SELECT " +
             "po.order_no, p.product_name, po.order_quantity AS totalQuantity, " +
@@ -81,5 +81,5 @@ public interface ProductionDailyReportMapper {
             "WHERE (po.status BETWEEN 2 AND 5) " +
             "AND (po.planned_start_date <= #{date} AND po.planned_end_date >= #{date}) " +
             "ORDER BY po.priority")
-    List<DailyOrderProgressDto> selectOrderProgress(@Param("date") LocalDate date);
+    List<DailyOrderProgressVo> selectOrderProgress(@Param("date") LocalDate date);
 }

@@ -3,7 +3,7 @@
 <mapper namespace="com.autoMotiveMes.mapper.order.ProductionOrderMapper">
 
     <!-- 查询工单列表 -->
-    <select id="listOrders" resultType="com.autoMotiveMes.dto.order.ProductionOrderListDto">
+    <select id="listOrders" resultType="com.autoMotiveMes.dto.order.ProductionOrderListVo">
         SELECT o.*, p.product_code, p.product_name,
         o2.order_no as rework_order_no
         FROM production_order o
@@ -26,11 +26,11 @@
                 AND o.planned_end_date &lt;= #{dto.endDate}
             </if>
         </where>
-        ORDER BY o.priority ASC, o.create_time DESC
+        ORDER BY o.priority, o.create_time DESC
     </select>
 
     <!-- 获取工单详情 -->
-    <select id="getOrderDetail" resultType="com.autoMotiveMes.dto.order.ProductionOrderDetailDto">
+    <select id="getOrderDetail" resultType="com.autoMotiveMes.dto.order.ProductionOrderDetailVo">
         SELECT o.*, p.product_code, p.product_name, u.real_name as creatorName,
                o2.order_no as rework_order_no, o2.status as rework_order_status
         FROM production_order o

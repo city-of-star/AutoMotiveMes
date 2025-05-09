@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025-04-21 20:29:53
  */
 @Data
-public class MaintenanceRecordListRequestDto {
+public class MaintenanceRecordListDto {
     private Integer page;
     private Integer size;
 

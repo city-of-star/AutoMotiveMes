@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.business;
 
-import com.autoMotiveMes.dto.order.SchedulePlanDto;
+import com.autoMotiveMes.dto.order.SchedulePlanVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -24,5 +24,5 @@ public interface SchedulingService {
      * @param size 分页大小
      * @return 分页排程列表
      */
-    Page<SchedulePlanDto> listSchedules(Long orderId, Integer page, Integer size);
+    Page<SchedulePlanVo> listSchedules(Long orderId, Integer page, Integer size);
 }

@@ -16,24 +16,24 @@ public interface AlarmService {
      * 处理警报并产生维护记录
      * @param dto 处理过程记录
      */
-    void handleAlarmMaintenance(HandleAlarmRequestDto dto);
+    void handleAlarmMaintenance(HandleAlarmDto dto);
 
     /**
      * 获取实时报警记录列表
      * @return 实时报警记录列表
      */
-    List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm();
+    List<RealTimeAlarmVo> listRealTimeEquipmentAlarm();
 
     /**
      * 分页查询报警历史记录列表
      * @param query 查询条件
      * @return 分页报警历史记录列表
      */
-    Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto query);
+    Page<AlarmHistoryVo> listEquipmentAlarmHistory(AlarmHistoryDto query);
 
     /**
      * 获取正常设备和在线设备的数量
      * @return 正常设备和在线设备的数量
      */
-    GetEquipmentCountResponseDto getEquipmentCount();
+    GetEquipmentCountVo getEquipmentCount();
 }

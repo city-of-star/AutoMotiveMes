@@ -23,23 +23,23 @@ public class AlarmController {
     private final AlarmService alarmService;
 
     @GetMapping("/listRealTimeAlarms")
-    public R<List<RealTimeAlarmResponseDto>> listRealTimeEquipmentAlarm() {
+    public R<List<RealTimeAlarmVo>> listRealTimeEquipmentAlarm() {
         return R.success(alarmService.listRealTimeEquipmentAlarm());
     }
 
     @PostMapping("/listEquipmentAlarmHistory")
-    public R<Page<AlarmHistoryResponseDto>> listEquipmentAlarmHistory(@RequestBody AlarmHistoryRequestDto dto) {
+    public R<Page<AlarmHistoryVo>> listEquipmentAlarmHistory(@RequestBody AlarmHistoryDto dto) {
         return R.success(alarmService.listEquipmentAlarmHistory(dto));
     }
 
     @PostMapping("/handleAlarm")
-    public R<?> handleAlarm(@RequestBody HandleAlarmRequestDto dto) {
+    public R<?> handleAlarm(@RequestBody HandleAlarmDto dto) {
         alarmService.handleAlarmMaintenance(dto);
         return R.success();
     }
 
     @GetMapping("/getEquipmentCount")
-    public R<GetEquipmentCountResponseDto> getEquipmentCount() {
+    public R<GetEquipmentCountVo> getEquipmentCount() {
         return R.success(alarmService.getEquipmentCount());
     }
 }

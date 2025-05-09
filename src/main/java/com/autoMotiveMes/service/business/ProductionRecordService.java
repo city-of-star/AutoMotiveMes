@@ -1,8 +1,8 @@
 package com.autoMotiveMes.service.business;
 
-import com.autoMotiveMes.dto.order.ProductionRecordQueryDTO;
-import com.autoMotiveMes.dto.order.ProductionRecordResponseDto;
-import com.autoMotiveMes.dto.order.ProductionStatisticsDto;
+import com.autoMotiveMes.dto.order.ProductionRecordQueryDto;
+import com.autoMotiveMes.dto.order.ProductionRecordVo;
+import com.autoMotiveMes.dto.order.ProductionStatisticsVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -18,11 +18,11 @@ public interface ProductionRecordService {
      * @param dto 查询条件
      * @return 分页生产记录列表
      */
-    Page<ProductionRecordResponseDto> listProductionRecord(ProductionRecordQueryDTO dto);
+    Page<ProductionRecordVo> listProductionRecord(ProductionRecordQueryDto dto);
 
     /**
      * 获取今日产量统计数据
      * @return 今日产量统计数据
      */
-    ProductionStatisticsDto getProductionStatistics();
+    ProductionStatisticsVo getProductionStatistics();
 }

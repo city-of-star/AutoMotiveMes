@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2025-04-30 14:22:13
  */
 @Data
-public class SysPermissionTreeNode {
+public class SysPermissionTreeNodeVo {
     private Integer permId;
     private String permCode;
     private String permName;
@@ -23,5 +23,5 @@ public class SysPermissionTreeNode {
     private Integer orderNum;
     private String apiPath;
     private String method;
-    private List<SysPermissionTreeNode> children;
+    private List<SysPermissionTreeNodeVo> children;
 }

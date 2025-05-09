@@ -1,7 +1,7 @@
 package com.autoMotiveMes.controller.business;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.order.SchedulePlanDto;
+import com.autoMotiveMes.dto.order.SchedulePlanVo;
 import com.autoMotiveMes.service.business.SchedulingService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class SchedulingController {
     private final SchedulingService schedulingService;
 
     @GetMapping("/get/{orderId}")
-    public R<Page<SchedulePlanDto>> getSchedules(
+    public R<Page<SchedulePlanVo>> getSchedules(
             @PathVariable Long orderId,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {

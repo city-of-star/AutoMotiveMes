@@ -14,7 +14,6 @@ import com.autoMotiveMes.service.business.AlarmService;
 import com.autoMotiveMes.service.simulationService.EquipmentRealTimeDataSimulatorService;
 import com.autoMotiveMes.utils.CommonUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 实现功能【报警服务类】
@@ -128,15 +126,9 @@ public class AlarmServiceImpl implements AlarmService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
     }
 
-    @Data
-    private static class AlarmRuleConfig {
-        private int continuousThreshold = 3;
-        private int multiParamThreshold = 2;
-    }
-
     @Override
     @Transactional
-    public void handleAlarmMaintenance(HandleAlarmRequestDto dto) {
+    public void handleAlarmMaintenance(HandleAlarmDto dto) {
         try {
             String username = CommonUtils.getCurrentUsername();
             EquipmentAlarm alarm = alarmMapper.selectById(dto.getAlarmId());
@@ -175,7 +167,7 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public List<RealTimeAlarmResponseDto> listRealTimeEquipmentAlarm() {
+    public List<RealTimeAlarmVo> listRealTimeEquipmentAlarm() {
         try {
             return alarmMapper.listRealTimeEquipmentAlarm();
         } catch (ServerException e) {
@@ -184,9 +176,9 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public Page<AlarmHistoryResponseDto> listEquipmentAlarmHistory(AlarmHistoryRequestDto dto) {
+    public Page<AlarmHistoryVo> listEquipmentAlarmHistory(AlarmHistoryDto dto) {
         try {
-            Page<AlarmHistoryResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+            Page<AlarmHistoryVo> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
                     dto.getSize() == null ? 10 : dto.getSize());
             return alarmMapper.listEquipmentAlarmHistory(page, dto);
         } catch (ServerException e) {
@@ -195,9 +187,9 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public GetEquipmentCountResponseDto getEquipmentCount() {
+    public GetEquipmentCountVo getEquipmentCount() {
         try {
-            GetEquipmentCountResponseDto dto = new GetEquipmentCountResponseDto();
+            GetEquipmentCountVo dto = new GetEquipmentCountVo();
             dto.setNormalEquipmentCount(equipmentMapper.getNormalEquipmentCount());
             dto.setOnlineEquipmentCount(equipmentMapper.getOnlineEquipmentCount());
             return dto;

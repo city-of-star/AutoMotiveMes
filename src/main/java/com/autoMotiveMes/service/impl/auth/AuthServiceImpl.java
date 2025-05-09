@@ -46,10 +46,10 @@ public class AuthServiceImpl implements AuthService {
     private final RedisTemplate<String, SysUser> userRedisTemplate;
 
     @Override
-    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
+    public AuthDto login(LoginDto loginDto) {
         // 验证用户的密码
-        SysUser user = userMapper.selectByUsername(loginRequestDto.getUsername());
-        if (user == null || !passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+        SysUser user = userMapper.selectByUsername(loginDto.getUsername());
+        if (user == null || !passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             throw new BusinessException(ErrorCode.ERROR_USERNAME_OR_PASSWORD);
         }
         if (user.getStatus() == 0) {
@@ -61,10 +61,10 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             // 生成 token
-            String token = jwtUtils.generateToken(loginRequestDto.getUsername());
+            String token = jwtUtils.generateToken(loginDto.getUsername());
 
             // 创建响应对象并设置角色和权限
-            AuthResponseDto response = new AuthResponseDto();
+            AuthDto response = new AuthDto();
             response.setToken(token);
 
             // 更新用户最后登录时间
@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
                     TimeUnit.SECONDS
             );
 
-            log.info("用户 {} 登录成功", loginRequestDto.getUsername());
+            log.info("用户 {} 登录成功", loginDto.getUsername());
 
             return response;
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserInfoResponseDto getUserInfo() {
+    public UserInfoVo getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             return userMapper.getUserInfoByUsername(authentication.getName());
@@ -102,8 +102,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserRoleAndPermissionResponseDto getUserRoleAndPermission() {
-        UserRoleAndPermissionResponseDto userRoleAndPermission = new UserRoleAndPermissionResponseDto();
+    public UserRoleAndPermissionVo getUserRoleAndPermission() {
+        UserRoleAndPermissionVo userRoleAndPermission = new UserRoleAndPermissionVo();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {

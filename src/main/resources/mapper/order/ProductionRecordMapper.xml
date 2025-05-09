@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.autoMotiveMes.mapper.order.ProductionRecordMapper">
 
-    <resultMap id="productionRecordMap" type="com.autoMotiveMes.dto.order.ProductionRecordResponseDto">
+    <resultMap id="productionRecordMap" type="com.autoMotiveMes.dto.order.ProductionRecordVo">
         <!-- 基础信息 -->
         <id property="recordId" column="record_id"/>
         <result property="equipmentCode" column="equipment_code"/>
@@ -136,8 +136,7 @@
         SELECT *
         FROM production_record
         WHERE quality_check_generated = 0
-          AND end_time IS NOT NULL
-        ORDER BY end_time ASC
+        ORDER BY end_time
     </select>
 
 </mapper>

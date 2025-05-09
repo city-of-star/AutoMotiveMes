@@ -5,13 +5,13 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * 实现功能【】
+ * 实现功能【日报页工单进度出参】
  *
  * @author li.hongyu
  * @date 2025-04-29 09:10:33
  */
 @Data
-public class DailyOrderProgressDto {
+public class DailyOrderProgressVo {
     private String orderNo;
     private String productName;
     private Integer totalQuantity;     // 工单总量

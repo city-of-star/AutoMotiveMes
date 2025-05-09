@@ -1,10 +1,10 @@
 package com.autoMotiveMes.controller.business;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.order.DailyOrderProgressDto;
-import com.autoMotiveMes.dto.order.DailyProductionDetailDto;
-import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
-import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
+import com.autoMotiveMes.dto.order.DailyOrderProgressVo;
+import com.autoMotiveMes.dto.order.DailyProductionDetailVo;
+import com.autoMotiveMes.dto.order.DailyProductionSummaryVo;
+import com.autoMotiveMes.dto.order.EquipmentDailyStatusVo;
 import com.autoMotiveMes.service.business.DailyReportService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +31,14 @@ public class DailyReportController {
     private final DailyReportService reportService;
 
     @GetMapping("/summary")
-    public R<DailyProductionSummaryDto> getDailySummary(
+    public R<DailyProductionSummaryVo> getDailySummary(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         if (date == null) date = LocalDate.now();
         return R.success(reportService.getDailySummary(date));
     }
 
     @GetMapping("/details")
-    public R<Page<DailyProductionDetailDto>> getDailyDetails(
+    public R<Page<DailyProductionDetailVo>> getDailyDetails(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
@@ -47,14 +47,14 @@ public class DailyReportController {
     }
 
     @GetMapping("/order-progress")
-    public R<List<DailyOrderProgressDto>> getOrderProgress(
+    public R<List<DailyOrderProgressVo>> getOrderProgress(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         if (date == null) date = LocalDate.now();
         return R.success(reportService.getOrderProgress(date));
     }
 
     @GetMapping("/equipment-status")
-    public R<EquipmentDailyStatusDto> getEquipmentStatus(
+    public R<EquipmentDailyStatusVo> getEquipmentStatus(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         if (date == null) date = LocalDate.now();
         return R.success(reportService.getEquipmentStatusStats(date));

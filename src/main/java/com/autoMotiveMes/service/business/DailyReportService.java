@@ -1,9 +1,9 @@
 package com.autoMotiveMes.service.business;
 
-import com.autoMotiveMes.dto.order.DailyOrderProgressDto;
-import com.autoMotiveMes.dto.order.DailyProductionDetailDto;
-import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
-import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
+import com.autoMotiveMes.dto.order.DailyOrderProgressVo;
+import com.autoMotiveMes.dto.order.DailyProductionDetailVo;
+import com.autoMotiveMes.dto.order.DailyProductionSummaryVo;
+import com.autoMotiveMes.dto.order.EquipmentDailyStatusVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.time.LocalDate;
@@ -19,20 +19,20 @@ public interface DailyReportService {
     /**
      * 获取每日生产概况统计
      */
-    DailyProductionSummaryDto getDailySummary(LocalDate date);
+    DailyProductionSummaryVo getDailySummary(LocalDate date);
 
     /**
      * 分页查询当日生产明细
      */
-    Page<DailyProductionDetailDto> getDailyDetails(LocalDate date, Integer page, Integer size);
+    Page<DailyProductionDetailVo> getDailyDetails(LocalDate date, Integer page, Integer size);
 
     /**
      * 获取工单进度列表
      */
-    List<DailyOrderProgressDto> getOrderProgress(LocalDate date);
+    List<DailyOrderProgressVo> getOrderProgress(LocalDate date);
 
     /**
      * 获取设备状态统计
      */
-    EquipmentDailyStatusDto getEquipmentStatusStats(LocalDate date);
+    EquipmentDailyStatusVo getEquipmentStatusStats(LocalDate date);
 }

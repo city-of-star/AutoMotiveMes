@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.system.SysDeptTreeNode;
+import com.autoMotiveMes.dto.system.SysDeptTreeNodeVo;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ import java.util.List;
 public interface DeptService {
 
     // 获取部门树状结构
-    List<SysDeptTreeNode> getDeptTree();
+    List<SysDeptTreeNodeVo> getDeptTree();
 }

@@ -32,7 +32,7 @@
         WHERE phone = #{phone}
     </select>
 
-    <select id="getUserInfoByUsername" resultType="com.autoMotiveMes.dto.auth.UserInfoResponseDto">
+    <select id="getUserInfoByUsername" resultType="com.autoMotiveMes.dto.auth.UserInfoVo">
         SELECT
             u.user_id,
             u.username,

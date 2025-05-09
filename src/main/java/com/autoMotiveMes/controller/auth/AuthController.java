@@ -21,21 +21,21 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public R<AuthResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        AuthResponseDto authResponseDto = authService.login(loginRequestDto);
-        return R.success(authResponseDto);
+    public R<AuthDto> login(@RequestBody LoginDto loginDto) {
+        AuthDto authDto = authService.login(loginDto);
+        return R.success(authDto);
     }
 
     @PostMapping("/info")
-    public R<UserInfoResponseDto> info() {
-        UserInfoResponseDto userInfoResponseDto = authService.getUserInfo();
-        return R.success(userInfoResponseDto);
+    public R<UserInfoVo> info() {
+        UserInfoVo userInfoVo = authService.getUserInfo();
+        return R.success(userInfoVo);
     }
 
     @PostMapping("/getRoleAndPermission")
-    public R<UserRoleAndPermissionResponseDto> getRoleAndPermission() {
-        UserRoleAndPermissionResponseDto userRoleAndPermissionResponseDto = authService.getUserRoleAndPermission();
-        return R.success(userRoleAndPermissionResponseDto);
+    public R<UserRoleAndPermissionVo> getRoleAndPermission() {
+        UserRoleAndPermissionVo userRoleAndPermissionVo = authService.getUserRoleAndPermission();
+        return R.success(userRoleAndPermissionVo);
     }
 
     @PostMapping("/isValidToken")

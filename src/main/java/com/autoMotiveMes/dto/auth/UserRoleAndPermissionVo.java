@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025-02-15 16:50:48
  */
 @Data
-public class UserRoleAndPermissionResponseDto {
+public class UserRoleAndPermissionVo {
     private String[] roles;
     private String[] permissions;
 }

@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * 实现功能【】
+ * 实现功能【日报页产品总结出参】
  *
  * @author li.hongyu
  * @date 2025-04-29 09:09:44
  */
 @Data
-public class DailyProductionSummaryDto {
+public class DailyProductionSummaryVo {
     private LocalDate reportDate;       // 报告日期
     private Integer totalOutput;        // 总产量
     private Integer qualifiedProducts;  // 合格品数量

@@ -1,7 +1,7 @@
 package com.autoMotiveMes.mapper.order;
 
-import com.autoMotiveMes.dto.order.ProductionOrderDetailDto;
-import com.autoMotiveMes.dto.order.ProductionOrderListDto;
+import com.autoMotiveMes.dto.order.ProductionOrderDetailVo;
+import com.autoMotiveMes.dto.order.ProductionOrderListVo;
 import com.autoMotiveMes.dto.order.ProductionOrderQueryDto;
 import com.autoMotiveMes.entity.order.ProductionOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -19,10 +19,10 @@ import org.apache.ibatis.annotations.Param;
 public interface ProductionOrderMapper extends BaseMapper<ProductionOrder> {
 
     // 查询工单列表
-    Page<ProductionOrderListDto> listOrders(Page<ProductionOrderListDto> page, @Param("dto") ProductionOrderQueryDto dto);
+    Page<ProductionOrderListVo> listOrders(Page<ProductionOrderListVo> page, @Param("dto") ProductionOrderQueryDto dto);
 
     // 获取工单详情
-    ProductionOrderDetailDto getOrderDetail(Long orderId);
+    ProductionOrderDetailVo getOrderDetail(Long orderId);
 
     // 查询当日最大工单流水号
     Integer selectMaxOrderSeq(String datePart);

@@ -1,8 +1,8 @@
 package com.autoMotiveMes.mapper.equipment;
 
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListRequestDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailVo;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListVo;
 import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,7 +18,7 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface EquipmentMaintenanceMapper extends BaseMapper<EquipmentMaintenance> {
-    Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(Page<MaintenanceRecordListResponseDto> page, @Param("dto") MaintenanceRecordListRequestDto dto);
+    Page<MaintenanceRecordListVo> listMaintenanceRecord(Page<MaintenanceRecordListVo> page, @Param("dto") MaintenanceRecordListDto dto);
 
     @Select("SELECT m.maintenance_id, m.maintenance_type, " +
             "DATE_FORMAT(m.plan_date, '%Y-%m-%d') AS plan_date, " +
@@ -30,5 +30,5 @@ public interface EquipmentMaintenanceMapper extends BaseMapper<EquipmentMaintena
             "FROM equipment_maintenance m " +
             "JOIN equipment e ON m.equipment_id = e.equipment_id " +
             "WHERE m.maintenance_id = #{maintenanceId}")
-    MaintenanceRecordDetailResponseDto selectMaintenanceDetailById(Long maintenanceId);
+    MaintenanceRecordDetailVo selectMaintenanceDetailById(Long maintenanceId);
 }

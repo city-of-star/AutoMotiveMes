@@ -1,8 +1,8 @@
 package com.autoMotiveMes.service.impl.business;
 
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListRequestDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailVo;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListVo;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.equipment.EquipmentMaintenance;
 import com.autoMotiveMes.mapper.equipment.EquipmentMaintenanceMapper;
@@ -49,14 +49,14 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     }
 
     @Override
-    public Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto) {
-        Page<MaintenanceRecordListResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+    public Page<MaintenanceRecordListVo> listMaintenanceRecord(MaintenanceRecordListDto dto) {
+        Page<MaintenanceRecordListVo> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
                 dto.getSize() == null ? 10 : dto.getSize());
         return maintenanceMapper.listMaintenanceRecord(page, dto);
     }
 
     @Override
-    public MaintenanceRecordDetailResponseDto getMaintenanceDetail(Long maintenanceId) {
+    public MaintenanceRecordDetailVo getMaintenanceDetail(Long maintenanceId) {
         return maintenanceMapper.selectMaintenanceDetailById(maintenanceId);
     }
 }

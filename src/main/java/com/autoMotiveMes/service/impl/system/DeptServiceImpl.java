@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.dto.system.SysDeptTreeNode;
+import com.autoMotiveMes.dto.system.SysDeptTreeNodeVo;
 import com.autoMotiveMes.entity.system.SysDept;
 import com.autoMotiveMes.mapper.system.SysDeptMapper;
 import com.autoMotiveMes.service.system.DeptService;
@@ -24,17 +24,17 @@ public class DeptServiceImpl implements DeptService {
     private final SysDeptMapper sysDeptMapper;
 
     @Override
-    public List<SysDeptTreeNode> getDeptTree() {
+    public List<SysDeptTreeNodeVo> getDeptTree() {
         List<SysDept> depts = sysDeptMapper.selectAllEnabledDepts();
         return buildTree(depts);
     }
 
-    private List<SysDeptTreeNode> buildTree(List<SysDept> depts) {
-        Map<Long, SysDeptTreeNode> nodeMap = new LinkedHashMap<>();
+    private List<SysDeptTreeNodeVo> buildTree(List<SysDept> depts) {
+        Map<Long, SysDeptTreeNodeVo> nodeMap = new LinkedHashMap<>();
 
         // 创建所有节点
         depts.forEach(dept -> {
-            SysDeptTreeNode node = new SysDeptTreeNode();
+            SysDeptTreeNodeVo node = new SysDeptTreeNodeVo();
             node.setDeptId(dept.getDeptId());
             node.setDeptName(dept.getDeptName());
             node.setParentId(dept.getParentId());
@@ -43,12 +43,12 @@ public class DeptServiceImpl implements DeptService {
         });
 
         // 构建树结构
-        List<SysDeptTreeNode> trees = new ArrayList<>();
+        List<SysDeptTreeNodeVo> trees = new ArrayList<>();
         nodeMap.values().forEach(node -> {
             if (node.getParentId() == null || node.getParentId() == 0) {
                 trees.add(node);
             } else {
-                SysDeptTreeNode parent = nodeMap.get(node.getParentId());
+                SysDeptTreeNodeVo parent = nodeMap.get(node.getParentId());
                 if (parent != null) {
                     if (parent.getChildren() == null) {
                         parent.setChildren(new ArrayList<>());
@@ -63,8 +63,8 @@ public class DeptServiceImpl implements DeptService {
         return trees;
     }
 
-    private void sortTree(List<SysDeptTreeNode> nodes) {
-        nodes.sort(Comparator.comparingInt(SysDeptTreeNode::getOrderNum));
+    private void sortTree(List<SysDeptTreeNodeVo> nodes) {
+        nodes.sort(Comparator.comparingInt(SysDeptTreeNodeVo::getOrderNum));
         nodes.forEach(node -> {
             if (node.getChildren() != null) {
                 sortTree(node.getChildren());

@@ -1,8 +1,8 @@
 package com.autoMotiveMes.mapper.order;
 
-import com.autoMotiveMes.dto.order.ProductionRecordQueryDTO;
-import com.autoMotiveMes.dto.order.ProductionRecordResponseDto;
-import com.autoMotiveMes.dto.order.ProductionStatisticsDto;
+import com.autoMotiveMes.dto.order.ProductionRecordQueryDto;
+import com.autoMotiveMes.dto.order.ProductionRecordVo;
+import com.autoMotiveMes.dto.order.ProductionStatisticsVo;
 import com.autoMotiveMes.entity.order.ProductionRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,7 +22,7 @@ import java.util.List;
 public interface ProductionRecordMapper extends BaseMapper<ProductionRecord> {
 
     // 查询生产记录
-    Page<ProductionRecordResponseDto> listProductionRecord(Page<ProductionRecordResponseDto> page, @Param("dto") ProductionRecordQueryDTO dto);
+    Page<ProductionRecordVo> listProductionRecord(Page<ProductionRecordVo> page, @Param("dto") ProductionRecordQueryDto dto);
 
     List<ProductionRecord> selectUncheckedRecords(Page<ProductionRecord> page);
 
@@ -31,5 +31,5 @@ public interface ProductionRecordMapper extends BaseMapper<ProductionRecord> {
             " SUM(output_quantity - defective_quantity) AS qualified " +
             "FROM production_record " +
             "WHERE DATE(start_time) = CURDATE()")
-    ProductionStatisticsDto selectTodayStatistics();
+    ProductionStatisticsVo selectTodayStatistics();
 }

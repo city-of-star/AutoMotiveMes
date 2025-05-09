@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2025-04-24 15:42:47
  */
 @Data
-public class ProductionRecordQueryDTO {
+public class ProductionRecordQueryDto {
     // 基本筛选条件
     private String orderNo;          // 工单号模糊查询
     private String productName;      // 产品名称模糊查询

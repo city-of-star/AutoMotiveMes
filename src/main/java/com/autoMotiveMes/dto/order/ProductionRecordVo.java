@@ -3,7 +3,6 @@ package com.autoMotiveMes.dto.order;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2025-04-24 15:44:05
  */
 @Data
-public class ProductionRecordResponseDto {
+public class ProductionRecordVo {
     // 记录基础信息
     private Long recordId;           // 记录ID
     private String equipmentCode;    // 设备编号（需关联设备表）

@@ -1,8 +1,8 @@
 package com.autoMotiveMes.service.business;
 
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailResponseDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListRequestDto;
-import com.autoMotiveMes.dto.equipment.MaintenanceRecordListResponseDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordDetailVo;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListDto;
+import com.autoMotiveMes.dto.equipment.MaintenanceRecordListVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -17,12 +17,12 @@ public interface MaintenanceService {
      * @param dto 查询条件
      * @return 分页设备维护记录列表
      */
-    Page<MaintenanceRecordListResponseDto> listMaintenanceRecord(MaintenanceRecordListRequestDto dto);
+    Page<MaintenanceRecordListVo> listMaintenanceRecord(MaintenanceRecordListDto dto);
 
     /**
      * 通过id获取设备维护记录详情
      * @param maintenanceId 维护记录id
      * @return 设备维护记录详情
      */
-    MaintenanceRecordDetailResponseDto getMaintenanceDetail(Long maintenanceId);
+    MaintenanceRecordDetailVo getMaintenanceDetail(Long maintenanceId);
 }

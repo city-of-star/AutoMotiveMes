@@ -11,13 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface AuthService {
     // 登录
-    AuthResponseDto login(LoginRequestDto loginRequestDto);
+    AuthDto login(LoginDto loginDto);
 
     // 获取用户信息
-    UserInfoResponseDto getUserInfo();
+    UserInfoVo getUserInfo();
 
     // 获取用户角色与权限
-    UserRoleAndPermissionResponseDto getUserRoleAndPermission();
+    UserRoleAndPermissionVo getUserRoleAndPermission();
 
     // 验证用户token是否过期
     void isValidToken(HttpServletRequest request);

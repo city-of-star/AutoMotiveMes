@@ -1,8 +1,8 @@
 package com.autoMotiveMes.service.impl.business;
 
-import com.autoMotiveMes.dto.order.ProductionRecordQueryDTO;
-import com.autoMotiveMes.dto.order.ProductionRecordResponseDto;
-import com.autoMotiveMes.dto.order.ProductionStatisticsDto;
+import com.autoMotiveMes.dto.order.ProductionRecordQueryDto;
+import com.autoMotiveMes.dto.order.ProductionRecordVo;
+import com.autoMotiveMes.dto.order.ProductionStatisticsVo;
 import com.autoMotiveMes.mapper.order.ProductionRecordMapper;
 import com.autoMotiveMes.service.business.ProductionRecordService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,19 +27,19 @@ public class ProductionRecordServiceImpl implements ProductionRecordService {
     private final ProductionRecordMapper productionRecordMapper;
 
     @Override
-    public Page<ProductionRecordResponseDto> listProductionRecord(ProductionRecordQueryDTO dto) {
-        Page<ProductionRecordResponseDto> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
+    public Page<ProductionRecordVo> listProductionRecord(ProductionRecordQueryDto dto) {
+        Page<ProductionRecordVo> page = new Page<>(dto.getPage() == null ? 1 : dto.getPage(),
                 dto.getSize() == null ? 10 : dto.getSize());
         return productionRecordMapper.listProductionRecord(page, dto);
     }
 
     @Override
-    public ProductionStatisticsDto getProductionStatistics() {
-        ProductionStatisticsDto stats = productionRecordMapper.selectTodayStatistics();
+    public ProductionStatisticsVo getProductionStatistics() {
+        ProductionStatisticsVo stats = productionRecordMapper.selectTodayStatistics();
 
         // 处理无数据情况
         if (stats == null || stats.getTotalOutput() == null) {
-            stats = new ProductionStatisticsDto();
+            stats = new ProductionStatisticsVo();
             stats.setTotalOutput(0);
             stats.setQualified(0);
             stats.setYieldRate(BigDecimal.ZERO);

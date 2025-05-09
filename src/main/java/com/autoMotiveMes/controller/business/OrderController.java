@@ -24,12 +24,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/list")
-    public R<Page<ProductionOrderListDto>> listOrders(@RequestBody ProductionOrderQueryDto dto) {
+    public R<Page<ProductionOrderListVo>> listOrders(@RequestBody ProductionOrderQueryDto dto) {
         return R.success(orderService.listOrders(dto));
     }
 
     @GetMapping("/detail/{orderId}")
-    public R<ProductionOrderDetailDto> getDetail(@PathVariable Long orderId) {
+    public R<ProductionOrderDetailVo> getDetail(@PathVariable Long orderId) {
         return R.success(orderService.getOrderDetail(orderId));
     }
 

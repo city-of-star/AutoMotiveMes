@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @date 2025-04-21 20:25:05
  */
 @Data
-public class MaintenanceRecordListResponseDto {
+public class MaintenanceRecordListVo {
     private Long maintenanceId;       // 维护记录ID
     private String equipmentCode;     // 设备编码（如WSH-001）
     private String equipmentName;     // 设备名称（如数控冲压机）

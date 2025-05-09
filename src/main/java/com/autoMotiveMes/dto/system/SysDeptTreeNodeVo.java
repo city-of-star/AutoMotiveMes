@@ -11,10 +11,10 @@ import java.util.List;
  * @date 2025-04-05 18:17:07
  */
 @Data
-public class SysDeptTreeNode {
+public class SysDeptTreeNodeVo {
     private Long deptId;
     private String deptName;
     private Long parentId;
     private Integer orderNum;
-    private List<SysDeptTreeNode> children;
+    private List<SysDeptTreeNodeVo> children;
 }

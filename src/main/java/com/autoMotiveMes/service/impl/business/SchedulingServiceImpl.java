@@ -2,7 +2,7 @@ package com.autoMotiveMes.service.impl.business;
 
 import com.autoMotiveMes.common.exception.BusinessException;
 import com.autoMotiveMes.common.response.ErrorCode;
-import com.autoMotiveMes.dto.order.SchedulePlanDto;
+import com.autoMotiveMes.dto.order.SchedulePlanVo;
 import com.autoMotiveMes.entity.equipment.Equipment;
 import com.autoMotiveMes.entity.order.ProcessDefinition;
 import com.autoMotiveMes.entity.order.ProductionOrder;
@@ -43,8 +43,8 @@ public class SchedulingServiceImpl implements SchedulingService {
     private final EquipmentMapper equipmentMapper;
 
     @Override
-    public Page<SchedulePlanDto> listSchedules(Long orderId, Integer page, Integer size) {
-        Page<SchedulePlanDto> pageObj = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
+    public Page<SchedulePlanVo> listSchedules(Long orderId, Integer page, Integer size) {
+        Page<SchedulePlanVo> pageObj = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
         return productionScheduleMapper.listSchedules(pageObj, orderId);
     }
 

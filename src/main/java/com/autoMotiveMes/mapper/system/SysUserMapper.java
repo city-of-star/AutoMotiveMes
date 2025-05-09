@@ -1,7 +1,7 @@
 package com.autoMotiveMes.mapper.system;
 
 import com.autoMotiveMes.dto.system.GetUserPageDto;
-import com.autoMotiveMes.dto.auth.UserInfoResponseDto;
+import com.autoMotiveMes.dto.auth.UserInfoVo;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -35,7 +35,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     SysUser selectByPhone(@Param("phone") String phone);
 
     // 通过用户名获取用户详细信息
-    UserInfoResponseDto getUserInfoByUsername(@Param("username") String username);
+    UserInfoVo getUserInfoByUsername(@Param("username") String username);
 
     // 获取用户列表
     Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") GetUserPageDto dto);

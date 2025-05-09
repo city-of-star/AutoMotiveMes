@@ -1,7 +1,5 @@
 package com.autoMotiveMes.dto.equipment;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
  * @date 2025-04-19 18:08:18
  */
 @Data
-public class RealTimeAlarmResponseDto {
+public class RealTimeAlarmVo {
     private Long alarmId;
     private String alarmCode;
     private String alarmReason;

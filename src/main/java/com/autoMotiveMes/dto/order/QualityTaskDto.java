@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【质检任务DTO】
+ * 实现功能【质检任务】
  *
  * @author li.hongyu
  * @date 2025-04-27 14:56:00

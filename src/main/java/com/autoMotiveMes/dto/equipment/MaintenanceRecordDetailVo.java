@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @date 2025-04-21 20:25:51
  */
 @Data
-public class MaintenanceRecordDetailResponseDto {
+public class MaintenanceRecordDetailVo {
     // 维护基础信息
     private Long maintenanceId;
     private String maintenanceType;

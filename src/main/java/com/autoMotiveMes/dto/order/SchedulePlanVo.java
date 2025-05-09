@@ -6,13 +6,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 实现功能【排程计划响应DTO】
+ * 实现功能【排程计划响应】
  *
  * @author li.hongyu
  * @date 2025-04-24 10:07:59
  */
 @Data
-public class SchedulePlanDto {
+public class SchedulePlanVo {
     private Long scheduleId;
     private String orderNo;
     private String processName;

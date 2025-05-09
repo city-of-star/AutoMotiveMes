@@ -39,8 +39,8 @@ public class OrderServiceImpl implements OrderService {
     private final ProductionScheduleMapper scheduleMapper;
 
     @Override
-    public Page<ProductionOrderListDto> listOrders(ProductionOrderQueryDto dto) {
-        Page<ProductionOrderListDto> page = new Page<>(
+    public Page<ProductionOrderListVo> listOrders(ProductionOrderQueryDto dto) {
+        Page<ProductionOrderListVo> page = new Page<>(
                 dto.getPage() == null ? 1 : dto.getPage(),
                 dto.getSize() == null ? 10 : dto.getSize()
         );
@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ProductionOrderDetailDto getOrderDetail(Long orderId) {
+    public ProductionOrderDetailVo getOrderDetail(Long orderId) {
         return orderMapper.getOrderDetail(orderId);
     }
 

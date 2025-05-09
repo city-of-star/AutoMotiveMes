@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @date 2025-04-19 17:48:49
  */
 @Data
-public class HandleAlarmRequestDto {
+public class HandleAlarmDto {
     private Long alarmId;
     private String maintenanceContent;
     private String result;

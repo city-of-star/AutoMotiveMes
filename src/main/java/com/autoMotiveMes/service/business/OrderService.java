@@ -20,14 +20,14 @@ public interface OrderService {
      * @param dto 查询条件
      * @return 分页工单列表
      */
-    Page<ProductionOrderListDto> listOrders(ProductionOrderQueryDto dto);
+    Page<ProductionOrderListVo> listOrders(ProductionOrderQueryDto dto);
 
     /**
      * 根据工单id获取工单详情
      * @param orderId 工单id
      * @return 工单详情
      */
-    ProductionOrderDetailDto getOrderDetail(Long orderId);
+    ProductionOrderDetailVo getOrderDetail(Long orderId);
 
     /**
      * 创建工单

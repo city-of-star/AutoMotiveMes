@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025-04-20 11:48:27
  */
 @Data
-public class GetEquipmentCountResponseDto {
+public class GetEquipmentCountVo {
     private Integer normalEquipmentCount;
     private Integer onlineEquipmentCount;
 }

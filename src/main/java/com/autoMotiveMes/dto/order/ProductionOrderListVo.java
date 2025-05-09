@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2025-04-24 10:06:30
  */
 @Data
-public class ProductionOrderListDto {
+public class ProductionOrderListVo {
     private Long orderId;
     private String orderNo;
     private String productCode;

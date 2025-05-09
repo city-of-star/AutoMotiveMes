@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @date 2025-04-19 23:10:26
  */
 @Data
-public class AlarmHistoryResponseDto {
+public class AlarmHistoryVo {
     private Long alarmId;
     private String alarmCode;
     private String alarmReason;

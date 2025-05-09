@@ -1,9 +1,9 @@
 package com.autoMotiveMes.service.impl.business;
 
-import com.autoMotiveMes.dto.order.DailyOrderProgressDto;
-import com.autoMotiveMes.dto.order.DailyProductionDetailDto;
-import com.autoMotiveMes.dto.order.DailyProductionSummaryDto;
-import com.autoMotiveMes.dto.order.EquipmentDailyStatusDto;
+import com.autoMotiveMes.dto.order.DailyOrderProgressVo;
+import com.autoMotiveMes.dto.order.DailyProductionDetailVo;
+import com.autoMotiveMes.dto.order.DailyProductionSummaryVo;
+import com.autoMotiveMes.dto.order.EquipmentDailyStatusVo;
 import com.autoMotiveMes.mapper.equipment.EquipmentMapper;
 import com.autoMotiveMes.mapper.order.ProductionDailyReportMapper;
 import com.autoMotiveMes.service.business.DailyReportService;
@@ -30,10 +30,10 @@ public class DailyReportServiceImpl implements DailyReportService {
     private final EquipmentMapper equipmentMapper;
 
     @Override
-    public DailyProductionSummaryDto getDailySummary(LocalDate date) {
-        DailyProductionSummaryDto summary = productionDailyReportMapper.selectDailySummary(date);
+    public DailyProductionSummaryVo getDailySummary(LocalDate date) {
+        DailyProductionSummaryVo summary = productionDailyReportMapper.selectDailySummary(date);
         if (summary == null) {
-            summary = new DailyProductionSummaryDto();
+            summary = new DailyProductionSummaryVo();
             summary.setReportDate(date);
         }
 
@@ -45,18 +45,18 @@ public class DailyReportServiceImpl implements DailyReportService {
     }
 
     @Override
-    public Page<DailyProductionDetailDto> getDailyDetails(LocalDate date, Integer page, Integer size) {
-        Page<DailyProductionDetailDto> pageParam = new Page<>(page, size);
+    public Page<DailyProductionDetailVo> getDailyDetails(LocalDate date, Integer page, Integer size) {
+        Page<DailyProductionDetailVo> pageParam = new Page<>(page, size);
         return productionDailyReportMapper.selectDailyDetails(pageParam, date);
     }
 
     @Override
-    public List<DailyOrderProgressDto> getOrderProgress(LocalDate date) {
+    public List<DailyOrderProgressVo> getOrderProgress(LocalDate date) {
         return productionDailyReportMapper.selectOrderProgress(date);
     }
 
     @Override
-    public EquipmentDailyStatusDto getEquipmentStatusStats(LocalDate date) {
+    public EquipmentDailyStatusVo getEquipmentStatusStats(LocalDate date) {
         return productionDailyReportMapper.selectEquipmentStatusStats();
     }
 }

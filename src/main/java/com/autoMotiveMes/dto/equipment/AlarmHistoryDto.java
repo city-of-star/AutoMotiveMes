@@ -12,7 +12,7 @@ import java.time.LocalDate;
  * @date 2025-04-19 23:11:37
  */
 @Data
-public class AlarmHistoryRequestDto {
+public class AlarmHistoryDto {
     private Integer page;
     private Integer size;
     private String equipmentCode;

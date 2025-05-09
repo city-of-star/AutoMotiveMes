@@ -1,7 +1,7 @@
 package com.autoMotiveMes.controller.system;
 
 import com.autoMotiveMes.common.response.R;
-import com.autoMotiveMes.dto.system.SysPermissionTreeNode;
+import com.autoMotiveMes.dto.system.SysPermissionTreeNodeVo;
 import com.autoMotiveMes.service.system.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +26,7 @@ public class PermissionController {
 
     @GetMapping("/tree")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:role:list')")
-    public R<List<SysPermissionTreeNode>> getDeptTree() {
+    public R<List<SysPermissionTreeNodeVo>> getDeptTree() {
         return R.success(permissionService.getPermissionTree());
     }
 }

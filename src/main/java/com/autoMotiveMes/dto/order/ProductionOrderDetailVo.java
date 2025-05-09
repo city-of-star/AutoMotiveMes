@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 实现功能【工单详情出参】
@@ -13,7 +12,7 @@ import java.util.List;
  * @date 2025-04-24 10:07:00
  */
 @Data
-public class ProductionOrderDetailDto {
+public class ProductionOrderDetailVo {
     private Long orderId;
     private String orderNo;
     private String productCode;

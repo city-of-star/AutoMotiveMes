@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.autoMotiveMes.mapper.order.ProductionScheduleMapper">
-    <select id="listSchedules" resultType="com.autoMotiveMes.dto.order.SchedulePlanDto">
-        SELECT s.schedule_id, o.order_no, pd.process_name,
-               e.equipment_code, e.equipment_name,
-               s.planned_start_time, s.planned_end_time,
-               s.schedule_status, u.real_name AS operator_name
+    <select id="listSchedules" resultType="com.autoMotiveMes.dto.order.SchedulePlanVo">
+        SELECT s.schedule_id,
+               o.order_no,
+               pd.process_name,
+               e.equipment_code,
+               e.equipment_name,
+               s.planned_start_time,
+               s.planned_end_time,
+               s.schedule_status,
+               u.real_name AS operator_name
         FROM production_schedule s
                  JOIN production_order o ON s.order_id = o.order_id
                  JOIN process_definition pd ON s.process_id = pd.process_id
                  LEFT JOIN equipment e ON s.equipment_id = e.equipment_id
                  LEFT JOIN sys_user u ON s.operator = u.user_id
         WHERE s.order_id = #{orderId}
-        ORDER BY pd.sequence ASC
+        ORDER BY pd.sequence
     </select>
 
     <select id="countRunningSchedules" resultType="java.lang.Integer">
