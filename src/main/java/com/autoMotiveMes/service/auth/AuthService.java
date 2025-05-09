@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface AuthService {
     // 登录
-    AuthDto login(LoginDto loginDto);
+    AuthVo login(LoginDto loginDto);
 
     // 获取用户信息
     UserInfoVo getUserInfo();

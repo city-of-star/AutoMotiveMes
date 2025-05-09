@@ -401,7 +401,7 @@ const openEditDialog = () => {
 
 // 单个删除
 const handleSingleDelete = (row) => {
-  ElMessageBox.confirm('此操作将永久删除该角色，是否继续？', '警告', {
+  ElMessageBox.confirm('此操作将永久删除该角色，是否继续？', '系统提示', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning'

@@ -9,6 +9,6 @@ import lombok.Data;
  * @date 2025-02-15 16:39:39
  */
 @Data
-public class AuthDto {
+public class AuthVo {
     private String token;
 }

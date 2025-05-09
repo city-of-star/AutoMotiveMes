@@ -708,7 +708,7 @@ const submitEditUser = async () => {
 const search = async () => {
   try {
     loading.value = true
-    const res = await axios.post('/system/user/search', {
+    const res = await axios.post('/system/user/page', {
       page: currentPage.value,
       size: pageSize.value,
       ...searchData.value,

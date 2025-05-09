@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private final RedisTemplate<String, SysUser> userRedisTemplate;
 
     @Override
-    public AuthDto login(LoginDto loginDto) {
+    public AuthVo login(LoginDto loginDto) {
         // 验证用户的密码
         SysUser user = userMapper.selectByUsername(loginDto.getUsername());
         if (user == null || !passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
             String token = jwtUtils.generateToken(loginDto.getUsername());
 
             // 创建响应对象并设置角色和权限
-            AuthDto response = new AuthDto();
+            AuthVo response = new AuthVo();
             response.setToken(token);
 
             // 更新用户最后登录时间

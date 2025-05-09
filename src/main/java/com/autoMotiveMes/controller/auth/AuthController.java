@@ -21,9 +21,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public R<AuthDto> login(@RequestBody LoginDto loginDto) {
-        AuthDto authDto = authService.login(loginDto);
-        return R.success(authDto);
+    public R<AuthVo> login(@RequestBody LoginDto loginDto) {
+        AuthVo authVo = authService.login(loginDto);
+        return R.success(authVo);
     }
 
     @PostMapping("/info")
