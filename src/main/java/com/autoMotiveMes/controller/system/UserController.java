@@ -30,7 +30,7 @@ public class UserController {
      * @param dto 查询条件
      * @return 分页用户列表
      */
-    @PostMapping("/search")
+    @PostMapping("/page")
     @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:list')")
     public R<Page<SysUser>> getUserPage(@RequestBody GetUserPageDto dto) {
         return R.success(userService.getUserPage(dto));

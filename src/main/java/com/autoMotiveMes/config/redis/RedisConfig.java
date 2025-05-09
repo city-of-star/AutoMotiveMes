@@ -24,6 +24,27 @@ import java.text.SimpleDateFormat;
 @Configuration
 public class RedisConfig {
 
+    // 用户缓存配置
+    @Bean
+    public RedisTemplate<String, SysUser> userRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, SysUser> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // 配置 ObjectMapper 并注册 JavaTimeModule
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // 创建 JSON 序列化器
+        Jackson2JsonRedisSerializer<SysUser> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, SysUser.class);
+
+        template.setValueSerializer(serializer);
+        return template;
+    }
+
     // 设备缓存配置
     @Bean
     public RedisTemplate<String, EquipmentParameters> redisTemplate(RedisConnectionFactory factory) {
@@ -44,27 +65,6 @@ public class RedisConfig {
 
         template.setValueSerializer(serializer);
 
-        return template;
-    }
-
-    // 用户缓存配置
-    @Bean
-    public RedisTemplate<String, SysUser> userRedisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, SysUser> template = new RedisTemplate<>();
-        template.setConnectionFactory(factory);
-        template.setKeySerializer(new StringRedisSerializer());
-
-        // 配置 ObjectMapper 并注册 JavaTimeModule
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        // 创建 JSON 序列化器
-        Jackson2JsonRedisSerializer<SysUser> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, SysUser.class);
-
-        template.setValueSerializer(serializer);
         return template;
     }
 }
