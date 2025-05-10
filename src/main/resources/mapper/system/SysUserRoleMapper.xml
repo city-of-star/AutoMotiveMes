@@ -15,4 +15,17 @@
         WHERE user_id = #{userId}
     </select>
 
+    <!-- 批量插入用户角色 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO sys_user_role
+        (user_id, role_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.userId},
+            #{item.roleId}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

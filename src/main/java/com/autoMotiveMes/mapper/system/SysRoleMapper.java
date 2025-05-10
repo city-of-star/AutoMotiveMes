@@ -18,4 +18,7 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
     // 分页查询角色列表
     Page<SysRole> getRolePage(Page<SysRole> page, @Param("dto") GetRolePageDto dto);
+
+    // 根据角色名查询部门id
+    Integer getRoleIdByName(@Param("roleName") String roleName);
 }

@@ -133,6 +133,7 @@ const notices = ref([
   { time: '2025-04-10', content: '智能制造系统升级公告' },
   { time: '2025-04-08', content: '安全月生产规范培训通知' }
 ])
+
 </script>
 
 <style lang="scss" scoped>

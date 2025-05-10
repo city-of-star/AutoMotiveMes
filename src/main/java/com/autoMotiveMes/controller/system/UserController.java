@@ -5,12 +5,11 @@ import com.autoMotiveMes.common.response.R;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.service.system.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 实现功能【用户管理服务 controller】
@@ -105,5 +104,34 @@ public class UserController {
     public R<?> resetPassword(@RequestBody ResetPasswordDto dto) {
         userService.resetPassword(dto);
         return R.success();
+    }
+
+    /**
+     * 获取用户导入模板
+     */
+    @GetMapping("/getUserImportTemplate")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:import')")
+    public void getUserImportTemplate(HttpServletResponse response) {
+        userService.getUserImportTemplate(response);
+    }
+
+    /**
+     * 批量导入用户
+     */
+    @PostMapping("/batchImportUser")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:import')")
+    public R<?> batchImportUser(MultipartFile file) {
+        userService.batchImportUser(file);
+        return R.success();
+    }
+
+    /**
+     * 获取导出用户表格
+     * @param response http响应
+     */
+    @GetMapping("/exportUser")
+    @PreAuthorize("@rbacService.hasPermission(authentication, 'system:user:export')")
+    public void exportUser(HttpServletResponse response) {
+        userService.exportUser(response);
     }
 }

@@ -21,6 +21,11 @@ public enum ErrorCode {
     ROLE_IS_USE(30, "角色存在关联用户，无法删除"),
     ROLE_NAME_EXISTS(31, "角色名称已存在"),
     ROLE_CODE_EXISTS(32, "角色编码已存在"),
+    FILE_EMPTY(33, "上传文件为空"),
+    FILE_FORMAT_ERROR(34, "无法解析该类型的文件"),
+    IMPORT_TEMPLATE_ERROR(35, "导入模板错误"),
+    IMPORT_DATA_ERROR(36, "导入数据错误"),
+    ERROR_FIELD_TRANSFORMATION(37, "字段转换失败"),
 
     // 其他业务相关(400)
     INVALID_OPERATION(100, "非法操作"),

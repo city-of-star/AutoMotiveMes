@@ -132,10 +132,4 @@ public class OrderServiceImpl implements OrderService {
     public List<Product> listProduct() {
         return productMapper.selectList(null);
     }
-
-//    @Override
-//    public ProductionOrder getOriginalOrder(Long reworkOrderId) {
-//        return orderMapper.selectOne(new QueryWrapper<ProductionOrder>()
-//                .eq("rework_of", reworkOrderId));
-//    }
 }

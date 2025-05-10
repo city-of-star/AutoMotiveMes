@@ -7,7 +7,14 @@
         SELECT dept_id, dept_name, parent_id, order_num
         FROM sys_dept
         WHERE status = 1
-        ORDER BY order_num ASC
+        ORDER BY order_num
+    </select>
+
+    <!-- 根据部门名查询部门id -->
+    <select id="getDeptIdByName" resultType="java.lang.Long">
+        SELECT dept_id
+        FROM sys_dept
+        WHERE dept_name = #{deptName}
     </select>
 
 </mapper>

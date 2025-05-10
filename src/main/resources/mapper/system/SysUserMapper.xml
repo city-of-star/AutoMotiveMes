@@ -54,7 +54,7 @@
         WHERE u.username = #{username}
     </select>
 
-    <select id="selectUserList" resultType="com.autoMotiveMes.entity.system.SysUser">
+    <select id="searchUserPage" resultType="com.autoMotiveMes.entity.system.SysUser">
         SELECT
         u.user_id,
         u.username,
@@ -98,4 +98,51 @@
         ORDER BY u.create_time DESC
     </select>
 
+    <select id="getUserPage" resultType="com.autoMotiveMes.entity.system.SysUser">
+        SELECT
+        u.user_id,
+        u.username,
+        u.real_name,
+        u.sex,
+        d.dept_name,
+        p.post_name,
+        r.role_name,
+        u.email,
+        u.phone,
+        u.status,
+        u.account_locked,
+        u.login_attempts,
+        u.create_time,
+        u.update_time
+        FROM sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        LEFT JOIN sys_post p ON u.post_id = p.post_id
+        LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id
+        LEFT JOIN sys_role r ON r.role_id = ur.role_id
+    </select>
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user
+        (username, password, real_name, sex, dept_id, post_id, head_img, theme_color, email,
+         phone, status, account_locked, login_attempts, create_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.username},
+            #{item.password},
+            #{item.realName},
+            #{item.sex},
+            #{item.deptId},
+            #{item.postId},
+            #{item.headImg},
+            #{item.themeColor},
+            #{item.email},
+            #{item.phone},
+            #{item.status},
+            #{item.accountLocked},
+            #{item.loginAttempts},
+            #{item.createTime}
+            )
+        </foreach>
+    </insert>
 </mapper>

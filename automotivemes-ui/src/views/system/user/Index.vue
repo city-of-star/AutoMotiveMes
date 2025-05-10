@@ -383,6 +383,60 @@
     </span>
     </template>
   </el-dialog>
+
+  <!-- 导入用户对话框 -->
+  <el-dialog
+      v-model="importDialogVisible"
+      title="用户导入"
+      width="600px"
+  >
+    <!-- 模板下载按钮 -->
+    <template #header>
+      <div class="dialog-header">
+        <span>用户导入</span>
+        <el-button
+            type="primary"
+            link
+            @click="downloadTemplate"
+            :disabled="!hasPermission('system:user:import')"
+        >
+          下载模板
+        </el-button>
+      </div>
+    </template>
+
+    <!-- 上传区域 -->
+    <el-upload
+        class="upload-container"
+        drag
+        :action="baseUrl+'/system/user/batchImportUser'"
+        method="post"
+        :headers="{ Authorization: `Bearer ${store.state.user.token}` }"
+        :before-upload="beforeUpload"
+        :on-success="handleSuccess"
+        :on-error="handleError"
+        :on-progress="(e) => uploading = e.percent < 100"
+        :disabled="uploading"
+    >
+      <el-icon class="el-icon--upload"><upload /></el-icon>
+      <div class="el-upload__text">
+        将文件拖到此处，或<em>点击上传</em>
+      </div>
+      <div class="el-upload__tip" v-html="uploadTips"></div>
+    </el-upload>
+
+    <!-- 操作按钮 -->
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="importDialogVisible = false">取消</el-button>
+        <el-button
+            type="primary"
+            @click="submitUpload"
+            :loading="uploading"
+        >确定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -761,10 +815,129 @@ const handleDeptNodeClick = (data) => {
 }
 
 /* 导入导出功能 */
-const importUsers = () => ElMessage.error('尚未实现此功能')
-const exportUsers = () => ElMessage.error('尚未实现此功能')
+const baseUrl = window.CONFIG.api.baseURL;
+const importDialogVisible = ref(false)
+const uploading = ref(false)
+// 上传提示信息
+const uploadTips = computed(() => `
+  支持扩展名：<span style="color: #409EFF; margin: 0 4px">.xlsx</span>
+  文件大小限制：<span style="color: #409EFF;">10MB</span><br/>
+  模板说明：<span style="color: #67C23A;">请使用下载的模板填写数据，保持表头顺序不变</span>
+`)
+const importUsers = () => {
+  importDialogVisible.value = true
+}
+// 下载模板
+const downloadTemplate = async () => {
+  try {
+    const response = await axios.get('/system/user/getUserImportTemplate', {
+      responseType: 'blob', // 指定响应类型为二进制流
+      headers: {
+        Authorization: `Bearer ${store.state.user.token}`  // 携带认证token
+      }
+    });
 
-// 操作栏三个按钮的功能实现
+    // 创建临时下载链接
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+
+    // 从响应头中获取文件名
+    const fileName = response.headers['content-disposition']
+        ?.split('filename=')[1]
+        ?.replace(/"/g, '') || '用户导入模板.xlsx';
+
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    // 清理资源
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('模板下载失败:', error);
+    ElMessage.error('模板下载失败，请检查权限或稍后重试');
+  }
+}
+
+// 文件上传前校验
+const beforeUpload = (file) => {
+  const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  const isSizeValid = file.size / 1024 / 1024 < 10
+
+  if (!isExcel) {
+    ElMessage.error('仅支持.xlsx格式文件')
+    return false
+  }
+  if (!isSizeValid) {
+    ElMessage.error('文件大小不能超过10MB')
+    return false
+  }
+  return true
+}
+
+// 提交上传
+const submitUpload = () => {
+  // 触发el-upload的内部上传
+  const uploadElement = document.querySelector('.upload-container .el-upload__input')
+  uploadElement?.click()
+}
+
+// 上传成功处理
+const handleSuccess = (response) => {
+  uploading.value = false
+  if (response.code === 200) {
+    ElMessage.success('用户导入成功')
+    importDialogVisible.value = false
+    // 刷新用户列表
+    search()
+  } else {
+    ElMessage.error(response.msg || '导入失败')
+  }
+}
+
+// 上传错误处理
+const handleError = (error) => {
+  uploading.value = false
+  ElMessage.error(error.message || '上传失败，请检查网络连接')
+}
+
+const exportUsers = async () => {
+  try {
+    const response = await axios.get('/system/user/exportUser', {
+      responseType: 'blob',
+      headers: {
+        Authorization: `Bearer ${store.state.user.token}`
+      }
+    });
+
+    // 创建临时下载链接
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+
+    // 从响应头获取文件名（完全遵循后端定义）
+    const fileName = response.headers['content-disposition']
+            ?.split('filename=')[1]
+            ?.replace(/"/g, '')
+        || '用户数据导出.xlsx'; // 后备默认文件名
+
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    // 清理资源
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success('导出成功');
+  } catch (error) {
+    console.error('导出失败:', error);
+    ElMessage.error('导出失败，请检查权限或稍后再试');
+  }
+};
+
+/* 操作栏三个按钮的功能实现 */
 const handleEditUser = async (row) => {
   try {
     const res = await axios.post('/system/user/getInfo', { userId: row.userId })
@@ -870,5 +1043,35 @@ onMounted(() => {
 
 .table-container {
   margin-top: 10px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.upload-container {
+  text-align: center;
+  padding: 20px;
+}
+
+:deep(.el-upload-dragger) {
+  padding: 40px 20px;
+  background-color: #fafafa;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+:deep(.el-upload-dragger:hover) {
+  border-color: #409EFF;
+}
+
+.el-upload__tip {
+  margin-top: 15px;
+  color: #909399;
+  line-height: 1.6;
 }
 </style>

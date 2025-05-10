@@ -2,10 +2,10 @@ package com.autoMotiveMes.mapper.system;
 
 import com.autoMotiveMes.entity.system.SysUserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 实现功能【用户角色关联表 mapper】
@@ -21,4 +21,7 @@ public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
 
     // 根据用户ID查询关联
     SysUserRole selectByUserId(@Param("userId") Long userId);
+
+    // 批量插入用户角色
+    void insertBatch(@Param("list") List<SysUserRole> list);
 }

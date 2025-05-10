@@ -38,7 +38,7 @@ public class SysUser {
     /**
      * 用户的性别
      */
-    private String sex;
+    private Integer sex;
     /**
      * 用户的系统主题色
      */
@@ -52,10 +52,25 @@ public class SysUser {
      */
     private Long postId;
     /**
+     * 用户所属的角色id
+     */
+    @TableField(exist = false)
+    private Integer roleId;
+    /**
+     * 用户所属的角色名称
+     */
+    @TableField(exist = false)
+    private String roleName;
+    /**
      * 用户所属的部门名称
      */
     @TableField(exist = false)
     private String deptName;
+    /**
+     * 用户所属的岗位名称
+     */
+    @TableField(exist = false)
+    private String postName;
     /**
      * 用户的头像url
      */

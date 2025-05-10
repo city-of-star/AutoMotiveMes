@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -26,10 +25,5 @@ public interface ProductionRecordMapper extends BaseMapper<ProductionRecord> {
 
     List<ProductionRecord> selectUncheckedRecords(Page<ProductionRecord> page);
 
-    @Select("SELECT " +
-            " SUM(output_quantity) AS totalOutput, " +
-            " SUM(output_quantity - defective_quantity) AS qualified " +
-            "FROM production_record " +
-            "WHERE DATE(start_time) = CURDATE()")
     ProductionStatisticsVo selectTodayStatistics();
 }

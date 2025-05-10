@@ -22,4 +22,11 @@
         ORDER BY role_id ASC
     </select>
 
+    <select id="getRoleIdByName" resultType="java.lang.Integer">
+        SELECT
+            role_id
+        FROM sys_role
+        WHERE role_name = #{roleName}
+    </select>
+
 </mapper>

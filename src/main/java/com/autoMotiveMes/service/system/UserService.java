@@ -3,6 +3,8 @@ package com.autoMotiveMes.service.system;
 import com.autoMotiveMes.dto.system.*;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 实现功能【用户管理服务接口】
@@ -55,4 +57,21 @@ public interface UserService {
      * @param dto 密码重置参数（用户ID和新密码）
      */
     void resetPassword(ResetPasswordDto dto);
+
+    /**
+     * 获取用户导入模板
+     * @param response http响应
+     */
+    void getUserImportTemplate(HttpServletResponse response);
+
+    /**
+     * 批量导入用户
+     */
+    void batchImportUser(MultipartFile file);
+
+    /**
+     * 导出用户
+     * @param response http响应
+     */
+    void exportUser(HttpServletResponse response);
 }

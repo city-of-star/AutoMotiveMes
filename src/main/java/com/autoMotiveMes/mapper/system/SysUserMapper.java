@@ -37,6 +37,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     // 通过用户名获取用户详细信息
     UserInfoVo getUserInfoByUsername(@Param("username") String username);
 
-    // 获取用户列表
-    Page<SysUser> selectUserList(Page<SysUser> page, @Param("query") GetUserPageDto dto);
+    // 分页查询用户列表
+    Page<SysUser> searchUserPage(Page<SysUser> page, @Param("query") GetUserPageDto dto);
+
+    // 分页获取用户列表
+    Page<SysUser> getUserPage(Page<SysUser> page);
+
+    // 批量插入用户
+    void insertBatch(@Param("list") List<SysUser> list);
 }

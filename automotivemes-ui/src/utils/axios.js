@@ -24,11 +24,33 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     response => {
-        // 直接返回数据
-        return response.data.data;
+        // 文件下载特殊处理（根据Content-Type判断）
+        const contentType = response.headers['content-type']
+        const isFileDownload = [
+            'application/octet-stream',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/zip'
+        ].some(type => contentType.includes(type))
+
+        // 如果是文件下载响应，返回完整response对象
+        if (isFileDownload) {
+            return {
+                data: response.data,
+                headers: response.headers,
+                status: response.status
+            }
+        }
+
+        // 普通JSON数据返回处理后的数据
+        return response.data.data
     },
     error => {
-        // 统一错误处理
+        // 文件下载错误处理
+        if (error.config?.responseType === 'blob') {
+            return handleBlobError(error)
+        }
+
+        // 其他错误处理
         if (error.response) {
             const httpStatus = error.response.status
             const res = error.response.data
@@ -92,6 +114,25 @@ function handleUnauthorized() {
             query: { redirect: router.currentRoute.value.fullPath }
         })
     })
+}
+
+// Blob错误处理方法
+async function handleBlobError(error) {
+    try {
+        // 尝试读取错误信息（适用于后端返回JSON错误的情况）
+        const reader = new FileReader()
+        const blob = error.response.data
+        const text = await new Promise((resolve) => {
+            reader.onload = () => resolve(reader.result)
+            reader.readAsText(blob)
+        })
+
+        const result = JSON.parse(text)
+        ElMessage.error(result.msg || '文件下载失败')
+    } catch (e) {
+        ElMessage.error('文件下载失败，请检查权限或网络')
+    }
+    return Promise.reject(error)
 }
 
 export default service
