@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.autoMotiveMes.mapper.system.SysPostMapper">
+
+    <!-- 根据岗位名查询部门id -->
+    <select id="getPostIdByName" resultType="java.lang.Long">
+        SELECT post_id
+        FROM sys_post
+        WHERE post_name = #{postName}
+    </select>
+
+</mapper>
