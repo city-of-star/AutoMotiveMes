@@ -265,7 +265,7 @@ public class UserServiceImpl implements UserService {
 
             // ==================== 标题行 ====================
             String[] headers = {"用户名", "真实姓名", "性别(男/女)", "部门名称", "岗位名称",
-                    "角色名称", "邮箱", "联系电话", "状态(0:禁用 1:启用)", "锁定状态(0:已锁定;1:未锁定)"};
+                    "角色名称", "邮箱", "联系电话"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -284,8 +284,6 @@ public class UserServiceImpl implements UserService {
                     roles.stream().map(SysRole::getRoleName).findFirst().orElse(""),  // 第一个角色
                     "test@example.com",
                     "13800138000",
-                    "1",
-                    "1"
             };
             for (int i = 0; i < exampleData.length; i++) {
                 Cell cell = exampleRow.createCell(i);
@@ -464,22 +462,6 @@ public class UserServiceImpl implements UserService {
                     }
                     temp.setPhone(phone);
 
-                    // 是否启用（选填）
-                    if (getCellValue(row, headerMap, "状态(0:禁用 1:启用)", String.class) != null) {
-                        temp.setStatus(Integer.valueOf(Objects.requireNonNull(
-                                getCellValue(row, headerMap, "状态(0:禁用 1:启用)", String.class))));
-                    } else {
-                        temp.setStatus(1);  // 默认启用
-                    }
-
-                    // 是否锁定（选填）
-                    if (getCellValue(row, headerMap, "锁定状态(0:已锁定;1:未锁定)", String.class) != null) {
-                        temp.setAccountLocked(Integer.valueOf(Objects.requireNonNull(
-                                getCellValue(row, headerMap, "锁定状态(0:已锁定;1:未锁定)", String.class))));
-                    } else {
-                        temp.setAccountLocked(1);  // 默认未锁定
-                    }
-
                     SysUser user = new SysUser();
                     user.setUsername(temp.getUsername());
                     user.setPassword(passwordEncoder.encode(CommonConstant.DEFAULT_PASSWORD));  // 默认密码
@@ -491,14 +473,9 @@ public class UserServiceImpl implements UserService {
                     }
                     user.setDeptId(deptId);
                     user.setPostId(postId);
-                    user.setHeadImg(CommonConstant.HEAD_IMG_URL);
-                    user.setThemeColor(CommonConstant.DEFAULT_THEME_COLOR);
                     user.setRoleId(roleId);
                     user.setEmail(email);
                     user.setPhone(phone);
-                    user.setStatus(temp.getStatus());
-                    user.setAccountLocked(temp.getAccountLocked());
-                    user.setLoginAttempts(0);
                     user.setCreateTime(LocalDateTime.now());
                     userList.add(user);
 

@@ -44,7 +44,7 @@ const routes  = [
   {
     path: '/scheduling/plan/:orderId',
     name: 'scheduling-plan',
-    component: () => import('@/views/scheduling/plan/Index.vue'),
+    component: () => import('@/views/production/plan/Index.vue'),
     meta: { title: '排程计划', },
   }
 ]
@@ -79,45 +79,48 @@ const asyncRoutes = [
         component: () => import('@/views/system/post/Index.vue'),
         meta: { permissions: 'system:post:manage', title: '岗位管理', icon: 'BriefcaseIcon' },
       },
-    ]
-  },
-  {
-    path: '/production',
-    meta: { permissions: 'production:monitor', title: '生产监控', icon: 'BuildingOfficeIcon' },
-    children: [
       {
-        path: '/production/real-time',
-        name: 'real-time-monitor',
-        component: () => import('@/views/production/real-time/Index.vue'),
+        path: '/system/alarm/config',
+        name: 'alarm-config',
+        component: () => import('@/views/system/alarm/Index.vue'),
         meta: {
-          permissions: 'production:monitor:real-time',
-          title: '实时监控',
-          icon: 'ChartBarIcon',
-          keepAlive: false
+          permissions: 'system:alarm:config',
+          title: '报警配置',
+          icon: 'ArchiveBoxIcon'
         },
       },
     ]
   },
   {
-    path: '/scheduling',
-    meta: { permissions: 'scheduling:manage', title: '生产排程', icon: 'CalendarIcon' },
+    path: '/monitor',
+    name: 'monitor',
+    component: () => import('@/views/monitor/Index.vue'),
+    meta: {
+      permissions: 'monitor',
+      title: '生产监控',
+      icon: 'BuildingOfficeIcon'
+    }
+  },
+  {
+    path: '/production',
+    meta: { permissions: 'production:manage', title: '生产排程', icon: 'CalendarIcon' },
     children: [
       {
-        path: '/scheduling/orders',
-        name: 'work-order',
-        component: () => import('@/views/scheduling/orders/Index.vue'),
+        path: '/production/order/manage',
+        name: 'production-order-manage',
+        component: () => import('@/views/production/order/Index.vue'),
         meta: {
-          permissions: 'scheduling:order:manage',
+          permissions: 'production:order:manage',
           title: '工单管理',
           icon: 'ClipboardDocumentListIcon'
         },
       },
       {
-        path: '/scheduling/production/record/',
-        name: 'production-record',
-        component: () => import('@/views/scheduling/record/Index.vue'),
+        path: '/production/record/view',
+        name: 'production-record-view',
+        component: () => import('@/views/production/record/Index.vue'),
         meta: {
-          permissions: 'scheduling:production:record',
+          permissions: 'production:record:view',
           title: '生产记录',
           icon: 'TableCellsIcon'
         },
@@ -129,8 +132,8 @@ const asyncRoutes = [
     meta: { permissions: 'equipment:manage', title: '设备管理', icon: 'CpuChipIcon' },
     children: [
       {
-        path: '/equipment/status',
-        name: 'equipment-status',
+        path: '/equipment/status/view',
+        name: 'equipment-status-view',
         component: () => import('@/views/equipment/status/Index.vue'),
         meta: {
           permissions: 'equipment:status:view',
@@ -139,11 +142,11 @@ const asyncRoutes = [
         },
       },
       {
-        path: '/equipment/maintenance',
-        name: 'equipment-maintenance',
+        path: '/equipment/maintenance/view',
+        name: 'equipment-maintenance-view',
         component: () => import('@/views/equipment/maintenance/Index.vue'),
         meta: {
-          permissions: 'equipment:maintenance:manage',
+          permissions: 'equipment:maintenance:view',
           title: '维护记录',
           icon: 'WrenchScrewdriverIcon'
         },
@@ -155,11 +158,11 @@ const asyncRoutes = [
     meta: { permissions: 'quality:manage', title: '质量管理', icon: 'ShieldCheckIcon' },
     children: [
       {
-        path: '/quality/inspection',
-        name: 'quality-inspection',
+        path: '/quality/inspection/view',
+        name: 'quality-inspection-view',
         component: () => import('@/views/quality/inspection/Index.vue'),
         meta: {
-          permissions: 'quality:manage:inspection',
+          permissions: 'quality:inspection:view',
           title: '质检检测',
           icon: 'MagnifyingGlassIcon'
         },
@@ -190,25 +193,15 @@ const asyncRoutes = [
           icon: 'ArchiveBoxIcon'
         },
       },
-      {
-        path: '/alarm/rule',
-        name: 'alarm-rule',
-        component: () => import('@/views/alarm/rule/Index.vue'),
-        meta: {
-          permissions: 'alarm:rule:config',
-          title: '配置规则',
-          icon: 'ArchiveBoxIcon'
-        },
-      },
     ]
   },
   {
     path: '/report',
-    meta: { permissions: 'report:view', title: '生产报表', icon: 'DocumentChartBarIcon' },
+    meta: { permissions: 'report:manage', title: '生产报表', icon: 'DocumentChartBarIcon' },
     children: [
       {
-        path: '/report/daily',
-        name: 'daily-report',
+        path: '/report/daily/view',
+        name: 'daily-report-view',
         component: () => import('@/views/report/daily/Index.vue'),
         meta: {
           permissions: 'report:daily:view',
@@ -217,8 +210,8 @@ const asyncRoutes = [
         },
       },
       {
-        path: '/report/quality',
-        name: 'quality-report',
+        path: '/report/quality/view',
+        name: 'quality-report-view',
         component: () => import('@/views/report/quality/Index.vue'),
         meta: {
           permissions: 'report:quality:view',

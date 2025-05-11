@@ -134,7 +134,7 @@ const formatTime = (time) => {
 
 // 页面操作
 const goBack = () => {
-  router.push('/scheduling/orders')
+  router.push({name: "production-order-manage"})
 }
 
 const refresh = () => {
