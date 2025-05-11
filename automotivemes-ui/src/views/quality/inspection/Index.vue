@@ -79,7 +79,7 @@
 
       <el-table-column label="检验时间" width="180" align="center">
         <template #default="{ row }">
-          {{ formatTime(row.inspectionData) }}
+          {{ formatTime(row.inspectionTime) }}
         </template>
       </el-table-column>
 

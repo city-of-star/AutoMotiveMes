@@ -18,5 +18,5 @@ public class QualityTaskDto {
     private String processName;
     private String inspectionItems;  // 质检项名称
     private Integer taskStatus;  // 1-待检验 2-检验中 3-已完成
-    private LocalDateTime inspectionData;
+    private LocalDateTime inspectionTime;
 }

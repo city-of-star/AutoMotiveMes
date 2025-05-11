@@ -159,7 +159,7 @@
         <pre class="content-pre">{{ currentDetail.maintenanceContent }}</pre>
       </el-descriptions-item>
       <el-descriptions-item label="维护结果" :span="2">{{ currentDetail.result }}</el-descriptions-item>
-      <el-descriptions-item label="维护成本">{{ currentDetail.cost ? currentDetail.cost.toFixed(2)+'元' : '--' }}</el-descriptions-item>
+      <el-descriptions-item label="维护成本">{{ currentDetail.cost != null ? currentDetail.cost.toFixed(2)+'元' : '--' }}</el-descriptions-item>
       <el-descriptions-item label="上次维护">{{ currentDetail.lastMaintenanceDate || '暂无记录' }}</el-descriptions-item>
     </el-descriptions>
   </el-dialog>
