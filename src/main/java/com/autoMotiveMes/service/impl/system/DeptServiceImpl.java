@@ -29,6 +29,11 @@ public class DeptServiceImpl implements DeptService {
         return buildTree(depts);
     }
 
+    @Override
+    public List<SysDept> getDeptList() {
+        return sysDeptMapper.selectList(null);
+    }
+
     private List<SysDeptTreeNodeVo> buildTree(List<SysDept> depts) {
         Map<Long, SysDeptTreeNodeVo> nodeMap = new LinkedHashMap<>();
 

@@ -238,7 +238,7 @@ public class UserServiceImpl implements UserService {
         try {
             // 获取动态数据
             List<SysRole> roles = roleService.getRoleList();
-            List<SysDeptTreeNodeVo> depts = deptService.getDeptTree();
+            List<SysDept> depts = deptService.getDeptList();
             List<SysPost> posts = postService.getPostList();
 
             // 创建工作簿
@@ -251,30 +251,17 @@ public class UserServiceImpl implements UserService {
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
             headerFont.setColor(IndexedColors.WHITE.getIndex());
-            headerFont.setFontHeightInPoints((short) 12);
             headerStyle.setFont(headerFont);
             headerStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            headerStyle.setAlignment(HorizontalAlignment.CENTER);
-            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            headerStyle.setBorderTop(BorderStyle.THIN);
-            headerStyle.setBorderBottom(BorderStyle.THIN);
-            headerStyle.setBorderLeft(BorderStyle.THIN);
-            headerStyle.setBorderRight(BorderStyle.THIN);
-            headerStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            headerStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-            headerStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-            headerStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);      // 水平居中[3,7](@ref)
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中[3,7](@ref)
 
-            // 正文样式（居中对齐+自动换行+全边框）
+            // 数据行样式（白底黑字+居中+自动换行）
             CellStyle bodyStyle = workbook.createCellStyle();
-            bodyStyle.cloneStyleFrom(headerStyle);  // 继承边框配置
-            bodyStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex()); // 白底
-            // 重置字体样式
-            Font bodyFont = workbook.createFont();
-            bodyFont.setColor(IndexedColors.BLACK.getIndex());
-            bodyStyle.setFont(bodyFont);
-            bodyStyle.setWrapText(true);
+            bodyStyle.setAlignment(HorizontalAlignment.CENTER);       // 水平居中[7](@ref)
+            bodyStyle.setVerticalAlignment(VerticalAlignment.CENTER);  // 垂直居中[7](@ref)
+            bodyStyle.setWrapText(true);                              // 自动换行[5](@ref)
 
             // ==================== 标题行 ====================
             String[] headers = {"用户名", "真实姓名", "性别(男/女)", "部门名称", "岗位名称",
@@ -292,7 +279,7 @@ public class UserServiceImpl implements UserService {
                     "test_user",
                     "测试用户",
                     "男",
-                    flattenDeptTree(depts)[0],  // 取第一个部门
+                    depts.stream().map(SysDept::getDeptName).findFirst().orElse(""),  // 取第一个部门
                     posts.stream().map(SysPost::getPostName).findFirst().orElse(""),  // 第一个岗位
                     roles.stream().map(SysRole::getRoleName).findFirst().orElse(""),  // 第一个角色
                     "test@example.com",
@@ -334,7 +321,7 @@ public class UserServiceImpl implements UserService {
             // ==================== 数据验证 ====================
             DataValidationHelper helper = sheet.getDataValidationHelper();
             // 部门下拉（从第2行开始，索引从0开始）
-            addValidation(sheet, helper, flattenDeptTree(depts), 3);
+            addValidation(sheet, helper, depts.stream().map(SysDept::getDeptName).toArray(String[]::new), 3);
             // 岗位下拉
             addValidation(sheet, helper, posts.stream().map(SysPost::getPostName).toArray(String[]::new), 4);
             // 角色下拉
@@ -690,22 +677,6 @@ public class UserServiceImpl implements UserService {
             }
         } catch (ClassCastException | NumberFormatException e) {
             throw new BusinessException(ErrorCode.ERROR_FIELD_TRANSFORMATION, "字段[" + fieldName + "]转换失败: " + e.getMessage());
-        }
-    }
-
-    // 展平部门树结构
-    private String[] flattenDeptTree(List<SysDeptTreeNodeVo> depts) {
-        List<String> result = new ArrayList<>();
-        flattenDeptTreeHelper(depts, result);
-        return result.toArray(new String[0]);
-    }
-
-    private void flattenDeptTreeHelper(List<SysDeptTreeNodeVo> nodes, List<String> result) {
-        for (SysDeptTreeNodeVo node : nodes) {
-            result.add(node.getDeptName());
-            if (node.getChildren() != null && !node.getChildren().isEmpty()) {
-                flattenDeptTreeHelper(node.getChildren(), result);
-            }
         }
     }
 
