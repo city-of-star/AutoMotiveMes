@@ -916,11 +916,11 @@ const exportUsers = async () => {
     const link = document.createElement('a');
     link.href = url;
 
-    // 从响应头获取文件名（完全遵循后端定义）
+    // 从响应头获取文件名
     const fileName = response.headers['content-disposition']
             ?.split('filename=')[1]
             ?.replace(/"/g, '')
-        || '用户数据导出.xlsx'; // 后备默认文件名
+        || '用户数据导出.xlsx';  // 后备默认文件名
 
     link.setAttribute('download', fileName);
     document.body.appendChild(link);

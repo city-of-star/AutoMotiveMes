@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -544,79 +545,104 @@ public class UserServiceImpl implements UserService {
     @Override
     public void exportUser(HttpServletResponse response) {
         SXSSFWorkbook workbook = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         try {
-            // 创建流式工作簿（限制内存中保留1000行，超出部分写入临时文件）
+            // 创建流式工作簿（内存保留1000行，其他写入临时文件）
             workbook = new SXSSFWorkbook(1000);
             SXSSFSheet sheet = workbook.createSheet("用户数据");
 
-            // 设置响应头（参
-            String fileName = URLEncoder.encode("用户数据导出_"+System.currentTimeMillis()+".xlsx", StandardCharsets.UTF_8)
-                    .replaceAll("\\+", "%20");
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment;filename*=UTF-8''" + fileName);
+            // ==================== 样式定义 ====================
+            // 表头样式（深蓝背景+白色粗体+居中）
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.WHITE.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);      // 水平居中[3,7](@ref)
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中[3,7](@ref)
 
-            // 创建表头
-            String[] headers = {
-                    "用户ID", "用户名", "真实姓名", "性别", "部门", "岗位", "角色", "状态",
-                    "账户锁定状态", "登录尝试次数", "手机号", "邮箱", "创建时间", "更新时间"
-            };
+            // 数据行样式（白底黑字+居中+自动换行）
+            CellStyle bodyStyle = workbook.createCellStyle();
+            bodyStyle.setAlignment(HorizontalAlignment.CENTER);       // 水平居中[7](@ref)
+            bodyStyle.setVerticalAlignment(VerticalAlignment.CENTER);  // 垂直居中[7](@ref)
+            bodyStyle.setWrapText(true);                              // 自动换行[5](@ref)
+
+            // ==================== 表头创建 ====================
+            String[] headers = {"用户ID", "用户名", "真实姓名", "性别", "部门", "岗位", "角色", "状态",
+                    "账户锁定状态", "登录尝试次数", "手机号", "邮箱", "创建时间", "更新时间"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
-                headerRow.createCell(i).setCellValue(headers[i]);
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);  // 应用表头样式[3,7](@ref)
             }
 
-            // 分页参数
+            // ==================== 数据写入 ====================
             int pageSize = 1000;
             int currentPage = 1;
             long total;
-            int rowNum = 1; // 数据起始行
+            int rowNum = 1;
 
             do {
-                // 构建分页查询参数
                 Page<SysUser> page = userMapper.getUserPage(new Page<>(currentPage, pageSize));
                 List<SysUser> users = page.getRecords();
                 total = page.getTotal();
 
-                // 写入数据行
                 for (SysUser user : users) {
                     Row dataRow = sheet.createRow(rowNum++);
-                    dataRow.createCell(0).setCellValue(user.getUserId());
-                    dataRow.createCell(1).setCellValue(user.getUsername());
-                    dataRow.createCell(2).setCellValue(user.getRealName());
-                    dataRow.createCell(3).setCellValue(user.getSex() == 1 ? "男" : "女");
-                    dataRow.createCell(4).setCellValue(user.getDeptName());
-                    dataRow.createCell(5).setCellValue(user.getPostName());
-                    dataRow.createCell(6).setCellValue(user.getRoleName());
-                    dataRow.createCell(7).setCellValue(user.getStatus() == 1 ? "启用" : "禁用");
-                    dataRow.createCell(8).setCellValue(user.getAccountLocked() == 1 ? "未锁定" : "已锁定");
-                    dataRow.createCell(9).setCellValue(user.getLoginAttempts());
-                    dataRow.createCell(10).setCellValue(user.getPhone());
-                    dataRow.createCell(11).setCellValue(user.getEmail());
-                    dataRow.createCell(12).setCellValue(user.getCreateTime());
-                    dataRow.createCell(13).setCellValue(user.getUpdateTime());
+                    // 应用数据行样式到所有单元格
+                    for (int i = 0; i < headers.length; i++) {
+                        Cell cell = dataRow.createCell(i);
+                        cell.setCellStyle(bodyStyle);  // 统一应用正文样式[3,7](@ref)
+                    }
+
+                    // 数据填充（保持原有逻辑）
+                    dataRow.getCell(0).setCellValue(user.getUserId());
+                    dataRow.getCell(1).setCellValue(user.getUsername());
+                    dataRow.getCell(2).setCellValue(user.getRealName());
+                    dataRow.getCell(3).setCellValue(user.getSex() == 1 ? "男" : "女");
+                    dataRow.getCell(4).setCellValue(user.getDeptName());
+                    dataRow.getCell(5).setCellValue(user.getPostName());
+                    dataRow.getCell(6).setCellValue(user.getRoleName());
+                    dataRow.getCell(7).setCellValue(user.getStatus() == 1 ? "启用" : "禁用");
+                    dataRow.getCell(8).setCellValue(user.getAccountLocked() == 1 ? "未锁定" : "已锁定");
+                    dataRow.getCell(9).setCellValue(user.getLoginAttempts());
+                    dataRow.getCell(10).setCellValue(user.getPhone());
+                    dataRow.getCell(11).setCellValue(user.getEmail());
+                    if (user.getCreateTime() != null) {
+                        dataRow.getCell(12).setCellValue(user.getCreateTime().format(formatter));
+                    }
+                    if (user.getUpdateTime() != null) {
+                        dataRow.getCell(13).setCellValue(user.getUpdateTime().format(formatter));
+                    }
                 }
-
                 currentPage++;
-            } while (currentPage <= (total + pageSize - 1) / pageSize);  // 分页计算
+            } while (currentPage <= (total + pageSize - 1) / pageSize);
 
-            // 自适应列宽
-            sheet.trackAllColumnsForAutoSizing(); // 显式跟踪所有列
+            // ==================== 列宽优化 ====================
+            sheet.trackAllColumnsForAutoSizing();
             for (int i = 0; i < headers.length; i++) {
-                sheet.autoSizeColumn(i);  // 自动调整列宽
-                // 针对中文的手动补偿
+                sheet.autoSizeColumn(i);
+                // 中文列宽补偿（增加2个汉字宽度）
                 int columnWidth = sheet.getColumnWidth(i) + 2 * 256 * 2;
-                sheet.setColumnWidth(i, Math.min(columnWidth, 255 * 256));
+                sheet.setColumnWidth(i, Math.min(columnWidth, 255 * 256));  // 最大列宽限制[5](@ref)
             }
 
-            // 流式写入响应
+            // ==================== 响应输出 ====================
+            String fileName = URLEncoder.encode("用户数据导出_"+System.currentTimeMillis()+".xlsx",
+                    StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment;filename*=UTF-8''" + fileName);
             workbook.write(response.getOutputStream());
+
         } catch (Exception e) {
             throw new ServerException("用户数据导出失败: " + e.getMessage());
         } finally {
-            // 释放资源
             if (workbook != null) {
-                workbook.dispose();  // 删除临时文件
+                workbook.dispose();  // 删除临时文件[6](@ref)
                 try { workbook.close(); } catch (IOException ignored) {}
             }
         }
@@ -640,8 +666,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 通用单元格值获取方法（支持空值处理）
-    private <T> T getCellValue(Row row, Map<String, Integer> headerMap,
-                               String fieldName, Class<T> clazz) {
+    private <T> T getCellValue(Row row, Map<String, Integer> headerMap, String fieldName, Class<T> clazz) {
         // 获取列索引
         Integer colIndex = headerMap.get(fieldName);
         if (colIndex == null) {
@@ -706,6 +731,7 @@ public class UserServiceImpl implements UserService {
         sheet.addValidationData(validation);
     }
 
+    // 用于映射用户上传的导入数据
     @Data
     public static class SysUserTemp {
         private String username;
