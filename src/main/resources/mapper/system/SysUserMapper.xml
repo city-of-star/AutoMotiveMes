@@ -123,25 +123,18 @@
 
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO sys_user
-        (username, password, real_name, sex, dept_id, post_id, head_img, theme_color, email,
-         phone, status, account_locked, login_attempts, create_time)
+        (username, real_name, sex, dept_id, post_id, email,
+         phone)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
             #{item.username},
-            #{item.password},
             #{item.realName},
             #{item.sex},
             #{item.deptId},
             #{item.postId},
-            #{item.headImg},
-            #{item.themeColor},
             #{item.email},
-            #{item.phone},
-            #{item.status},
-            #{item.accountLocked},
-            #{item.loginAttempts},
-            #{item.createTime}
+            #{item.phone}
             )
         </foreach>
     </insert>

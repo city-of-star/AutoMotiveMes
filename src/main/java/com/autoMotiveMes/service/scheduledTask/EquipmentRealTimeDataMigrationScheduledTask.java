@@ -3,7 +3,6 @@ package com.autoMotiveMes.service.scheduledTask;
 import com.autoMotiveMes.common.constant.CommonConstant;
 import com.autoMotiveMes.entity.equipment.EquipmentParameters;
 import com.autoMotiveMes.mapper.equipment.EquipmentParametersMapper;
-import com.autoMotiveMes.utils.CommonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 实现功能【设备实时参数数据迁移定时任务服务】
@@ -54,7 +52,6 @@ public class EquipmentRealTimeDataMigrationScheduledTask {
                 }
 
                 LocalDateTime currentTime = LocalDateTime.now();
-                AtomicInteger k = new AtomicInteger();
 
                 List<EquipmentParameters> expiredData = allData.stream()
                         .filter(entry -> entry.getCollectTime() != null)
@@ -62,8 +59,6 @@ public class EquipmentRealTimeDataMigrationScheduledTask {
                                 currentTime.isAfter(entry.getCollectTime().
                                         plusMinutes(CommonConstant.DATA_EXPIRE_MINUTES)))
                         .toList();
-
-
 
                 if (expiredData.isEmpty()) {
                     log.info("{} 暂无过期数据", key);

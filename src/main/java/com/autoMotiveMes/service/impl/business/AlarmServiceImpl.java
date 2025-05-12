@@ -61,9 +61,11 @@ public class AlarmServiceImpl implements AlarmService {
             List<EquipmentParameters> params = redisTemplate.opsForList().range(key, 0, 49);  // 取最近50条
 
             if (params != null) {
+                // 检查参数连续3次异常情况
                 checkContinuousAbnormal(equipmentId, params);
             }
             if (params != null) {
+                // 检查多参数同时异常情况
                 checkMultiParamAbnormal(equipmentId, params);
             }
         });

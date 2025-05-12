@@ -285,6 +285,7 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES
     (9,5),   -- wwb -> QUALITY_CHECKER（来料检验）
     (17,5),  -- zm -> QUALITY_CHECKER（质量检测科）
     (18,5),  -- zj -> QUALITY_CHECKER（质量检测科）
+    (19, 5),
 
     -- 设备工程师
     (10,6),  -- wyj -> EQUIPMENT_ENGINEER（PLC运维）
