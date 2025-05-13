@@ -4,9 +4,9 @@
 ### 后端
 - **框架**: Spring Boot 3.4.2
 - **安全**: Spring Security + JWT
-- **数据库**: MySQL/H2 + MyBatis-Plus 3.5.5
+- **数据库**: MySQL8.0.40/H2 + MyBatis-Plus 3.5.5
 - **实时通信**: WebSocket/STOMP
-- **缓存**: Redis
+- **缓存**: Redis5.0.14.1
 - **工具**: Lombok, AOP
 
 ### 前端
@@ -15,7 +15,7 @@
 - **状态管理**: Vuex 4
 - **路由**: Vue Router 4
 - **可视化**: ECharts
-- **通信**: Axios + STOMP.js
+- **通信**: Axios
 
 ## 系统功能
 - 🛡️ JWT身份认证
