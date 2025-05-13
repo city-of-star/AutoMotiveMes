@@ -175,18 +175,20 @@ public class UserServiceImpl implements UserService {
             // 修改用户信息
             SysUser newUser = new SysUser();
             newUser.setUserId(userId);
-            newUser.setPhone(dto.getPhone());
-            newUser.setEmail(dto.getEmail());
-            newUser.setRealName(dto.getRealName());
-            newUser.setStatus(dto.getStatus());
-            newUser.setDeptId(dto.getDeptId());
-            newUser.setPostId(dto.getPostId());
+            if (StringUtils.isNotBlank(dto.getPhone())) newUser.setPhone(dto.getPhone());
+            if (StringUtils.isNotBlank(dto.getEmail())) newUser.setEmail(dto.getEmail());
+            if (StringUtils.isNotBlank(dto.getRealName())) newUser.setRealName(dto.getRealName());
+            if (dto.getStatus() != null) newUser.setStatus(dto.getStatus());
+            if (dto.getDeptId() != null) newUser.setDeptId(dto.getDeptId());
+            if (dto.getPostId() != null) newUser.setPostId(dto.getPostId());
             userMapper.updateById(newUser);
 
-            // 修改用户的角色信息
-            userRoleMapper.deleteByUserId(userId);  // 删除用户原本的角色
-            SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
-            userRoleMapper.insert(userRole);  // 添加新的用户角色关系
+            if (dto.getRoleId() != null) {
+                // 修改用户的角色信息
+                userRoleMapper.deleteByUserId(userId);  // 删除用户原本的角色
+                SysUserRole userRole = new SysUserRole(userId, dto.getRoleId());
+                userRoleMapper.insert(userRole);  // 添加新的用户角色关系
+            }
 
             // 清除旧缓存
             SysUser updatedUser = userMapper.selectById(userId);

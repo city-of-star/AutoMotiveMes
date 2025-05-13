@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class UpdateUserDto {
-    private String userId;
+    private Long userId;
     private String realName;
     private Integer roleId;
     private String phone;
