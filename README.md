@@ -23,9 +23,42 @@
 - 🔔 设备异常预警
 - 📦 工单生命周期管理
 - 🔍 质量追溯系统
-- 📈 OEE效能分析
-- 📱 多终端适配
 
 ## 快速部署
-### 后端配置
-1. 初始化数据库
+1. 打开 /src/main/resources/application-dev.yml 文件，修改其中的用户名和密码
+2. 一键启动脚本：/script/start.bat 双击运行（脚本打开的小黑框不要关闭）
+3. 在浏览器访问 http://127.0.0.1:8080
+
+## 🚀 快速部署指南
+
+### 前置条件
+确保系统已安装：
+- MySQL 8.0+ 服务（需开启服务）
+- Redis 5.0+
+- JDK 17+
+- Node.js 16+
+- Maven 3.6+
+
+### 配置步骤
+1. **修改数据库配置**  
+   编辑配置文件：  
+   `/src/main/resources/application-dev.yml`  
+   修改以下字段：
+   ```yaml
+   spring:
+     datasource:
+       url: [您的MySQL连接地址]  # 示例：jdbc:mysql://localhost:3306/auto_motive_mes?useSSL=false
+       username: [数据库用户名]   # 默认root
+       password: [数据库密码]
+
+2. **启动系统**
+    运行部署脚本：
+    `/script/start.bat  # Windows系统双击运行`
+
+3. **访问地址**
+|  服务   | 访问地址  |
+|  ----  | ----  |
+| 🔌 后端API  | http://localhost:3000 |
+| 🖥️ 前端界面  | http://localhost:8080 |
+
+💡 提示：所有服务启动后将自动打开独立终端窗口，请勿关闭启动窗口
