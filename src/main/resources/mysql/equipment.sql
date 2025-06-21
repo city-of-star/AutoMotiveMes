@@ -1,5 +1,5 @@
 /* 设备基础信息表（equipment） */
-CREATE TABLE equipment (
+CREATE TABLE IF NOT EXISTS equipment (
     equipment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '设备唯一标识',
     equipment_code VARCHAR(32) NOT NULL UNIQUE COMMENT '设备编码（规则：车间代码+流水号）',
     equipment_name VARCHAR(64) NOT NULL COMMENT '设备名称',
@@ -19,7 +19,7 @@ CREATE TABLE equipment (
 ) ENGINE=InnoDB COMMENT='设备基础信息表';
 
 /* 设备类型表（equipment_type） */
-CREATE TABLE equipment_type (
+CREATE TABLE IF NOT EXISTS equipment_type (
     type_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '类型ID',
     type_name VARCHAR(32) NOT NULL UNIQUE COMMENT '类型名称（如：冲压机/焊接机器人）',
     description TEXT COMMENT '类型描述',
@@ -28,7 +28,7 @@ CREATE TABLE equipment_type (
 ) ENGINE=InnoDB COMMENT='设备类型分类表';
 
 /* 设备状态记录表（equipment_status） */
-CREATE TABLE equipment_status (
+CREATE TABLE IF NOT EXISTS equipment_status (
     status_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '状态记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     status_code SMALLINT NOT NULL COMMENT '状态编码（1-运行 2-空闲 3-故障）',
@@ -41,7 +41,7 @@ CREATE TABLE equipment_status (
 ) ENGINE=InnoDB COMMENT='设备状态历史记录表';
 
 /* 设备运行参数记录表（equipment_parameters） */
-CREATE TABLE equipment_parameters (
+CREATE TABLE IF NOT EXISTS equipment_parameters (
     param_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '参数记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     param_name VARCHAR(32) NOT NULL COMMENT '参数名称（如：温度/压力）',
@@ -54,7 +54,7 @@ CREATE TABLE equipment_parameters (
 ) ENGINE=InnoDB COMMENT='设备运行参数记录表';
 
 /* 设备报警记录表（equipment_alarm） */
-CREATE TABLE equipment_alarm (
+CREATE TABLE IF NOT EXISTS equipment_alarm (
     alarm_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '报警记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     alarm_code VARCHAR(32) NOT NULL COMMENT '报警编码（按标准编码规则）',
@@ -71,7 +71,7 @@ CREATE TABLE equipment_alarm (
 ) ENGINE=InnoDB COMMENT='设备报警记录表';
 
 /* 设备维护记录表（equipment_maintenance） */
-CREATE TABLE equipment_maintenance (
+CREATE TABLE IF NOT EXISTS equipment_maintenance (
     maintenance_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '维护记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     plan_date DATE NOT NULL COMMENT '计划维护日期',
