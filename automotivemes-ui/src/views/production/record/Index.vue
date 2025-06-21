@@ -181,24 +181,16 @@
 
       <!-- 响应式隐藏列 -->
       <el-table-column
-          prop="processSequence"
-          label="顺序"
-          width="90"
-          class-name="hidden-sm"
-          align="center"
-      />
-
-      <el-table-column
           prop="outputQuantity"
           label="产出量"
-          width="110"
+          width="90"
           align="center"
       />
 
       <el-table-column
           prop="defectiveQuantity"
           label="不良数"
-          width="110"
+          width="80"
           align="center"
       />
 
@@ -215,7 +207,7 @@
       <!-- 时间列优化 -->
       <el-table-column
           label="生产时间"
-          min-width="220"
+          min-width="180"
           class-name="hidden-sm"
           align="center"
       >
@@ -230,20 +222,9 @@
       </el-table-column>
 
       <el-table-column
-          label="耗时"
-          width="120"
-          class-name="hidden-xs"
-          align="center"
-      >
-        <template #default="{ row }">
-          {{ formatDuration(row.duration) }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
           prop="operatorName"
           label="操作员"
-          width="120"
+          width="100"
           class-name="hidden-sm"
           align="center"
       />
@@ -449,21 +430,6 @@ const formatDateTime = (dateStr) => {
   if (!dateStr) return '-'
   const date = new Date(dateStr)
   return date.toLocaleDateString() + ' ' + date.toLocaleTimeString().slice(0,5)
-}
-
-const formatDuration = (seconds) => {
-  if (!seconds) return '-'
-  const days = Math.floor(seconds / 86400)
-  const hours = Math.floor((seconds % 86400) / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const secs = seconds % 60
-
-  return [
-    days && `${days}天`,
-    hours && `${hours}时`,
-    minutes && `${minutes}分`,
-    `${secs}秒`
-  ].filter(Boolean).join('').replace(/^0+/, '') || '0秒'
 }
 
 const getQualityTagType = (row) => {
