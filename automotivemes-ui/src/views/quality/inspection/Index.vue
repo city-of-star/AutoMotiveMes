@@ -37,9 +37,9 @@
         <el-col :xs="24" :sm="12" :md="8" :lg="6">
           <el-form-item label="任务状态：">
             <el-select v-model="queryForm.taskStatus" clearable placeholder="全部状态">
-              <el-option label="待检验" :value="1" />
-              <el-option label="检验中" :value="2" />
-              <el-option label="已完成" :value="3" />
+              <el-option label="合格" :value="1" />
+              <el-option label="不合格" :value="2" />
+              <el-option label="待复检" :value="3" />
             </el-select>
           </el-form-item>
         </el-col>
