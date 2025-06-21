@@ -29,13 +29,13 @@
 ### 前置条件
 确保系统已安装：
 - MySQL 8.0+ 服务（需开启服务）
-- Redis 5.0+
+- Redis 5.0+（本项目已自带这个服务）
 - JDK 17+
 - Node.js 16+
 - Maven 3.6+
 
 ### 配置步骤
-1. **修改数据库配置**  
+1. 修改数据库配置
    编辑配置文件：  
    `/src/main/resources/application-dev.yml`  
    修改以下字段：
@@ -46,14 +46,12 @@
        username: [数据库用户名]   # 默认root
        password: [数据库密码]
 
-2. **启动系统**
+2. 启动系统
     运行部署脚本：
-    `/script/start.bat  # Windows系统双击运行`
+    `/start.bat  # Windows系统双击运行`
 
-3. **访问地址**
-|  服务   | 访问地址  |
-|  ----  | ----  |
-| 🔌 后端API  | http://localhost:3000 |
-| 🖥️ 前端界面  | http://localhost:8080 |
+3. 访问地址
+- 🔌 后端API：http://localhost:3000
+- 🖥️ 前端界面：http://localhost:8080
 
 💡 提示：所有服务启动后将自动打开独立终端窗口，请勿关闭启动窗口
