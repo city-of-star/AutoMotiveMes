@@ -69,31 +69,31 @@
 
 ## 🔍 手动部署（当脚本启动失败时）
 1. 项目配置
-   1. 设置SDK版本为Java 17
-   2. 创建MySQL数据库：
-    ```sql
-    CREATE DATABASE auto_motive_mes CHARACTER SET utf8mb4;
-    ```
+    1. 设置SDK版本为Java 17
+    2. 创建MySQL数据库：
+        ```sql
+        CREATE DATABASE auto_motive_mes CHARACTER SET utf8mb4;
+        ```
 2. 数据库初始化
-   按顺序执行以下SQL脚本：
-    ```
-    src/main/resources/mysql/
-    └─ user.sql      # 用户相关表
-    └─ equipment.sql # 设备相关表
-    └─ order.sql     # 工单相关表
-    ```
+    1. 按顺序执行以下SQL脚本：
+        ```
+        src/main/resources/mysql/
+        └─ user.sql       # 用户相关表
+        └─ equipment.sql  # 设备相关表
+        └─ order.sql      # 工单相关表
+        ```
 3. 启动服务
-   1. 启动Redis服务：
-       ```
-       src/main/resources/redis/redis-server.exe
-       ```
-   2. 启动后端服务
-   3. 启动前端服务:
-       ```
-       cd automotivemes-ui
-       npm install       # 安装依赖
-       npm run serve     # 启动前端
-       ```
+    1. 启动Redis服务：
+        ```
+        src/main/resources/redis/redis-server.exe
+        ```
+    2. 启动后端服务
+    3. 启动前端服务:
+        ```
+        cd automotivemes-ui
+        npm install       # 安装依赖
+        npm run serve     # 启动前端
+        ```
 ## 📬 系统访问
 1. 打开浏览器访问：http://127.0.0.1:8080
 2. 使用初始凭证登录：
