@@ -46,15 +46,18 @@
 ### 🔧 配置步骤
 
 1. **数据库配置**  
-   编辑配置文件：  
-   `src/main/resources/application-dev.yml`  
-   修改以下关键配置：
-   ```yaml
-   spring:
-     datasource:
-       url: jdbc:mysql://localhost:3306/auto_motive_mes?useSSL=false&characterEncoding=utf8
-       username: your_username  # 默认root
-       password: your_password
+   1. 编辑配置文件：  
+       ```
+       src/main/resources/application-dev.yml
+       ```
+   2. 修改以下关键配置：
+       ```yaml
+       spring:
+         datasource:
+           url: jdbc:mysql://localhost:3306/auto_motive_mes?useSSL=false&characterEncoding=utf8
+           username: your_username  # 默认root
+           password: your_password
+       ```
 
 2. **启动系统**  
    运行启动脚本：双击 /start.bat
