@@ -14,9 +14,16 @@ import java.util.List;
  */
 public interface PostService {
 
-    // 获取岗位列表
+    /**
+     * 获取岗位列表
+     * @return 岗位列表
+     */
     List<SysPost> getPostList();
 
-    // 分页查询岗位列表
+    /**
+     * 分页查询岗位列表
+     * @param dto 查询条件
+     * @return 分页岗位列表
+     */
     Page<SysPost> getPostPage(GetPostPageDto dto);
 }

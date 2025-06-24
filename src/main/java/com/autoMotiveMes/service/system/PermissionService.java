@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.system;
 
-import com.autoMotiveMes.dto.system.SysPermissionTreeNodeVo;
+import com.autoMotiveMes.dto.system.PermissionTreeNodeVo;
 
 import java.util.List;
 
@@ -12,6 +12,9 @@ import java.util.List;
  */
 public interface PermissionService {
 
-    // 获取权限树
-    List<SysPermissionTreeNodeVo> getPermissionTree();
+    /**
+     * 获取权限树
+     * @return 权限树
+     */
+    List<PermissionTreeNodeVo> getPermissionTree();
 }
