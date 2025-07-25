@@ -1,6 +1,6 @@
 package com.autoMotiveMes.service.impl.system;
 
-import com.autoMotiveMes.dto.system.SysPermissionTreeNodeVo;
+import com.autoMotiveMes.dto.system.PermissionTreeNodeVo;
 import com.autoMotiveMes.entity.system.SysPermission;
 import com.autoMotiveMes.mapper.system.SysPermissionMapper;
 import com.autoMotiveMes.service.system.PermissionService;
@@ -25,7 +25,7 @@ public class PermissionServiceImpl implements PermissionService {
     private final SysPermissionMapper permissionMapper;
 
     @Override
-    public List<SysPermissionTreeNodeVo> getPermissionTree() {
+    public List<PermissionTreeNodeVo> getPermissionTree() {
         // 查询所有权限并按排序号升序排列
         List<SysPermission> permissions = permissionMapper.selectList(
                 new QueryWrapper<SysPermission>().orderByAsc("order_num"));
@@ -33,14 +33,14 @@ public class PermissionServiceImpl implements PermissionService {
         return buildPermissionTree(permissions);
     }
 
-    private List<SysPermissionTreeNodeVo> buildPermissionTree(List<SysPermission> permissions) {
+    private List<PermissionTreeNodeVo> buildPermissionTree(List<SysPermission> permissions) {
         // 将权限实体转换为树节点
-        List<SysPermissionTreeNodeVo> nodes = permissions.stream()
+        List<PermissionTreeNodeVo> nodes = permissions.stream()
                 .map(this::convertToTreeNode)
                 .toList();
 
         // 创建父ID到子节点列表的映射
-        Map<Integer, List<SysPermissionTreeNodeVo>> parentChildrenMap = new HashMap<>();
+        Map<Integer, List<PermissionTreeNodeVo>> parentChildrenMap = new HashMap<>();
         nodes.forEach(node -> {
             int parentId = node.getParentId();
             parentChildrenMap.computeIfAbsent(parentId, k -> new ArrayList<>())
@@ -48,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
         });
 
         // 获取根节点（parentId = 0）
-        List<SysPermissionTreeNodeVo> rootNodes = parentChildrenMap.getOrDefault(0, new ArrayList<>());
+        List<PermissionTreeNodeVo> rootNodes = parentChildrenMap.getOrDefault(0, new ArrayList<>());
 
         // 为每个节点递归设置子节点
         rootNodes.forEach(node -> populateChildren(node, parentChildrenMap));
@@ -56,20 +56,20 @@ public class PermissionServiceImpl implements PermissionService {
         return rootNodes;
     }
 
-    private void populateChildren(SysPermissionTreeNodeVo node, Map<Integer, List<SysPermissionTreeNodeVo>> parentChildrenMap) {
+    private void populateChildren(PermissionTreeNodeVo node, Map<Integer, List<PermissionTreeNodeVo>> parentChildrenMap) {
         Integer permId = node.getPermId();
-        List<SysPermissionTreeNodeVo> children = parentChildrenMap.get(permId);
+        List<PermissionTreeNodeVo> children = parentChildrenMap.get(permId);
         if (children != null) {
             // 对子节点按order_num排序
-            children.sort(Comparator.comparingInt(SysPermissionTreeNodeVo::getOrderNum));
+            children.sort(Comparator.comparingInt(PermissionTreeNodeVo::getOrderNum));
             node.setChildren(children);
             // 递归处理子节点的子节点
             children.forEach(child -> populateChildren(child, parentChildrenMap));
         }
     }
 
-    private SysPermissionTreeNodeVo convertToTreeNode(SysPermission permission) {
-        SysPermissionTreeNodeVo node = new SysPermissionTreeNodeVo();
+    private PermissionTreeNodeVo convertToTreeNode(SysPermission permission) {
+        PermissionTreeNodeVo node = new PermissionTreeNodeVo();
         node.setPermId(permission.getPermId());
         node.setPermCode(permission.getPermCode());
         node.setPermName(permission.getPermName());

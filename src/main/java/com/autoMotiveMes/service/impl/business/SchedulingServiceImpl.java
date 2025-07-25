@@ -68,9 +68,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         for (ProcessDefinition process : processes) {
             // 3.1 获取可用设备
             Equipment equipment = selectAvailableEquipment(process.getEquipmentType());
-            if (equipment == null) {
-                throw new BusinessException(ErrorCode.INVALID_OPERATION4, "工序["+process.getProcessName()+"]无可用设备");
-            }
 
             // 3.2 计算时间窗口
             LocalDateTime[] timeWindow = calculateTimeWindow(
@@ -100,27 +97,43 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     // 设备选择算法
     private Equipment selectAvailableEquipment(Integer equipmentType) {
-        // 查询所有可用设备（状态正常且维护周期内）
-        List<Equipment> equipments = equipmentMapper.selectList(
-                new QueryWrapper<Equipment>()
-                        .eq("equipment_type", equipmentType)
-                        .eq("status", 1)
-                        .apply("DATE_ADD(last_maintenance_date, INTERVAL maintenance_cycle DAY) >= CURDATE()")
-        );
 
-        if (equipments.isEmpty()) {
-            return null;
+        // 构建查询条件
+        QueryWrapper<Equipment> queryWrapper = new QueryWrapper<>();
+
+        // 检查是否存在匹配设备类型的设备
+        List<Equipment> typeMatchEquipments = equipmentMapper.selectList(
+                queryWrapper.eq("equipment_type", equipmentType)
+        );
+        if (typeMatchEquipments == null || typeMatchEquipments.isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_OPERATION4, "没有匹配设备类型[" + equipmentType + "]的设备");
+        }
+
+        // 检查状态正常的设备
+        List<Equipment> normalEquipments = equipmentMapper.selectList(
+                queryWrapper.eq("status", 1)
+        );
+        if (normalEquipments == null || normalEquipments.isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_OPERATION4, "设备类型[" + equipmentType + "]中没有状态正常的设备");
+        }
+
+        // 检查在维护周期内的设备
+        List<Equipment> maintainedEquipments = equipmentMapper.selectList(
+                queryWrapper.apply("DATE_ADD(last_maintenance_date, INTERVAL maintenance_cycle DAY) >= CURDATE()")
+        );
+        if (maintainedEquipments == null || maintainedEquipments.isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_OPERATION4, "设备类型[" + equipmentType + "]中没有在维护周期内的设备（下次维护日期已过期）");
         }
 
         // 选择负载最小的设备
         // 优先选择正在处理返工工单的设备
-        return equipments.stream()
+        return maintainedEquipments.stream()
                 .min(Comparator.comparingInt((Equipment e) -> {
                     // 优先考虑正在处理返工工单的设备
                     int reworkPriority = hasActiveReworkOrders(e.getEquipmentId()) ? 0 : 1;
                     return reworkPriority * 1000 + productionScheduleMapper.countRunningSchedules(e.getEquipmentId());
                 }).thenComparing(Equipment::getEquipmentId)) // 添加次要排序条件
-                .orElse(null);
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_OPERATION4, "未找到可用设备"));
     }
 
     private boolean hasActiveReworkOrders(Long equipmentId) {

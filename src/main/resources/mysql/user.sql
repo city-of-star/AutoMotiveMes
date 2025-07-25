@@ -1,5 +1,5 @@
 -- 用户表
-CREATE TABLE sys_user (
+CREATE TABLE IF NOT EXISTS sys_user (
     user_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
     username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
     password VARCHAR(100) NOT NULL COMMENT '加密密码' DEFAULT '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa',
@@ -20,7 +20,7 @@ CREATE TABLE sys_user (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 角色表
-CREATE TABLE sys_role (
+CREATE TABLE IF NOT EXISTS sys_role (
     role_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '角色ID',
     role_code VARCHAR(50) NOT NULL UNIQUE COMMENT '角色编码',
     role_name VARCHAR(50) NOT NULL COMMENT '角色名称',
@@ -28,7 +28,7 @@ CREATE TABLE sys_role (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 -- 权限表（菜单权限+操作权限）
-CREATE TABLE sys_permission (
+CREATE TABLE IF NOT EXISTS sys_permission (
     perm_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '权限ID',
     perm_code VARCHAR(200) NOT NULL UNIQUE COMMENT '权限编码',
     perm_name VARCHAR(50) NOT NULL COMMENT '权限名称',
@@ -43,7 +43,7 @@ CREATE TABLE sys_permission (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
 
 -- 部门表
-CREATE TABLE sys_dept (
+CREATE TABLE IF NOT EXISTS sys_dept (
     dept_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '部门ID',
     dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
     parent_id BIGINT COMMENT '父部门ID（支持树形层级）',
@@ -57,7 +57,7 @@ CREATE TABLE sys_dept (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='部门表';
 
 -- 岗位表
-CREATE TABLE sys_post (
+CREATE TABLE IF NOT EXISTS sys_post (
     post_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '岗位ID',
     post_name VARCHAR(50) NOT NULL COMMENT '岗位名称',
     post_code VARCHAR(50) NOT NULL UNIQUE COMMENT '岗位编码',
@@ -70,7 +70,7 @@ CREATE TABLE sys_post (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='岗位表';
 
 -- 用户角色关系表
-CREATE TABLE sys_user_role (
+CREATE TABLE IF NOT EXISTS sys_user_role (
     user_id BIGINT NOT NULL,
     role_id INT NOT NULL,
     PRIMARY KEY (user_id, role_id),
@@ -79,7 +79,7 @@ CREATE TABLE sys_user_role (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关系表';
 
 -- 角色权限关系表
-CREATE TABLE sys_role_permission (
+CREATE TABLE IF NOT EXISTS sys_role_permission (
     role_id INT NOT NULL,
     perm_id INT NOT NULL,
     PRIMARY KEY (role_id, perm_id),

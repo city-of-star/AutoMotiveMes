@@ -1,4 +1,4 @@
-CREATE TABLE product (
+CREATE TABLE IF NOT EXISTS product (
     product_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '产品ID',
     product_code VARCHAR(32) NOT NULL UNIQUE COMMENT '产品型号',
     product_name VARCHAR(64) NOT NULL COMMENT '产品名称',
@@ -10,7 +10,7 @@ CREATE TABLE product (
     INDEX idx_product_code (product_code)
 ) ENGINE=InnoDB COMMENT='产品基础信息表';
 
-CREATE TABLE production_order (
+CREATE TABLE IF NOT EXISTS production_order (
     order_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工单ID',
     order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '工单号（规则：YYMMDD+4位流水）',
     rework_of BIGINT UNSIGNED COMMENT '原工单ID（返工专用）',
@@ -34,7 +34,7 @@ CREATE TABLE production_order (
     INDEX idx_rework (rework_of)
 ) ENGINE=InnoDB COMMENT='生产工单主表';
 
-CREATE TABLE process_definition (
+CREATE TABLE IF NOT EXISTS process_definition (
     process_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工序ID',
     process_code VARCHAR(32) NOT NULL UNIQUE COMMENT '工序编码',
     process_name VARCHAR(64) NOT NULL COMMENT '工序名称',
@@ -50,7 +50,7 @@ CREATE TABLE process_definition (
     UNIQUE idx_process_sequence (product_id, sequence)
 ) ENGINE=InnoDB COMMENT='产品工序定义表';
 
-CREATE TABLE production_schedule (
+CREATE TABLE IF NOT EXISTS production_schedule (
     schedule_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '排程ID',
     order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
     process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
@@ -68,7 +68,7 @@ CREATE TABLE production_schedule (
     INDEX idx_schedule_status (schedule_status)
 ) ENGINE=InnoDB COMMENT='生产排程计划表';
 
-CREATE TABLE production_record (
+CREATE TABLE IF NOT EXISTS production_record (
     record_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '记录ID',
     order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
     process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
@@ -84,7 +84,7 @@ CREATE TABLE production_record (
     INDEX idx_production_time (start_time, end_time)
 ) ENGINE=InnoDB COMMENT='生产执行记录表';
 
-CREATE TABLE quality_inspection_item (
+CREATE TABLE IF NOT EXISTS quality_inspection_item (
     item_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检项ID',
     product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
     inspection_name VARCHAR(64) NOT NULL COMMENT '检测项目名称',
@@ -96,7 +96,7 @@ CREATE TABLE quality_inspection_item (
 INDEX idx_product_inspection (product_id)
 ) ENGINE=InnoDB COMMENT='质量检测项目表';
 
-CREATE TABLE quality_inspection_record (
+CREATE TABLE IF NOT EXISTS quality_inspection_record (
     inspection_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检记录ID',
     order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
     item_id BIGINT UNSIGNED NOT NULL COMMENT '质检项ID',
@@ -120,32 +120,59 @@ INSERT INTO product (product_code, product_name, specifications, standard_cycle_
     ('D-4004', '精密齿轮箱', '{"材质":"合金钢","传动比":"10:1","扭矩":"50N·m"}', 240, 200),
     ('E-5005', '工业传感器', '{"测量范围":"0-100mm","精度":"±0.1mm","输出信号":"4-20mA"}', 150, 100);
 
+# -- 插入工序定义（每个产品3道工序）
+# INSERT INTO process_definition (process_code, process_name, product_id, sequence, equipment_type, standard_time, quality_checkpoints) VALUES
+# -- 产品1（A-1001）
+# ('PRC-001', '压铸成型', 1, 1, 1, 45, '["外观检查"]'),
+# ('PRC-002', '电路板组装', 1, 2, 3, 120, '["导通测试"]'),
+# ('PRC-003', '气密测试', 1, 3, 2, 60, '["气密性测试"]'),
+#
+# -- 产品2（B-2002）
+# ('PRC-004', '定子绕线', 2, 1, 4, 180, '["绝缘测试"]'),
+# ('PRC-005', '转子动平衡', 2, 2, 3, 90, '["空载电流"]'),
+# ('PRC-006', '整机装配', 2, 3, 2, 150, '["振动测试"]'),
+#
+# -- 产品3（C-3003）
+# ('PRC-007', '机械臂铸造', 3, 1, 1, 240, '["尺寸精度"]'),
+# ('PRC-008', '精密加工', 3, 2, 3, 300, '["负载测试"]'),
+# ('PRC-009', '关节组装', 3, 3, 2, 180, '["耐久测试"]'),
+#
+# -- 产品4（D-4004）工序
+# ('PRC-010', '齿轮加工', 4, 1, 3, 180, '["齿形精度检测"]'),
+# ('PRC-011', '箱体组装', 4, 2, 2, 120, '["密封性测试"]'),
+# ('PRC-012', '性能测试', 4, 3, 5, 240, '["负载运行测试"]'),
+#
+# -- 产品5（E-5005）工序
+# ('PRC-013', '芯片焊接', 5, 1, 2, 90, '["焊点检测"]'),
+# ('PRC-014', '模块封装', 5, 2, 4, 60, '["外观检查"]'),
+# ('PRC-015', '功能校验', 5, 3, 3, 120, '["信号稳定性测试"]');
+
 -- 插入工序定义（每个产品3道工序）
 INSERT INTO process_definition (process_code, process_name, product_id, sequence, equipment_type, standard_time, quality_checkpoints) VALUES
 -- 产品1（A-1001）
-('PRC-001', '压铸成型', 1, 1, 1, 45, '["外观检查"]'),
-('PRC-002', '电路板组装', 1, 2, 3, 120, '["导通测试"]'),
-('PRC-003', '气密测试', 1, 3, 2, 60, '["气密性测试"]'),
+('PRC-001', '压铸成型', 1, 1, 1, 1, '["外观检查"]'),
+('PRC-002', '电路板组装', 1, 2, 3, 1, '["导通测试"]'),
+('PRC-003', '气密测试', 1, 3, 2, 1, '["气密性测试"]'),
 
 -- 产品2（B-2002）
-('PRC-004', '定子绕线', 2, 1, 4, 180, '["绝缘测试"]'),
-('PRC-005', '转子动平衡', 2, 2, 3, 90, '["空载电流"]'),
-('PRC-006', '整机装配', 2, 3, 2, 150, '["振动测试"]'),
+('PRC-004', '定子绕线', 2, 1, 4, 1, '["绝缘测试"]'),
+('PRC-005', '转子动平衡', 2, 2, 3, 1, '["空载电流"]'),
+('PRC-006', '整机装配', 2, 3, 2, 1, '["振动测试"]'),
 
 -- 产品3（C-3003）
-('PRC-007', '机械臂铸造', 3, 1, 1, 240, '["尺寸精度"]'),
-('PRC-008', '精密加工', 3, 2, 3, 300, '["负载测试"]'),
-('PRC-009', '关节组装', 3, 3, 2, 180, '["耐久测试"]'),
+('PRC-007', '机械臂铸造', 3, 1, 1, 1, '["尺寸精度"]'),
+('PRC-008', '精密加工', 3, 2, 3, 1, '["负载测试"]'),
+('PRC-009', '关节组装', 3, 3, 2, 1, '["耐久测试"]'),
 
 -- 产品4（D-4004）工序
-('PRC-010', '齿轮加工', 4, 1, 3, 180, '["齿形精度检测"]'),
-('PRC-011', '箱体组装', 4, 2, 2, 120, '["密封性测试"]'),
-('PRC-012', '性能测试', 4, 3, 5, 240, '["负载运行测试"]'),
+('PRC-010', '齿轮加工', 4, 1, 3, 1, '["齿形精度检测"]'),
+('PRC-011', '箱体组装', 4, 2, 2, 1, '["密封性测试"]'),
+('PRC-012', '性能测试', 4, 3, 5, 1, '["负载运行测试"]'),
 
 -- 产品5（E-5005）工序
-('PRC-013', '芯片焊接', 5, 1, 2, 90, '["焊点检测"]'),
-('PRC-014', '模块封装', 5, 2, 4, 60, '["外观检查"]'),
-('PRC-015', '功能校验', 5, 3, 3, 120, '["信号稳定性测试"]');
+('PRC-013', '芯片焊接', 5, 1, 2, 1, '["焊点检测"]'),
+('PRC-014', '模块封装', 5, 2, 4, 1, '["外观检查"]'),
+('PRC-015', '功能校验', 5, 3, 3, 1, '["信号稳定性测试"]');
 
 -- 插入生产工单（覆盖所有状态）
 INSERT INTO production_order (order_no, product_id, order_quantity, completed_quantity, defective_quantity,

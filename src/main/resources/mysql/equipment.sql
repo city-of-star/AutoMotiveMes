@@ -1,5 +1,5 @@
 /* 设备基础信息表（equipment） */
-CREATE TABLE equipment (
+CREATE TABLE IF NOT EXISTS equipment (
     equipment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '设备唯一标识',
     equipment_code VARCHAR(32) NOT NULL UNIQUE COMMENT '设备编码（规则：车间代码+流水号）',
     equipment_name VARCHAR(64) NOT NULL COMMENT '设备名称',
@@ -19,7 +19,7 @@ CREATE TABLE equipment (
 ) ENGINE=InnoDB COMMENT='设备基础信息表';
 
 /* 设备类型表（equipment_type） */
-CREATE TABLE equipment_type (
+CREATE TABLE IF NOT EXISTS equipment_type (
     type_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '类型ID',
     type_name VARCHAR(32) NOT NULL UNIQUE COMMENT '类型名称（如：冲压机/焊接机器人）',
     description TEXT COMMENT '类型描述',
@@ -28,7 +28,7 @@ CREATE TABLE equipment_type (
 ) ENGINE=InnoDB COMMENT='设备类型分类表';
 
 /* 设备状态记录表（equipment_status） */
-CREATE TABLE equipment_status (
+CREATE TABLE IF NOT EXISTS equipment_status (
     status_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '状态记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     status_code SMALLINT NOT NULL COMMENT '状态编码（1-运行 2-空闲 3-故障）',
@@ -41,7 +41,7 @@ CREATE TABLE equipment_status (
 ) ENGINE=InnoDB COMMENT='设备状态历史记录表';
 
 /* 设备运行参数记录表（equipment_parameters） */
-CREATE TABLE equipment_parameters (
+CREATE TABLE IF NOT EXISTS equipment_parameters (
     param_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '参数记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     param_name VARCHAR(32) NOT NULL COMMENT '参数名称（如：温度/压力）',
@@ -54,7 +54,7 @@ CREATE TABLE equipment_parameters (
 ) ENGINE=InnoDB COMMENT='设备运行参数记录表';
 
 /* 设备报警记录表（equipment_alarm） */
-CREATE TABLE equipment_alarm (
+CREATE TABLE IF NOT EXISTS equipment_alarm (
     alarm_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '报警记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     alarm_code VARCHAR(32) NOT NULL COMMENT '报警编码（按标准编码规则）',
@@ -71,7 +71,7 @@ CREATE TABLE equipment_alarm (
 ) ENGINE=InnoDB COMMENT='设备报警记录表';
 
 /* 设备维护记录表（equipment_maintenance） */
-CREATE TABLE equipment_maintenance (
+CREATE TABLE IF NOT EXISTS equipment_maintenance (
     maintenance_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '维护记录ID',
     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
     plan_date DATE NOT NULL COMMENT '计划维护日期',
@@ -290,14 +290,14 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
 
 -- 插入设备基础数据
 INSERT INTO equipment (equipment_code, equipment_name, equipment_model, equipment_type, location, status, manufacturer, production_date, installation_date, last_maintenance_date, maintenance_cycle) VALUES
-    ('WSH-001', '数控冲压机', 'HFP-200', 1, '冲压车间/A线/工位1', 1, '上海重机', '2020-03-15', '2020-05-20', '2025-04-01', 90),
-    ('ROB-010', '弧焊机器人', 'FANUC-R2000', 2, '焊接车间/新能源线/工位3', 1, '发那科', '2022-01-10', '2022-02-01', '2025-04-01', 60),
-    ('AGV-005', '激光导航AGV', 'NDC-800', 4, '总装车间/物流区', 1, '新松机器人', '2021-09-01', '2025-04-01', '2025-04-01', 180),
-    ('CNC-100', '五轴加工中心', 'MAZAK-500', 3, '机加车间/精密区', 1, '山崎马扎克', '2019-11-30', '2020-01-10', '2025-04-01', 60),
-    ('OLD-001', '液压冲床', 'YH32-300', 5, '报废设备区', 1, '北京第一机床', '2010-05-01', '2010-07-01', '2025-04-01', 90),
-    ('WSH-002', '高速冲压机', 'HFP-300', 1, '冲压车间/B线/工位2', 1, '济南二机床', '2021-06-20', '2021-08-15', '2025-04-15', 60),
-    ('ROB-011', '点焊机器人', 'KUKA-KR16', 2, '焊接车间/传统线/工位5', 2, '库卡机器人', '2023-03-01', '2023-04-10', '2025-04-20', 45),
-    ('AGV-006', '磁导航AGV', 'MIRO-600', 4, '总装车间/暂存区', 3, '深圳麦格米特', '2022-05-15', '2022-06-01', '2025-04-25', 120),
-    ('CNC-101', '三轴加工中心', 'HAAS-VF2', 3, '机加车间/普通区', 1, '哈斯自动化', '2020-08-01', '2020-09-20', '2025-04-05', 30),
-    ('INJ-001', '注塑成型机', '海天-120T', 5, '注塑车间/1号机', 1, '海天国际', '2021-10-01', '2021-11-10', '2025-04-10', 90);
+    ('WSH-001', '数控冲压机', 'HFP-200', 1, '冲压车间/A线/工位1', 1, '上海重机', '2020-03-15', '2020-05-20', CURRENT_DATE - INTERVAL '45' DAY, 90),
+    ('ROB-010', '弧焊机器人', 'FANUC-R2000', 2, '焊接车间/新能源线/工位3', 1, '发那科', '2022-01-10', '2022-02-01', CURRENT_DATE - INTERVAL '30' DAY, 60),
+    ('AGV-005', '激光导航AGV', 'NDC-800', 4, '总装车间/物流区', 1, '新松机器人', '2021-09-01', '2022-01-15', CURRENT_DATE - INTERVAL '90' DAY, 180),
+    ('CNC-100', '五轴加工中心', 'MAZAK-500', 3, '机加车间/精密区', 1, '山崎马扎克', '2019-11-30', '2020-01-10', CURRENT_DATE - INTERVAL '40' DAY, 60),
+    ('OLD-001', '液压冲床', 'YH32-300', 5, '报废设备区', 1, '北京第一机床', '2010-05-01', '2010-07-01', CURRENT_DATE - INTERVAL '60' DAY, 90),
+    ('WSH-002', '高速冲压机', 'HFP-300', 1, '冲压车间/B线/工位2', 1, '济南二机床', '2021-06-20', '2021-08-15', CURRENT_DATE - INTERVAL '20' DAY, 60),
+    ('ROB-011', '点焊机器人', 'KUKA-KR16', 2, '焊接车间/传统线/工位5', 1, '库卡机器人', '2023-03-01', '2023-04-10', CURRENT_DATE - INTERVAL '15' DAY, 45),
+    ('AGV-006', '磁导航AGV', 'MIRO-600', 4, '总装车间/暂存区', 1, '深圳麦格米特', '2022-05-15', '2022-06-01', CURRENT_DATE - INTERVAL '50' DAY, 120),
+    ('CNC-101', '三轴加工中心', 'HAAS-VF2', 3, '机加车间/普通区', 1, '哈斯自动化', '2020-08-01', '2020-09-20', CURRENT_DATE - INTERVAL '10' DAY, 30),
+    ('INJ-001', '注塑成型机', '海天-120T', 5, '注塑车间/1号机', 1, '海天国际', '2021-10-01', '2021-11-10', CURRENT_DATE - INTERVAL '45' DAY, 90);
 

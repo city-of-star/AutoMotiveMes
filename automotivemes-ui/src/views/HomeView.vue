@@ -121,10 +121,10 @@ const router = useRouter()
 
 // 快捷操作配置
 const quickActions = ref([
-  { label: '工单创建', icon: ClipboardDocumentListIcon, type: 'primary', path: '/scheduling/orders' },
-  { label: '质检管理', icon: MagnifyingGlassIcon, type: 'success', path: '/quality/inspection' },
+  { label: '工单创建', icon: ClipboardDocumentListIcon, type: 'primary', path: '/production/order/manage' },
+  { label: '质检管理', icon: MagnifyingGlassIcon, type: 'success', path: '/quality/inspection/view' },
   { label: '报警处理', icon: ExclamationTriangleIcon, type: 'warning', path: '/alarm/current' },
-  { label: '设备监控', icon: PowerIcon, type: 'danger', path: '/equipment/status' }
+  { label: '设备监控', icon: PowerIcon, type: 'danger', path: '/equipment/status/view' }
 ])
 
 // 公告数据
