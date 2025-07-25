@@ -97,7 +97,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 120.0,
         "abnormalMin": 120.0,
         "abnormalMax": 150.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       },
       {
         "name": "滑块压力",
@@ -106,7 +106,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 22.0,
         "abnormalMin": 22.0,
         "abnormalMax": 25.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       },
       {
         "name": "工作温度",
@@ -115,7 +115,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 80.0,
         "abnormalMin": 80.0,
         "abnormalMax": 100.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       },
       {
         "name": "振动幅度",
@@ -124,7 +124,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 0.5,
         "abnormalMin": 0.5,
         "abnormalMax": 1.0,
-        "abnormalProbability": 0.002
+        "abnormalProbability": 0.0002
       }
     ]'),
 
@@ -137,7 +137,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 250.0,
         "abnormalMin": 250.0,
         "abnormalMax": 300.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       },
       {
         "name": "焊接电压",
@@ -146,7 +146,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 28.0,
         "abnormalMin": 28.0,
         "abnormalMax": 35.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       },
       {
         "name": "气体流量",
@@ -155,7 +155,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 20.0,
         "abnormalMin": 20.0,
         "abnormalMax": 25.0,
-        "abnormalProbability": 0.004
+        "abnormalProbability": 0.0004
       },
       {
         "name": "臂架负载率",
@@ -164,7 +164,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 90.0,
         "abnormalMin": 90.0,
         "abnormalMax": 100.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       }
     ]'),
 
@@ -177,7 +177,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 22000.0,
         "abnormalMin": 22000.0,
         "abnormalMax": 25000.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       },
       {
         "name": "进给速率",
@@ -186,7 +186,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 5000.0,
         "abnormalMin": 5000.0,
         "abnormalMax": 6000.0,
-        "abnormalProbability": 0.002
+        "abnormalProbability": 0.0002
       },
       {
         "name": "刀具温度",
@@ -195,7 +195,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 50.0,
         "abnormalMin": 50.0,
         "abnormalMax": 70.0,
-        "abnormalProbability": 0.004
+        "abnormalProbability": 0.0004
       },
       {
         "name": "切削力",
@@ -204,7 +204,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 15.0,
         "abnormalMin": 15.0,
         "abnormalMax": 25.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       }
     ]'),
 
@@ -217,7 +217,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 52.0,
         "abnormalMin": 52.0,
         "abnormalMax": 60.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       },
       {
         "name": "行驶速度",
@@ -226,7 +226,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 1.5,
         "abnormalMin": 1.5,
         "abnormalMax": 2.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       },
       {
         "name": "载重负荷",
@@ -235,7 +235,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 800.0,
         "abnormalMin": 800.0,
         "abnormalMax": 1000.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       },
       {
         "name": "导航信号强度",
@@ -244,7 +244,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 100.0,
         "abnormalMin": 0.0,
         "abnormalMax": 80.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       }
     ]'),
 
@@ -257,7 +257,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 1200.0,
         "abnormalMin": 1200.0,
         "abnormalMax": 1500.0,
-        "abnormalProbability": 0.004
+        "abnormalProbability": 0.0004
       },
       {
         "name": "料筒温度",
@@ -266,7 +266,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 250.0,
         "abnormalMin": 250.0,
         "abnormalMax": 300.0,
-        "abnormalProbability": 0.003
+        "abnormalProbability": 0.0003
       },
       {
         "name": "锁模力",
@@ -275,7 +275,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 850.0,
         "abnormalMin": 850.0,
         "abnormalMax": 900.0,
-        "abnormalProbability": 0.002
+        "abnormalProbability": 0.0002
       },
       {
         "name": "循环时间",
@@ -284,7 +284,7 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
         "normalMax": 40.0,
         "abnormalMin": 40.0,
         "abnormalMax": 60.0,
-        "abnormalProbability": 0.005
+        "abnormalProbability": 0.0005
       }
     ]');
 
