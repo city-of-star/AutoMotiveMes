@@ -33,6 +33,7 @@ CREATE TABLE sys_permission (
                                 perm_code VARCHAR(200) NOT NULL UNIQUE COMMENT '权限编码',
                                 perm_name VARCHAR(50) NOT NULL COMMENT '权限名称',
                                 perm_type varchar(20) NOT NULL COMMENT '权限类型(MENU,BUTTON,API)',
+                                status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
                                 parent_id INT DEFAULT 0 COMMENT '父权限ID',
                                 path VARCHAR(100) COMMENT '前端路由路径',
                                 component VARCHAR(100) COMMENT '前端组件',

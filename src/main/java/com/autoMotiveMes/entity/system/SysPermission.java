@@ -32,6 +32,10 @@ public class SysPermission {
      */
     private String permType;
     /**
+     * 权限状态，0 表示禁用，1 表示启用
+     */
+    private Integer status;
+    /**
      * 父权限的 ID，默认为 0 表示顶级权限
      */
     private Integer parentId;

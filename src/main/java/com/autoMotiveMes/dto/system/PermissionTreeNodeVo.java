@@ -16,6 +16,7 @@ public class PermissionTreeNodeVo {
     private String permCode;
     private String permName;
     private String permType;
+    private Integer status;
     private Integer parentId;
     private String path;
     private String component;

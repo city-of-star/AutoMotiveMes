@@ -74,6 +74,7 @@ public class PermissionServiceImpl implements PermissionService {
         node.setPermCode(permission.getPermCode());
         node.setPermName(permission.getPermName());
         node.setPermType(permission.getPermType());
+        node.setStatus(permission.getStatus());
         node.setParentId(permission.getParentId());
         node.setPath(permission.getPath());
         node.setComponent(permission.getComponent());
