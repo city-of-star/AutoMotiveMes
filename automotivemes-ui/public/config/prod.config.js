@@ -3,20 +3,19 @@ window.CONFIG = {
         name: 'prod'
     },
     api: {
-        baseURL: 'https://111.229.150.28:3000/api',
-        timeout: 10000
+        baseURL: '/api',  // http://localhost:3000
+        timeout: 15000
     },
     websocket: {
-        endpoint: '/prod-ws-endpoint',
-        reconnectInterval: 10000,
-        heartbeat: {
-            enable: true, interval: 45000
-        }
+        baseURL: '/mes-websocket',
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
     },
     theme: {
         sidebar: {
-            widthExpend: 200,
-            widthFold: 60
+            widthExpend: 250,
+            widthFold: 64
         }
     }
 };

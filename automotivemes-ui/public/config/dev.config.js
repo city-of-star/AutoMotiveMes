@@ -3,7 +3,7 @@ window.CONFIG = {
         name: 'dev'
     },
     api: {
-        baseURL: 'http://localhost:3000/api',
+        baseURL: '/api',  // http://localhost:3000
         timeout: 15000
     },
     websocket: {
