@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS auto_motive_mes;
+USE auto_motive_mes;
+
 -- 用户表
 CREATE TABLE sys_user (
                           user_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',

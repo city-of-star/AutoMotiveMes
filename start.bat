@@ -188,25 +188,21 @@ echo.
 :: 导入SQL文件
 :: ============================================
 echo [导入SQL数据]
-set "sql_files=user.sql equipment.sql order.sql"
+set "sql_file=!SQL_DIR!init_data.sql"
 
-for %%f in (%sql_files%) do (
-    set "sql_file=!SQL_DIR!%%f"
+if exist "!sql_file!" (
+    echo 正在导入: init_data.sql
+    mysql -u!db_username! -p!db_password! !db_name! < "!sql_file!" 2>nul
 
-    if exist "!sql_file!" (
-        echo 正在导入: %%f
-        mysql -u!db_username! -p!db_password! !db_name! < "!sql_file!" 2>nul
-
-        if %errorlevel% equ 0 (
-            echo ✅ 导入成功
-        ) else (
-            echo ❌ 导入失败: %%f
-            echo 请检查SQL文件语法
-        )
-        echo.
+    if %errorlevel% equ 0 (
+        echo ✅ 导入成功
     ) else (
-        echo ❌ SQL文件不存在: !sql_file!
+        echo ❌ 导入失败: init_data.sql
+        echo 请检查SQL文件语法
     )
+    echo.
+) else (
+    echo ❌ SQL文件不存在: !sql_file!
 )
 
 echo 数据库初始化完成!
