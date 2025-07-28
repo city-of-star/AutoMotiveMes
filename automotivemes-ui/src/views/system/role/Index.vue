@@ -443,7 +443,6 @@ search()
 
 <style scoped>
 .main-container {
-  padding: 20px;
   background: #fff;
   border-radius: 4px;
 }

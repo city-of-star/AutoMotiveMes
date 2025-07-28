@@ -1,6 +1,5 @@
 package com.autoMotiveMes.utils;
 
-import com.autoMotiveMes.common.exception.BusinessException;
 import com.autoMotiveMes.common.response.ErrorCode;
 import com.autoMotiveMes.entity.system.SysUser;
 import com.autoMotiveMes.mapper.system.SysUserMapper;

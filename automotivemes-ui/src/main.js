@@ -7,17 +7,15 @@ import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import { websocket } from './utils/websocket';
 
-// 环境判断（使用Vue CLI默认环境变量）
-const isDevelopment = process.env.NODE_ENV === 'development'
-
-// 初始化WebSocket连接
-websocket.init();
-
 // 动态加载配置文件
 const loadConfig = async () => {
     try {
-        const configFile = isDevelopment ? 'dev.config.js' : 'prod.config.js'
-        const response = await fetch(`/config/${configFile}`)
+        let response = ''
+        if (process.env.NODE_ENV === 'development') {
+            response = await fetch('/config/dev.config.js')
+        } else if (process.env.NODE_ENV === 'production') {
+            response = await fetch('/config/prod.config.js')
+        }
         const configScript = await response.text()
         new Function(configScript)()
     } catch (error) {
@@ -32,3 +30,6 @@ loadConfig().then(() => {
         .use(ElementPlus, { locale: zhCn })
         .mount('#app')
 });
+
+// 初始化WebSocket连接
+websocket.init();
