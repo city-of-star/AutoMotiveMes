@@ -10,5 +10,5 @@ import lombok.Data;
  */
 @Data
 public class ResetPasswordDto {
-    private String userId;
+    private Long userId;
 }
