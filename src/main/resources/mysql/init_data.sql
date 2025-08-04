@@ -2,93 +2,93 @@ CREATE DATABASE IF NOT EXISTS auto_motive_mes;
 USE auto_motive_mes;
 
 -- 用户表
-CREATE TABLE sys_user (
-                          user_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
-                          username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
-                          password VARCHAR(100) NOT NULL COMMENT '加密密码' DEFAULT '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa',
-                          real_name VARCHAR(50) COMMENT '真实姓名',
-                          sex TINYINT(1) COMMENT '性别(0:女 1:男)',
-                          dept_id BIGINT COMMENT '部门id',
-                          post_id BIGINT COMMENT '岗位id',
-                          head_img VARCHAR(200) COMMENT '头像URL' DEFAULT 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280',
-                          theme_color VARCHAR(50) COMMENT '主题色' DEFAULT '#409EFF',
-                          email VARCHAR(100) COMMENT '邮箱',
-                          phone VARCHAR(20) COMMENT '联系电话',
-                          status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)' DEFAULT 1,
-                          account_locked TINYINT(1) DEFAULT 1 COMMENT '账户是否锁定(0:已锁定;1:未锁定)' DEFAULT 1,
-                          login_attempts INT DEFAULT 0 COMMENT '连续登录失败次数' DEFAULT 0,
-                          last_login DATETIME COMMENT '最后登录时间',
-                          create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                          update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+CREATE TABLE IF NOT EXISTS sys_user (
+                                        user_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
+                                        username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
+                                        password VARCHAR(100) NOT NULL COMMENT '加密密码' DEFAULT '$2a$10$.0brTBYitG6.GVWfB8.7e.OolO2ec1j35d7Qpq8J/etjQLf/Yp4sa',
+                                        real_name VARCHAR(50) COMMENT '真实姓名',
+                                        sex TINYINT(1) COMMENT '性别(0:女 1:男)',
+                                        dept_id BIGINT COMMENT '部门id',
+                                        post_id BIGINT COMMENT '岗位id',
+                                        head_img VARCHAR(200) COMMENT '头像URL' DEFAULT 'https://img0.baidu.com/it/u=1053130193,1078694950&fm=253&fmt=auto&app=138&f=GIF?w=500&h=280',
+                                        theme_color VARCHAR(50) COMMENT '主题色' DEFAULT '#409EFF',
+                                        email VARCHAR(100) COMMENT '邮箱',
+                                        phone VARCHAR(20) COMMENT '联系电话',
+                                        status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
+                                        account_locked TINYINT(1) DEFAULT 1 COMMENT '账户是否锁定(0:已锁定;1:未锁定)',
+                                        login_attempts INT DEFAULT 0 COMMENT '连续登录失败次数',
+                                        last_login DATETIME COMMENT '最后登录时间',
+                                        create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 角色表
-CREATE TABLE sys_role (
-                          role_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '角色ID',
-                          role_code VARCHAR(50) NOT NULL UNIQUE COMMENT '角色编码',
-                          role_name VARCHAR(50) NOT NULL COMMENT '角色名称',
-                          description VARCHAR(255) COMMENT '角色描述'
+CREATE TABLE IF NOT EXISTS sys_role (
+                                        role_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '角色ID',
+                                        role_code VARCHAR(50) NOT NULL UNIQUE COMMENT '角色编码',
+                                        role_name VARCHAR(50) NOT NULL COMMENT '角色名称',
+                                        description VARCHAR(255) COMMENT '角色描述'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 -- 权限表（菜单权限+操作权限）
-CREATE TABLE sys_permission (
-                                perm_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '权限ID',
-                                perm_code VARCHAR(200) NOT NULL UNIQUE COMMENT '权限编码',
-                                perm_name VARCHAR(50) NOT NULL COMMENT '权限名称',
-                                perm_type varchar(20) NOT NULL COMMENT '权限类型(MENU,BUTTON,API)',
-                                status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
-                                parent_id INT DEFAULT 0 COMMENT '父权限ID',
-                                path VARCHAR(100) COMMENT '前端路由路径',
-                                component VARCHAR(100) COMMENT '前端组件',
-                                icon VARCHAR(50) COMMENT '菜单图标',
-                                order_num INT DEFAULT 0 COMMENT '显示顺序',
-                                api_path VARCHAR(100) COMMENT '后端接口路径',
-                                method VARCHAR(10) COMMENT '请求方法'
+CREATE TABLE IF NOT EXISTS sys_permission (
+                                              perm_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '权限ID',
+                                              perm_code VARCHAR(200) NOT NULL UNIQUE COMMENT '权限编码',
+                                              perm_name VARCHAR(50) NOT NULL COMMENT '权限名称',
+                                              perm_type varchar(20) NOT NULL COMMENT '权限类型(MENU,BUTTON,API)',
+                                              status TINYINT(1) DEFAULT 1 COMMENT '状态(0:禁用 1:启用)',
+                                              parent_id INT DEFAULT 0 COMMENT '父权限ID',
+                                              path VARCHAR(100) COMMENT '前端路由路径',
+                                              component VARCHAR(100) COMMENT '前端组件',
+                                              icon VARCHAR(50) COMMENT '菜单图标',
+                                              order_num INT DEFAULT 0 COMMENT '显示顺序',
+                                              api_path VARCHAR(100) COMMENT '后端接口路径',
+                                              method VARCHAR(10) COMMENT '请求方法'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限表';
 
 -- 部门表
-CREATE TABLE sys_dept (
-                          dept_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '部门ID',
-                          dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
-                          parent_id BIGINT COMMENT '父部门ID（支持树形层级）',
-                          order_num INT DEFAULT 0 COMMENT '显示顺序',
-                          status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
-                          leader_id BIGINT COMMENT '负责人ID（关联用户）',
-                          create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                          update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                          FOREIGN KEY (parent_id) REFERENCES sys_dept(dept_id),
-                          FOREIGN KEY (leader_id) REFERENCES sys_user(user_id)
+CREATE TABLE IF NOT EXISTS sys_dept (
+                                        dept_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '部门ID',
+                                        dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
+                                        parent_id BIGINT COMMENT '父部门ID（支持树形层级）',
+                                        order_num INT DEFAULT 0 COMMENT '显示顺序',
+                                        status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
+                                        leader_id BIGINT COMMENT '负责人ID（关联用户）',
+                                        create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        FOREIGN KEY (parent_id) REFERENCES sys_dept(dept_id),
+                                        FOREIGN KEY (leader_id) REFERENCES sys_user(user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='部门表';
 
 -- 岗位表
-CREATE TABLE sys_post (
-                          post_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '岗位ID',
-                          post_name VARCHAR(50) NOT NULL COMMENT '岗位名称',
-                          post_code VARCHAR(50) NOT NULL UNIQUE COMMENT '岗位编码',
-                          dept_id BIGINT NOT NULL COMMENT '所属部门ID',
-                          order_num INT DEFAULT 0 COMMENT '显示顺序',
-                          status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
-                          create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                          update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                          FOREIGN KEY (dept_id) REFERENCES sys_dept(dept_id)
+CREATE TABLE IF NOT EXISTS sys_post (
+                                        post_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '岗位ID',
+                                        post_name VARCHAR(50) NOT NULL COMMENT '岗位名称',
+                                        post_code VARCHAR(50) NOT NULL UNIQUE COMMENT '岗位编码',
+                                        dept_id BIGINT NOT NULL COMMENT '所属部门ID',
+                                        order_num INT DEFAULT 0 COMMENT '显示顺序',
+                                        status TINYINT(1) DEFAULT 1 COMMENT '状态(0:停用 1:启用)',
+                                        create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        update_time DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        FOREIGN KEY (dept_id) REFERENCES sys_dept(dept_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='岗位表';
 
 -- 用户角色关系表
-CREATE TABLE sys_user_role (
-                               user_id BIGINT NOT NULL,
-                               role_id INT NOT NULL,
-                               PRIMARY KEY (user_id, role_id),
-                               FOREIGN KEY (user_id) REFERENCES sys_user(user_id),
-                               FOREIGN KEY (role_id) REFERENCES sys_role(role_id)
+CREATE TABLE IF NOT EXISTS sys_user_role (
+                                             user_id BIGINT NOT NULL,
+                                             role_id INT NOT NULL,
+                                             PRIMARY KEY (user_id, role_id),
+                                             FOREIGN KEY (user_id) REFERENCES sys_user(user_id),
+                                             FOREIGN KEY (role_id) REFERENCES sys_role(role_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关系表';
 
 -- 角色权限关系表
-CREATE TABLE sys_role_permission (
-                                     role_id INT NOT NULL,
-                                     perm_id INT NOT NULL,
-                                     PRIMARY KEY (role_id, perm_id),
-                                     FOREIGN KEY (role_id) REFERENCES sys_role(role_id),
-                                     FOREIGN KEY (perm_id) REFERENCES sys_permission(perm_id)
+CREATE TABLE IF NOT EXISTS sys_role_permission (
+                                                   role_id INT NOT NULL,
+                                                   perm_id INT NOT NULL,
+                                                   PRIMARY KEY (role_id, perm_id),
+                                                   FOREIGN KEY (role_id) REFERENCES sys_role(role_id),
+                                                   FOREIGN KEY (perm_id) REFERENCES sys_permission(perm_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色权限关系表';
 
 -- 插入角色数据
@@ -354,93 +354,91 @@ INSERT INTO sys_role_permission (role_id, perm_id) VALUES
                                                        (7,38),(7,39),(7,40),                            -- 生产报表
                                                        (7,41),(7,42);
 
-
-
 /* 设备基础信息表（equipment） */
-CREATE TABLE equipment (
-                           equipment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '设备唯一标识',
-                           equipment_code VARCHAR(32) NOT NULL UNIQUE COMMENT '设备编码（规则：车间代码+流水号）',
-                           equipment_name VARCHAR(64) NOT NULL COMMENT '设备名称',
-                           equipment_model VARCHAR(32) NOT NULL COMMENT '设备型号',
-                           equipment_type INT NOT NULL COMMENT '设备类型（关联equipment_type.type_id）',
-                           location VARCHAR(128) COMMENT '安装位置（格式：车间/生产线/工位）',
-                           status TINYINT NOT NULL DEFAULT 1 COMMENT '当前状态：1-正常 2-待机 3-维护中 4-已报废',
-                           manufacturer VARCHAR(64) COMMENT '制造商',
-                           production_date DATE COMMENT '生产日期',
-                           installation_date DATE NOT NULL COMMENT '安装日期',
-                           last_maintenance_date DATE COMMENT '上次维护日期',
-                           maintenance_cycle INT COMMENT '维护周期（单位：天）',
-                           create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                           update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
-                           INDEX idx_type (equipment_type),
-                           INDEX idx_status (status)
+CREATE TABLE IF NOT EXISTS equipment (
+                                         equipment_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '设备唯一标识',
+                                         equipment_code VARCHAR(32) NOT NULL UNIQUE COMMENT '设备编码（规则：车间代码+流水号）',
+                                         equipment_name VARCHAR(64) NOT NULL COMMENT '设备名称',
+                                         equipment_model VARCHAR(32) NOT NULL COMMENT '设备型号',
+                                         equipment_type INT NOT NULL COMMENT '设备类型（关联equipment_type.type_id）',
+                                         location VARCHAR(128) COMMENT '安装位置（格式：车间/生产线/工位）',
+                                         status TINYINT NOT NULL DEFAULT 1 COMMENT '当前状态：1-正常 2-待机 3-维护中 4-已报废',
+                                         manufacturer VARCHAR(64) COMMENT '制造商',
+                                         production_date DATE COMMENT '生产日期',
+                                         installation_date DATE NOT NULL COMMENT '安装日期',
+                                         last_maintenance_date DATE COMMENT '上次维护日期',
+                                         maintenance_cycle INT COMMENT '维护周期（单位：天）',
+                                         create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+                                         INDEX idx_type (equipment_type),
+                                         INDEX idx_status (status)
 ) ENGINE=InnoDB COMMENT='设备基础信息表';
 
 /* 设备类型表（equipment_type） */
-CREATE TABLE equipment_type (
-                                type_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '类型ID',
-                                type_name VARCHAR(32) NOT NULL UNIQUE COMMENT '类型名称（如：冲压机/焊接机器人）',
-                                description TEXT COMMENT '类型描述',
-                                parameters_config JSON COMMENT '参数配置模板（JSON格式）',
-                                create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+CREATE TABLE IF NOT EXISTS equipment_type (
+                                              type_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '类型ID',
+                                              type_name VARCHAR(32) NOT NULL UNIQUE COMMENT '类型名称（如：冲压机/焊接机器人）',
+                                              description TEXT COMMENT '类型描述',
+                                              parameters_config JSON COMMENT '参数配置模板（JSON格式）',
+                                              create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 ) ENGINE=InnoDB COMMENT='设备类型分类表';
 
 /* 设备状态记录表（equipment_status） */
-CREATE TABLE equipment_status (
-                                  status_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '状态记录ID',
-                                  equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                  status_code SMALLINT NOT NULL COMMENT '状态编码（1-运行 2-空闲 3-故障）',
-                                  status_detail VARCHAR(128) COMMENT '状态详细描述',
-                                  start_time DATETIME NOT NULL COMMENT '状态开始时间',
-                                  end_time DATETIME COMMENT '状态结束时间',
-                                  duration INT COMMENT '持续时间（秒）',
-                                  FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-                                  INDEX idx_status_time (start_time, end_time)
+CREATE TABLE IF NOT EXISTS equipment_status (
+                                                status_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '状态记录ID',
+                                                equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                                status_code SMALLINT NOT NULL COMMENT '状态编码（1-运行 2-空闲 3-故障）',
+                                                status_detail VARCHAR(128) COMMENT '状态详细描述',
+                                                start_time DATETIME NOT NULL COMMENT '状态开始时间',
+                                                end_time DATETIME COMMENT '状态结束时间',
+                                                duration INT COMMENT '持续时间（秒）',
+                                                FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+                                                INDEX idx_status_time (start_time, end_time)
 ) ENGINE=InnoDB COMMENT='设备状态历史记录表';
 
 /* 设备运行参数记录表（equipment_parameters） */
-CREATE TABLE equipment_parameters (
-                                      param_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '参数记录ID',
-                                      equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                      param_name VARCHAR(32) NOT NULL COMMENT '参数名称（如：温度/压力）',
-                                      param_value DECIMAL(12,4) NOT NULL COMMENT '参数数值',
-                                      unit VARCHAR(16) COMMENT '计量单位',
-                                      collect_time DATETIME NOT NULL COMMENT '采集时间',
-                                      is_normal TINYINT NOT NULL COMMENT '是否正常：0-异常 1-正常',
-                                      FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-                                      INDEX idx_collect_time (collect_time)
+CREATE TABLE IF NOT EXISTS equipment_parameters (
+                                                    param_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '参数记录ID',
+                                                    equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                                    param_name VARCHAR(32) NOT NULL COMMENT '参数名称（如：温度/压力）',
+                                                    param_value DECIMAL(12,4) NOT NULL COMMENT '参数数值',
+                                                    unit VARCHAR(16) COMMENT '计量单位',
+                                                    collect_time DATETIME NOT NULL COMMENT '采集时间',
+                                                    is_normal TINYINT NOT NULL COMMENT '是否正常：0-异常 1-正常',
+                                                    FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+                                                    INDEX idx_collect_time (collect_time)
 ) ENGINE=InnoDB COMMENT='设备运行参数记录表';
 
 /* 设备报警记录表（equipment_alarm） */
-CREATE TABLE equipment_alarm (
-                                 alarm_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '报警记录ID',
-                                 equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                 alarm_code VARCHAR(32) NOT NULL COMMENT '报警编码（按标准编码规则）',
-                                 alarm_reason VARCHAR(200) COMMENT '报警原因',
-                                 alarm_level TINYINT NOT NULL COMMENT '报警等级：1-警告 2-一般故障 3-严重故障',
-                                 start_time DATETIME NOT NULL COMMENT '报警开始时间',
-                                 end_time DATETIME COMMENT '报警解除时间',
-                                 duration INT COMMENT '持续时间（秒）',
-                                 status TINYINT NOT NULL DEFAULT 0 COMMENT '处理状态：0-未处理 1-处理中 2-已处理',
-                                 handler VARCHAR(32) COMMENT '处理人',
-                                 solution TEXT COMMENT '处理方案',
-                                 FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-                                 INDEX idx_alarm_time (start_time)
+CREATE TABLE IF NOT EXISTS equipment_alarm (
+                                               alarm_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '报警记录ID',
+                                               equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                               alarm_code VARCHAR(32) NOT NULL COMMENT '报警编码（按标准编码规则）',
+                                               alarm_reason VARCHAR(200) COMMENT '报警原因',
+                                               alarm_level TINYINT NOT NULL COMMENT '报警等级：1-警告 2-一般故障 3-严重故障',
+                                               start_time DATETIME NOT NULL COMMENT '报警开始时间',
+                                               end_time DATETIME COMMENT '报警解除时间',
+                                               duration INT COMMENT '持续时间（秒）',
+                                               status TINYINT NOT NULL DEFAULT 0 COMMENT '处理状态：0-未处理 1-处理中 2-已处理',
+                                               handler VARCHAR(32) COMMENT '处理人',
+                                               solution TEXT COMMENT '处理方案',
+                                               FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+                                               INDEX idx_alarm_time (start_time)
 ) ENGINE=InnoDB COMMENT='设备报警记录表';
 
 /* 设备维护记录表（equipment_maintenance） */
-CREATE TABLE equipment_maintenance (
-                                       maintenance_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '维护记录ID',
-                                       equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                       plan_date DATE NOT NULL COMMENT '计划维护日期',
-                                       actual_date DATE COMMENT '实际维护日期',
-                                       maintenance_type TINYINT NOT NULL COMMENT '维护类型：1-日常保养 2-定期维护 3-紧急维修',
-                                       maintenance_content TEXT NOT NULL COMMENT '维护内容',
-                                       operator VARCHAR(32) NOT NULL COMMENT '维护人员',
-                                       result TEXT COMMENT '维护结果',
-                                       cost DECIMAL(10,2) COMMENT '维护成本',
-                                       FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-                                       INDEX idx_maintenance_date (plan_date)
+CREATE TABLE IF NOT EXISTS equipment_maintenance (
+                                                     maintenance_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '维护记录ID',
+                                                     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                                     plan_date DATE NOT NULL COMMENT '计划维护日期',
+                                                     actual_date DATE COMMENT '实际维护日期',
+                                                     maintenance_type TINYINT NOT NULL COMMENT '维护类型：1-日常保养 2-定期维护 3-紧急维修',
+                                                     maintenance_content TEXT NOT NULL COMMENT '维护内容',
+                                                     operator VARCHAR(32) NOT NULL COMMENT '维护人员',
+                                                     result TEXT COMMENT '维护结果',
+                                                     cost DECIMAL(10,2) COMMENT '维护成本',
+                                                     FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+                                                     INDEX idx_maintenance_date (plan_date)
 ) ENGINE=InnoDB COMMENT='设备维护记录表';
 
 
@@ -648,132 +646,129 @@ INSERT INTO equipment_type (type_name, description, parameters_config) VALUES
 
 -- 插入设备基础数据
 INSERT INTO equipment (equipment_code, equipment_name, equipment_model, equipment_type, location, status, manufacturer, production_date, installation_date, last_maintenance_date, maintenance_cycle) VALUES
-                                                                                                                                                                                                          ('WSH-001', '数控冲压机', 'HFP-200', 1, '冲压车间/A线/工位1', 1, '上海重机', '2020-03-15', '2020-05-20', '2025-04-01', 90),
-                                                                                                                                                                                                          ('ROB-010', '弧焊机器人', 'FANUC-R2000', 2, '焊接车间/新能源线/工位3', 1, '发那科', '2022-01-10', '2022-02-01', '2025-04-01', 60),
-                                                                                                                                                                                                          ('AGV-005', '激光导航AGV', 'NDC-800', 4, '总装车间/物流区', 1, '新松机器人', '2021-09-01', '2025-04-01', '2025-04-01', 180),
-                                                                                                                                                                                                          ('CNC-100', '五轴加工中心', 'MAZAK-500', 3, '机加车间/精密区', 1, '山崎马扎克', '2019-11-30', '2020-01-10', '2025-04-01', 60),
-                                                                                                                                                                                                          ('OLD-001', '液压冲床', 'YH32-300', 5, '报废设备区', 1, '北京第一机床', '2010-05-01', '2010-07-01', '2025-04-01', 90),
-                                                                                                                                                                                                          ('WSH-002', '高速冲压机', 'HFP-300', 1, '冲压车间/B线/工位2', 1, '济南二机床', '2021-06-20', '2021-08-15', '2025-04-15', 60),
-                                                                                                                                                                                                          ('ROB-011', '点焊机器人', 'KUKA-KR16', 2, '焊接车间/传统线/工位5', 2, '库卡机器人', '2023-03-01', '2023-04-10', '2025-04-20', 45),
-                                                                                                                                                                                                          ('AGV-006', '磁导航AGV', 'MIRO-600', 4, '总装车间/暂存区', 3, '深圳麦格米特', '2022-05-15', '2022-06-01', '2025-04-25', 120),
-                                                                                                                                                                                                          ('CNC-101', '三轴加工中心', 'HAAS-VF2', 3, '机加车间/普通区', 1, '哈斯自动化', '2020-08-01', '2020-09-20', '2025-04-05', 30),
-                                                                                                                                                                                                          ('INJ-001', '注塑成型机', '海天-120T', 5, '注塑车间/1号机', 1, '海天国际', '2021-10-01', '2021-11-10', '2025-04-10', 90);
+                                                                                                                                                                                                          ('WSH-001', '数控冲压机', 'HFP-200', 1, '冲压车间/A线/工位1', 1, '上海重机', '2020-03-15', '2020-05-20', CURRENT_DATE - INTERVAL '45' DAY, 90),
+                                                                                                                                                                                                          ('ROB-010', '弧焊机器人', 'FANUC-R2000', 2, '焊接车间/新能源线/工位3', 1, '发那科', '2022-01-10', '2022-02-01', CURRENT_DATE - INTERVAL '30' DAY, 60),
+                                                                                                                                                                                                          ('AGV-005', '激光导航AGV', 'NDC-800', 4, '总装车间/物流区', 1, '新松机器人', '2021-09-01', '2022-01-15', CURRENT_DATE - INTERVAL '90' DAY, 180),
+                                                                                                                                                                                                          ('CNC-100', '五轴加工中心', 'MAZAK-500', 3, '机加车间/精密区', 1, '山崎马扎克', '2019-11-30', '2020-01-10', CURRENT_DATE - INTERVAL '40' DAY, 60),
+                                                                                                                                                                                                          ('OLD-001', '液压冲床', 'YH32-300', 5, '报废设备区', 1, '北京第一机床', '2010-05-01', '2010-07-01', CURRENT_DATE - INTERVAL '60' DAY, 90),
+                                                                                                                                                                                                          ('WSH-002', '高速冲压机', 'HFP-300', 1, '冲压车间/B线/工位2', 1, '济南二机床', '2021-06-20', '2021-08-15', CURRENT_DATE - INTERVAL '20' DAY, 60),
+                                                                                                                                                                                                          ('ROB-011', '点焊机器人', 'KUKA-KR16', 2, '焊接车间/传统线/工位5', 1, '库卡机器人', '2023-03-01', '2023-04-10', CURRENT_DATE - INTERVAL '15' DAY, 45),
+                                                                                                                                                                                                          ('AGV-006', '磁导航AGV', 'MIRO-600', 4, '总装车间/暂存区', 1, '深圳麦格米特', '2022-05-15', '2022-06-01', CURRENT_DATE - INTERVAL '50' DAY, 120),
+                                                                                                                                                                                                          ('CNC-101', '三轴加工中心', 'HAAS-VF2', 3, '机加车间/普通区', 1, '哈斯自动化', '2020-08-01', '2020-09-20', CURRENT_DATE - INTERVAL '10' DAY, 30),
+                                                                                                                                                                                                          ('INJ-001', '注塑成型机', '海天-120T', 5, '注塑车间/1号机', 1, '海天国际', '2021-10-01', '2021-11-10', CURRENT_DATE - INTERVAL '45' DAY, 90);
 
-
-
-
-CREATE TABLE product (
-                         product_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '产品ID',
-                         product_code VARCHAR(32) NOT NULL UNIQUE COMMENT '产品型号',
-                         product_name VARCHAR(64) NOT NULL COMMENT '产品名称',
-                         specifications JSON NOT NULL COMMENT '产品规格参数（JSON格式）',
-                         standard_cycle_time INT NOT NULL COMMENT '标准节拍（秒/件）',
-                         safety_stock INT COMMENT '安全库存量',
-                         create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                         update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                         INDEX idx_product_code (product_code)
+CREATE TABLE IF NOT EXISTS product (
+                                       product_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '产品ID',
+                                       product_code VARCHAR(32) NOT NULL UNIQUE COMMENT '产品型号',
+                                       product_name VARCHAR(64) NOT NULL COMMENT '产品名称',
+                                       specifications JSON NOT NULL COMMENT '产品规格参数（JSON格式）',
+                                       standard_cycle_time INT NOT NULL COMMENT '标准节拍（秒/件）',
+                                       safety_stock INT COMMENT '安全库存量',
+                                       create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                       INDEX idx_product_code (product_code)
 ) ENGINE=InnoDB COMMENT='产品基础信息表';
 
-CREATE TABLE production_order (
-                                  order_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工单ID',
-                                  order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '工单号（规则：YYMMDD+4位流水）',
-                                  rework_of BIGINT UNSIGNED COMMENT '原工单ID（返工专用）',
-                                  product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
-                                  order_quantity INT NOT NULL COMMENT '计划数量',
-                                  completed_quantity INT DEFAULT 0 COMMENT '已完成数量',
-                                  defective_quantity INT DEFAULT 0 COMMENT '不良品数量',
-                                  priority TINYINT NOT NULL DEFAULT 2 COMMENT '优先级：1-紧急 2-高 3-普通 4-低',
-                                  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1-待排程 2-已排程 3-生产中 4-暂停 5-已完成 6-已关闭',
-                                  planned_start_date DATE COMMENT '计划开始日期',
-                                  planned_end_date DATE COMMENT '计划完成日期',
-                                  actual_start_date DATETIME COMMENT '实际开始时间',
-                                  actual_end_date DATETIME COMMENT '实际完成时间',
-                                  production_line VARCHAR(32) COMMENT '生产线代码',
-                                  creator BIGINT UNSIGNED NOT NULL COMMENT '创建人',
-                                  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                  update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                  FOREIGN KEY (product_id) REFERENCES product(product_id),
-                                  INDEX idx_order_status (status),
-                                  INDEX idx_planned_date (planned_start_date),
-                                  INDEX idx_rework (rework_of)
+CREATE TABLE IF NOT EXISTS production_order (
+                                                order_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工单ID',
+                                                order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '工单号（规则：YYMMDD+4位流水）',
+                                                rework_of BIGINT UNSIGNED COMMENT '原工单ID（返工专用）',
+                                                product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
+                                                order_quantity INT NOT NULL COMMENT '计划数量',
+                                                completed_quantity INT DEFAULT 0 COMMENT '已完成数量',
+                                                defective_quantity INT DEFAULT 0 COMMENT '不良品数量',
+                                                priority TINYINT NOT NULL DEFAULT 2 COMMENT '优先级：1-紧急 2-高 3-普通 4-低',
+                                                status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1-待排程 2-已排程 3-生产中 4-暂停 5-已完成 6-已关闭',
+                                                planned_start_date DATE COMMENT '计划开始日期',
+                                                planned_end_date DATE COMMENT '计划完成日期',
+                                                actual_start_date DATETIME COMMENT '实际开始时间',
+                                                actual_end_date DATETIME COMMENT '实际完成时间',
+                                                production_line VARCHAR(32) COMMENT '生产线代码',
+                                                creator BIGINT UNSIGNED NOT NULL COMMENT '创建人',
+                                                create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                                update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                                FOREIGN KEY (product_id) REFERENCES product(product_id),
+                                                INDEX idx_order_status (status),
+                                                INDEX idx_planned_date (planned_start_date),
+                                                INDEX idx_rework (rework_of)
 ) ENGINE=InnoDB COMMENT='生产工单主表';
 
-CREATE TABLE process_definition (
-                                    process_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工序ID',
-                                    process_code VARCHAR(32) NOT NULL UNIQUE COMMENT '工序编码',
-                                    process_name VARCHAR(64) NOT NULL COMMENT '工序名称',
-                                    product_id BIGINT UNSIGNED NOT NULL COMMENT '关联产品ID',
-                                    sequence INT NOT NULL COMMENT '工序顺序',
-                                    equipment_type INT UNSIGNED COMMENT '适用设备类型',
-                                    standard_time INT NOT NULL COMMENT '标准工时（秒）',
-                                    quality_checkpoints JSON COMMENT '质量检测点配置',
-                                    previous_process BIGINT UNSIGNED COMMENT '前道工序ID',
-                                    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                    FOREIGN KEY (product_id) REFERENCES product(product_id),
-                                    FOREIGN KEY (equipment_type) REFERENCES equipment_type(type_id),
-                                    UNIQUE idx_process_sequence (product_id, sequence)
+CREATE TABLE IF NOT EXISTS process_definition (
+                                                  process_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '工序ID',
+                                                  process_code VARCHAR(32) NOT NULL UNIQUE COMMENT '工序编码',
+                                                  process_name VARCHAR(64) NOT NULL COMMENT '工序名称',
+                                                  product_id BIGINT UNSIGNED NOT NULL COMMENT '关联产品ID',
+                                                  sequence INT NOT NULL COMMENT '工序顺序',
+                                                  equipment_type INT UNSIGNED COMMENT '适用设备类型',
+                                                  standard_time INT NOT NULL COMMENT '标准工时（秒）',
+                                                  quality_checkpoints JSON COMMENT '质量检测点配置',
+                                                  previous_process BIGINT UNSIGNED COMMENT '前道工序ID',
+                                                  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                                  FOREIGN KEY (product_id) REFERENCES product(product_id),
+                                                  FOREIGN KEY (equipment_type) REFERENCES equipment_type(type_id),
+                                                  UNIQUE idx_process_sequence (product_id, sequence)
 ) ENGINE=InnoDB COMMENT='产品工序定义表';
 
-CREATE TABLE production_schedule (
-                                     schedule_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '排程ID',
-                                     order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
-                                     process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
-                                     equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                     planned_start_time DATETIME NOT NULL COMMENT '计划开始时间',
-                                     planned_end_time DATETIME NOT NULL COMMENT '计划结束时间',
-                                     actual_start_time DATETIME COMMENT '实际开始时间',
-                                     actual_end_time DATETIME COMMENT '实际结束时间',
-                                     schedule_status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1-待执行 2-执行中 3-已完成 4-已延迟',
-                                     operator BIGINT UNSIGNED COMMENT '操作人员',
-                                     FOREIGN KEY (order_id) REFERENCES production_order(order_id),
-                                     FOREIGN KEY (process_id) REFERENCES process_definition(process_id),
-                                     FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
-                                     INDEX idx_schedule_time (planned_start_time, planned_end_time),
-                                     INDEX idx_schedule_status (schedule_status)
+CREATE TABLE IF NOT EXISTS production_schedule (
+                                                   schedule_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '排程ID',
+                                                   order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
+                                                   process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
+                                                   equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                                   planned_start_time DATETIME NOT NULL COMMENT '计划开始时间',
+                                                   planned_end_time DATETIME NOT NULL COMMENT '计划结束时间',
+                                                   actual_start_time DATETIME COMMENT '实际开始时间',
+                                                   actual_end_time DATETIME COMMENT '实际结束时间',
+                                                   schedule_status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1-待执行 2-执行中 3-已完成 4-已延迟',
+                                                   operator BIGINT UNSIGNED COMMENT '操作人员',
+                                                   FOREIGN KEY (order_id) REFERENCES production_order(order_id),
+                                                   FOREIGN KEY (process_id) REFERENCES process_definition(process_id),
+                                                   FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
+                                                   INDEX idx_schedule_time (planned_start_time, planned_end_time),
+                                                   INDEX idx_schedule_status (schedule_status)
 ) ENGINE=InnoDB COMMENT='生产排程计划表';
 
-CREATE TABLE production_record (
-                                   record_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '记录ID',
-                                   order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
-                                   process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
-                                   equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
-                                   output_quantity INT NOT NULL COMMENT '产出数量',
-                                   defective_quantity INT DEFAULT 0 COMMENT '不良数量',
-                                   quality_check_generated TINYINT NOT NULL COMMENT '质检任务生成标记：0-未生成 1-已生成',
-                                   start_time DATETIME NOT NULL COMMENT '开始时间',
-                                   end_time DATETIME NOT NULL COMMENT '结束时间',
-                                   operator BIGINT UNSIGNED NOT NULL COMMENT '操作员',
-                                   remark VARCHAR(255) COMMENT '异常备注',
-                                   FOREIGN KEY (order_id) REFERENCES production_order(order_id),
-                                   INDEX idx_production_time (start_time, end_time)
+CREATE TABLE IF NOT EXISTS production_record (
+                                                 record_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '记录ID',
+                                                 order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
+                                                 process_id BIGINT UNSIGNED NOT NULL COMMENT '工序ID',
+                                                 equipment_id BIGINT UNSIGNED NOT NULL COMMENT '设备ID',
+                                                 output_quantity INT NOT NULL COMMENT '产出数量',
+                                                 defective_quantity INT DEFAULT 0 COMMENT '不良数量',
+                                                 quality_check_generated TINYINT NOT NULL COMMENT '质检任务生成标记：0-未生成 1-已生成',
+                                                 start_time DATETIME NOT NULL COMMENT '开始时间',
+                                                 end_time DATETIME NOT NULL COMMENT '结束时间',
+                                                 operator BIGINT UNSIGNED NOT NULL COMMENT '操作员',
+                                                 remark VARCHAR(255) COMMENT '异常备注',
+                                                 FOREIGN KEY (order_id) REFERENCES production_order(order_id),
+                                                 INDEX idx_production_time (start_time, end_time)
 ) ENGINE=InnoDB COMMENT='生产执行记录表';
 
-CREATE TABLE quality_inspection_item (
-                                         item_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检项ID',
-                                         product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
-                                         inspection_name VARCHAR(64) NOT NULL COMMENT '检测项目名称',
-                                         inspection_standard VARCHAR(255) NOT NULL COMMENT '检测标准',
-                                         sampling_method VARCHAR(50) COMMENT '抽检方式（全检/抽检）',
-                                         acceptance_criteria JSON NOT NULL COMMENT '合格标准（JSON格式）',
-                                         create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                         FOREIGN KEY (product_id) REFERENCES product(product_id),
-                                         INDEX idx_product_inspection (product_id)
+CREATE TABLE IF NOT EXISTS quality_inspection_item (
+                                                       item_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检项ID',
+                                                       product_id BIGINT UNSIGNED NOT NULL COMMENT '产品ID',
+                                                       inspection_name VARCHAR(64) NOT NULL COMMENT '检测项目名称',
+                                                       inspection_standard VARCHAR(255) NOT NULL COMMENT '检测标准',
+                                                       sampling_method VARCHAR(50) COMMENT '抽检方式（全检/抽检）',
+                                                       acceptance_criteria JSON NOT NULL COMMENT '合格标准（JSON格式）',
+                                                       create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                                       FOREIGN KEY (product_id) REFERENCES product(product_id),
+                                                       INDEX idx_product_inspection (product_id)
 ) ENGINE=InnoDB COMMENT='质量检测项目表';
 
-CREATE TABLE quality_inspection_record (
-                                           inspection_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检记录ID',
-                                           order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
-                                           item_id BIGINT UNSIGNED NOT NULL COMMENT '质检项ID',
-                                           record_id BIGINT UNSIGNED NOT NULL COMMENT '生产记录ID',
-                                           inspection_result TINYINT NOT NULL COMMENT '检测结果：1-合格 2-不合格 3-待复检',
-                                           inspection_data JSON COMMENT '检测数据记录',
-                                           inspector BIGINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '检验员',
-                                           inspection_time DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '检验时间',
-                                           remark VARCHAR(255) COMMENT '备注说明',
-                                           FOREIGN KEY (order_id) REFERENCES production_order(order_id),
-                                           FOREIGN KEY (item_id) REFERENCES quality_inspection_item(item_id),
-                                           FOREIGN KEY (record_id) REFERENCES production_record(record_id),
-                                           INDEX idx_inspection_time (inspection_time)
+CREATE TABLE IF NOT EXISTS quality_inspection_record (
+                                                         inspection_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '质检记录ID',
+                                                         order_id BIGINT UNSIGNED NOT NULL COMMENT '工单ID',
+                                                         item_id BIGINT UNSIGNED NOT NULL COMMENT '质检项ID',
+                                                         record_id BIGINT UNSIGNED NOT NULL COMMENT '生产记录ID',
+                                                         inspection_result TINYINT NOT NULL COMMENT '检测结果：1-合格 2-不合格 3-待复检',
+                                                         inspection_data JSON COMMENT '检测数据记录',
+                                                         inspector BIGINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '检验员',
+                                                         inspection_time DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '检验时间',
+                                                         remark VARCHAR(255) COMMENT '备注说明',
+                                                         FOREIGN KEY (order_id) REFERENCES production_order(order_id),
+                                                         FOREIGN KEY (item_id) REFERENCES quality_inspection_item(item_id),
+                                                         FOREIGN KEY (record_id) REFERENCES production_record(record_id),
+                                                         INDEX idx_inspection_time (inspection_time)
 ) ENGINE=InnoDB COMMENT='质量检测记录表';
 
 -- 插入产品数据（3个不同产品）
@@ -784,32 +779,59 @@ INSERT INTO product (product_code, product_name, specifications, standard_cycle_
                                                                                                         ('D-4004', '精密齿轮箱', '{"材质":"合金钢","传动比":"10:1","扭矩":"50N·m"}', 240, 200),
                                                                                                         ('E-5005', '工业传感器', '{"测量范围":"0-100mm","精度":"±0.1mm","输出信号":"4-20mA"}', 150, 100);
 
+# -- 插入工序定义（每个产品3道工序）
+# INSERT INTO process_definition (process_code, process_name, product_id, sequence, equipment_type, standard_time, quality_checkpoints) VALUES
+# -- 产品1（A-1001）
+# ('PRC-001', '压铸成型', 1, 1, 1, 45, '["外观检查"]'),
+# ('PRC-002', '电路板组装', 1, 2, 3, 120, '["导通测试"]'),
+# ('PRC-003', '气密测试', 1, 3, 2, 60, '["气密性测试"]'),
+#
+# -- 产品2（B-2002）
+# ('PRC-004', '定子绕线', 2, 1, 4, 180, '["绝缘测试"]'),
+# ('PRC-005', '转子动平衡', 2, 2, 3, 90, '["空载电流"]'),
+# ('PRC-006', '整机装配', 2, 3, 2, 150, '["振动测试"]'),
+#
+# -- 产品3（C-3003）
+# ('PRC-007', '机械臂铸造', 3, 1, 1, 240, '["尺寸精度"]'),
+# ('PRC-008', '精密加工', 3, 2, 3, 300, '["负载测试"]'),
+# ('PRC-009', '关节组装', 3, 3, 2, 180, '["耐久测试"]'),
+#
+# -- 产品4（D-4004）工序
+# ('PRC-010', '齿轮加工', 4, 1, 3, 180, '["齿形精度检测"]'),
+# ('PRC-011', '箱体组装', 4, 2, 2, 120, '["密封性测试"]'),
+# ('PRC-012', '性能测试', 4, 3, 5, 240, '["负载运行测试"]'),
+#
+# -- 产品5（E-5005）工序
+# ('PRC-013', '芯片焊接', 5, 1, 2, 90, '["焊点检测"]'),
+# ('PRC-014', '模块封装', 5, 2, 4, 60, '["外观检查"]'),
+# ('PRC-015', '功能校验', 5, 3, 3, 120, '["信号稳定性测试"]');
+
 -- 插入工序定义（每个产品3道工序）
 INSERT INTO process_definition (process_code, process_name, product_id, sequence, equipment_type, standard_time, quality_checkpoints) VALUES
 -- 产品1（A-1001）
-('PRC-001', '压铸成型', 1, 1, 1, 45, '["外观检查"]'),
-('PRC-002', '电路板组装', 1, 2, 3, 120, '["导通测试"]'),
-('PRC-003', '气密测试', 1, 3, 2, 60, '["气密性测试"]'),
+('PRC-001', '压铸成型', 1, 1, 1, 1, '["外观检查"]'),
+('PRC-002', '电路板组装', 1, 2, 3, 1, '["导通测试"]'),
+('PRC-003', '气密测试', 1, 3, 2, 1, '["气密性测试"]'),
 
 -- 产品2（B-2002）
-('PRC-004', '定子绕线', 2, 1, 4, 180, '["绝缘测试"]'),
-('PRC-005', '转子动平衡', 2, 2, 3, 90, '["空载电流"]'),
-('PRC-006', '整机装配', 2, 3, 2, 150, '["振动测试"]'),
+('PRC-004', '定子绕线', 2, 1, 4, 1, '["绝缘测试"]'),
+('PRC-005', '转子动平衡', 2, 2, 3, 1, '["空载电流"]'),
+('PRC-006', '整机装配', 2, 3, 2, 1, '["振动测试"]'),
 
 -- 产品3（C-3003）
-('PRC-007', '机械臂铸造', 3, 1, 1, 240, '["尺寸精度"]'),
-('PRC-008', '精密加工', 3, 2, 3, 300, '["负载测试"]'),
-('PRC-009', '关节组装', 3, 3, 2, 180, '["耐久测试"]'),
+('PRC-007', '机械臂铸造', 3, 1, 1, 1, '["尺寸精度"]'),
+('PRC-008', '精密加工', 3, 2, 3, 1, '["负载测试"]'),
+('PRC-009', '关节组装', 3, 3, 2, 1, '["耐久测试"]'),
 
 -- 产品4（D-4004）工序
-('PRC-010', '齿轮加工', 4, 1, 3, 180, '["齿形精度检测"]'),
-('PRC-011', '箱体组装', 4, 2, 2, 120, '["密封性测试"]'),
-('PRC-012', '性能测试', 4, 3, 5, 240, '["负载运行测试"]'),
+('PRC-010', '齿轮加工', 4, 1, 3, 1, '["齿形精度检测"]'),
+('PRC-011', '箱体组装', 4, 2, 2, 1, '["密封性测试"]'),
+('PRC-012', '性能测试', 4, 3, 5, 1, '["负载运行测试"]'),
 
 -- 产品5（E-5005）工序
-('PRC-013', '芯片焊接', 5, 1, 2, 90, '["焊点检测"]'),
-('PRC-014', '模块封装', 5, 2, 4, 60, '["外观检查"]'),
-('PRC-015', '功能校验', 5, 3, 3, 120, '["信号稳定性测试"]');
+('PRC-013', '芯片焊接', 5, 1, 2, 1, '["焊点检测"]'),
+('PRC-014', '模块封装', 5, 2, 4, 1, '["外观检查"]'),
+('PRC-015', '功能校验', 5, 3, 3, 1, '["信号稳定性测试"]');
 
 -- 插入生产工单（覆盖所有状态）
 INSERT INTO production_order (order_no, product_id, order_quantity, completed_quantity, defective_quantity,
@@ -939,5 +961,7 @@ INSERT INTO quality_inspection_record (order_id, item_id, record_id, inspection_
 (8, 11, 12, 2, 19, '2025-05-07 13:00:00'), -- 不合格需要复检
 -- 返工工单9工序7质检（尺寸精度，item_id=7）
 (9, 7, 13, 3, 18, '2025-05-12 16:30:00'); -- 待复检
+
+
 
 
