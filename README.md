@@ -78,12 +78,9 @@
         CREATE DATABASE auto_motive_mes CHARACTER SET utf8mb4;
         ```
 2. 数据库初始化
-    1. 按顺序执行以下SQL脚本：
+    1. 执行SQL脚本：
         ```
-        src/main/resources/mysql/
-        └─ user.sql       # 用户相关表
-        └─ equipment.sql  # 设备相关表
-        └─ order.sql      # 工单相关表
+        src/main/resources/mysql/init_data.sql # 数据库初始化 
         ```
 3. 启动服务
     1. 启动Redis服务：
